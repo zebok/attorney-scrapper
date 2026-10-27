@@ -33,7 +33,8 @@ class StorageBackend(Protocol):
         results: list[dict[str, Any]],
     ) -> None: ...
     def merge_master(self, run_id: str) -> int: ...
-    def get_review_queue(self) -> pl.DataFrame: ...
+    def get_latest_run_id(self) -> str | None: ...
+    def get_review_queue(self, run_id: str | None = None) -> pl.DataFrame: ...
     def get_all_results(self, run_id: str | None = None) -> pl.DataFrame: ...
     def get_candidates(self, attorney_uuid: str) -> pl.DataFrame: ...
     def apply_human_review(
@@ -162,14 +163,35 @@ class CsvStorageBackend:
         updated_master.write_csv(master_path)
         return len(approved)
 
-    def get_review_queue(self) -> pl.DataFrame:
+    def get_latest_run_id(self) -> str | None:
+        """Return the most recent run_id from pipeline_runs or match_results."""
+        runs = self._read_table("pipeline_runs")
+        if len(runs) > 0 and "run_id" in runs.columns:
+            return runs["run_id"].tail(1)[0]
         results = self._read_table("match_results")
+        if len(results) > 0 and "run_id" in results.columns:
+            return results["run_id"].tail(1)[0]
+        return None
+
+    def get_review_queue(self, run_id: str | None = None) -> pl.DataFrame:
+        results = self.get_all_results(run_id=run_id)
+        if len(results) == 0:
+            return results
         return results.filter(pl.col("review_status") == "pending_review")
 
     def get_all_results(self, run_id: str | None = None) -> pl.DataFrame:
         results = self._read_table("match_results")
-        if run_id:
-            return results.filter(pl.col("run_id") == run_id)
+        if len(results) == 0:
+            return results
+        if run_id == "all":
+            return results
+        target_run_id = run_id or self.get_latest_run_id()
+        if target_run_id and "run_id" in results.columns:
+            filtered = results.filter(pl.col("run_id") == target_run_id)
+            if len(filtered) > 0:
+                return filtered
+        if "attorney_uuid" in results.columns:
+            return results.unique(subset=["attorney_uuid"], keep="last")
         return results
 
     def get_candidates(self, attorney_uuid: str) -> pl.DataFrame:
@@ -307,15 +329,27 @@ class BigQueryStorageBackend:
         job.result()
         return job.num_dml_affected_rows or 0
 
-    def get_review_queue(self) -> pl.DataFrame:
-        query = f"SELECT * FROM `{self.project_id}.{self.dataset_id}.v_review_queue`"
-        arrow_table = self.client.query(query).to_arrow()
-        return pl.from_arrow(arrow_table)  # type: ignore
+    def get_latest_run_id(self) -> str | None:
+        query = f"SELECT run_id FROM `{self.project_id}.{self.dataset_id}.pipeline_runs` ORDER BY started_at DESC LIMIT 1"
+        try:
+            arrow_table = self.client.query(query).to_arrow()
+            if len(arrow_table) > 0:
+                return str(arrow_table["run_id"][0])
+        except Exception:
+            pass
+        return None
+
+    def get_review_queue(self, run_id: str | None = None) -> pl.DataFrame:
+        results = self.get_all_results(run_id=run_id)
+        if len(results) == 0:
+            return results
+        return results.filter(pl.col("review_status") == "pending_review")
 
     def get_all_results(self, run_id: str | None = None) -> pl.DataFrame:
+        target_run_id = run_id or self.get_latest_run_id()
         q = f"SELECT * FROM `{self.project_id}.{self.dataset_id}.match_results`"
-        if run_id:
-            q += f" WHERE run_id = '{run_id}'"
+        if target_run_id and target_run_id != "all":
+            q += f" WHERE run_id = '{target_run_id}'"
         return pl.from_arrow(self.client.query(q).to_arrow())  # type: ignore
 
     def get_candidates(self, attorney_uuid: str) -> pl.DataFrame:

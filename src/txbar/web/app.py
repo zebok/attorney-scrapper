@@ -72,8 +72,11 @@ def health_endpoint() -> dict[str, Any]:
 
 
 @app.get("/api/v1/stats")
-def get_stats(storage: StorageBackend = Depends(get_current_storage)) -> dict[str, Any]:
-    results = storage.get_all_results()
+def get_stats(
+    run_id: str | None = Query(None),
+    storage: StorageBackend = Depends(get_current_storage),
+) -> dict[str, Any]:
+    results = storage.get_all_results(run_id=run_id)
     total = len(results)
     if total == 0:
         return {"total": 0, "auto_approved": 0, "pending_review": 0, "not_found": 0, "firm_changes": 0}
@@ -89,8 +92,11 @@ def get_stats(storage: StorageBackend = Depends(get_current_storage)) -> dict[st
 
 
 @app.get("/api/v1/queue")
-def get_queue(storage: StorageBackend = Depends(get_current_storage)) -> list[dict[str, Any]]:
-    queue_df = storage.get_review_queue()
+def get_queue(
+    run_id: str | None = Query(None),
+    storage: StorageBackend = Depends(get_current_storage),
+) -> list[dict[str, Any]]:
+    queue_df = storage.get_review_queue(run_id=run_id)
     return queue_df.to_dicts()
 
 
@@ -98,9 +104,10 @@ def get_queue(storage: StorageBackend = Depends(get_current_storage)) -> list[di
 def get_results(
     status_filter: str | None = Query(None, alias="status"),
     search: str | None = Query(None),
+    run_id: str | None = Query(None),
     storage: StorageBackend = Depends(get_current_storage),
 ) -> list[dict[str, Any]]:
-    df = storage.get_all_results()
+    df = storage.get_all_results(run_id=run_id)
     if status_filter:
         df = df.filter(df["review_status"] == status_filter)
     if search:
