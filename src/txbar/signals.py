@@ -170,12 +170,15 @@ class NameMatchSignal:
         # 4. Email Hint Verification (Disambiguator)
         email_confirmed = False
         if email_hints:
-            if email_hints.initials and cand_first and cand_last:
-                cand_initials = (
-                    cand_first[0] + (cand_middle[0] if cand_middle else "") + cand_last[0]
+            if email_hints.initials and cand_first:
+                cand_given_initials = (
+                    cand_first[0] + (cand_middle[0] if cand_middle else "")
                 ).lower()
                 target_initials = email_hints.initials.lower()
-                if target_initials in cand_initials or cand_initials.startswith(target_initials):
+                if (
+                    cand_given_initials.startswith(target_initials)
+                    or target_initials.startswith(cand_given_initials[0])
+                ):
                     email_confirmed = True
                     reasons.append("Email initials confirmed")
 

@@ -281,27 +281,19 @@ class MatchEngine:
             except Exception as e:
                 logger.warning("Stage 1 search failed: %s", e)
 
-        # Verify if Stage 1 found at least one plausible candidate matching given name or nickname
+        # Verify if Stage 1 found at least one candidate whose name is compatible with the target
         has_plausible_hit = False
-        if search_hits and parsed_name.first:
-            first_k = alpha_key(parsed_name.first)
-            nicknames = self.kb.get_nicknames(first_k)
+        if search_hits:
             for h, _ in search_hits:
-                h_first_k = alpha_key(h.name.first_name)
-                h_pref_k = alpha_key(h.name.preferred_name)
-                if (
-                    h_first_k == first_k
-                    or h_pref_k == first_k
-                    or h_first_k in nicknames
-                    or h_pref_k in nicknames
-                ):
+                eval_name = self.signal_name.evaluate(
+                    input_record, parsed_name, email_hints, h, None, self.kb, self.scoring_config
+                )
+                if eval_name.score >= self.scoring_config.weight_name * 0.85:
                     has_plausible_hit = True
                     break
             if not has_plausible_hit:
-                # Discard firm hits that are pure surname coincidences (colleagues at firm)
+                # Discard firm hits that are pure surname coincidences (colleagues at same firm)
                 search_hits = []
-        elif search_hits:
-            has_plausible_hit = True
 
         # Stage 2: Name + City (Standard geo targeted search)
         if not has_plausible_hit:
