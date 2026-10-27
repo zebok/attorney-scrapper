@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Texas Bar Attorney Enrichment & Review Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: rgba(18, 24, 38, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --accent: #3b82f6;
+      --accent-glow: rgba(59, 130, 246, 0.25);
+      --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.2);
+      --warning: #f59e0b;
+      --warning-glow: rgba(245, 158, 11, 0.2);
+      --danger: #ef4444;
+      --purple: #8b5cf6;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at 10% 20%, #111827 0%, #0b0f19 90%);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, sans-serif;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    header {
+      background: rgba(11, 15, 25, 0.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .brand-logo {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #fff;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+    .brand-title h1 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .brand-title p {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .token-input {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8rem;
+      color: var(--text);
+      font-family: var(--font-mono);
+      width: 140px;
+      transition: all 0.2s;
+    }
+    .token-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      width: 200px;
+    }
+    .health-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      color: var(--success);
+      font-weight: 500;
+    }
+    .health-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    main {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      backdrop-filter: blur(8px);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .stat-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.3rem;
+    }
+    .stat-val {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .stat-card.alert { border-color: rgba(245, 158, 11, 0.4); }
+    .stat-card.alert .stat-val { color: var(--warning); }
+    .stat-card.accent .stat-val { color: var(--accent); }
+    .stat-card.success .stat-val { color: var(--success); }
+    .stat-card.purple .stat-val { color: var(--purple); }
+
+    .controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .tabs-group {
+      display: flex;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 0.25rem;
+      border-radius: 8px;
+      border: 1px solid var(--card-border);
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+    .badge-count {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 0.1rem 0.4rem;
+      border-radius: 999px;
+      font-size: 0.7rem;
+    }
+    .search-input {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+      color: var(--text);
+      width: 280px;
+      transition: all 0.2s;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--accent-glow);
+    }
+
+    .table-container {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      overflow-x: auto;
+      backdrop-filter: blur(8px);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+    th {
+      background: rgba(255, 255, 255, 0.02);
+      padding: 0.85rem 1.25rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--card-border);
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+    }
+    td {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--card-border);
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255, 255, 255, 0.015); }
+
+    .score-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 0.75rem;
+    }
+    .score-high { background: var(--success-glow); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .score-mid { background: var(--warning-glow); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .score-low { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    .status-tag {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-transform: capitalize;
+    }
+    .status-auto_approved { background: var(--success-glow); color: var(--success); }
+    .status-pending_review { background: var(--warning-glow); color: var(--warning); }
+    .status-human_approved { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+    .status-human_rejected { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .status-not_found { background: rgba(148, 163, 184, 0.1); color: var(--text-muted); }
+
+    .firm-change-pill {
+      background: rgba(139, 92, 246, 0.2);
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      color: #c4b5fd;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-left: 0.5rem;
+    }
+
+    .btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn:hover { background: rgba(255, 255, 255, 0.1); }
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .btn-primary:hover { background: #2563eb; }
+    .btn-success {
+      background: var(--success);
+      border-color: var(--success);
+      color: #fff;
+    }
+    .btn-danger {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: #fff;
+    }
+
+    /* Modal / Drawer */
+    .drawer-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      display: none;
+      justify-content: flex-end;
+    }
+    .drawer-overlay.open { display: flex; }
+    .drawer-panel {
+      width: 600px;
+      max-width: 95vw;
+      background: #111827;
+      height: 100%;
+      border-left: 1px solid var(--card-border);
+      padding: 2rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+    }
+    .drawer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--card-border);
+      margin-bottom: 1.5rem;
+    }
+    .drawer-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .compare-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .compare-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+    }
+    .compare-row {
+      margin-bottom: 0.6rem;
+      font-size: 0.8rem;
+    }
+    .compare-key {
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      display: block;
+    }
+    .compare-val {
+      font-weight: 500;
+      color: var(--text);
+    }
+    .score-breakdown {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .score-bar-row {
+      margin-bottom: 0.75rem;
+    }
+    .score-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      margin-bottom: 0.25rem;
+    }
+    .score-bar-track {
+      background: rgba(255, 255, 255, 0.05);
+      height: 6px;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .score-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #10b981);
+    }
+    .candidates-list {
+      margin-bottom: 1.5rem;
+    }
+    .candidate-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.2s;
+    }
+    .candidate-card:hover, .candidate-card.selected {
+      border-color: var(--accent);
+      background: rgba(59, 130, 246, 0.08);
+    }
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #1e293b;
+      border: 1px solid var(--accent);
+      color: #fff;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      display: none;
+      z-index: 200;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-logo">TX</div>
+      <div class="brand-title">
+        <h1>Texas Bar Attorney Enrichment</h1>
+        <p>Recruiter BackOffice Research & Review Platform</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div id="health-indicator" class="health-pill">
+        <span class="health-dot"></span>
+        <span id="health-text">Checking...</span>
+      </div>
+      <input type="password" id="reviewer-token" class="token-input" placeholder="X-Reviewer-Token" title="Enter reviewer token for mutations" value="change-me">
+    </div>
+  </header>
+
+  <main>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Processed</div>
+        <div class="stat-val" id="stat-total">0</div>
+      </div>
+      <div class="stat-card success">
+        <div class="stat-label">Auto-Approved</div>
+        <div class="stat-val" id="stat-approved">0</div>
+      </div>
+      <div class="stat-card alert">
+        <div class="stat-label">Pending Review</div>
+        <div class="stat-val" id="stat-queue">0</div>
+      </div>
+      <div class="stat-card purple">
+        <div class="stat-label">Firm Moves Detected</div>
+        <div class="stat-val" id="stat-moves">0</div>
+      </div>
+    </div>
+
+    <div class="controls-bar">
+      <div class="tabs-group">
+        <button class="tab-btn active" id="tab-queue" onclick="setTab('queue')">
+          Review Queue <span class="badge-count" id="badge-queue">0</span>
+        </button>
+        <button class="tab-btn" id="tab-all" onclick="setTab('all')">All Records</button>
+        <button class="tab-btn" id="tab-moves" onclick="setTab('moves')">Firm Moves</button>
+        <button class="tab-btn" id="tab-live" onclick="setTab('live')">⚡ Live Lookup</button>
+      </div>
+      <div style="display: flex; gap: 0.75rem; align-items: center;">
+        <input type="text" id="search-input" class="search-input" placeholder="Search attorney, firm..." oninput="handleSearch(this.value)">
+        <button class="btn btn-primary" id="btn-run-batch" onclick="promptRunBatch()" style="display: flex; align-items: center; gap: 0.4rem;">
+          <span id="run-spinner" style="display: none;">⏳</span>
+          <span id="run-btn-text">▶ Run Batch</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Live Lookup View (Hidden by default) -->
+    <div id="live-lookup-view" style="display: none; margin-bottom: 2rem;">
+      <div class="compare-box" style="padding: 1.5rem; border-color: rgba(59, 130, 246, 0.3);">
+        <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; color: #fff;">⚡ Test On-Demand Live Lookup</h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+          Query the State Bar of Texas directory in real time. Experience waterfall lookups, preferred name resolution, and homonym disambiguation live.
+        </p>
+
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap;">
+          <span style="font-size: 0.75rem; color: var(--text-muted); align-self: center;">Quick Presets:</span>
+          <button class="btn" onclick="fillLivePreset('W. Buechele', 'Winstead PC', 'Dallas', 2016, 'bbuechele@winstead.com')">W. Buechele (Initial)</button>
+          <button class="btn" onclick="fillLivePreset('Wayne Zeringue III', 'Sidley Austin LLP', 'Dallas', 2017, 'jzeringue@sidley.com')">Wayne Zeringue III (Suffix + 'Jack')</button>
+          <button class="btn" onclick="fillLivePreset('Michael Roberts', 'Sidley Austin LLP', 'Dallas', 2017, 'mlroberts@sidley.com')">Michael Roberts (Homonym Deselect)</button>
+          <button class="btn" onclick="fillLivePreset('Rachel Boyce', 'Perkins Coie LLP', 'Dallas', 2015, 'rachel.boyce@ashurstperkins.com')">Rachel Boyce (Merger Alias)</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem; margin-bottom: 1rem;">
+          <div>
+            <label style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Full Name *</label>
+            <input type="text" id="live-name" class="search-input" style="width: 100%;" placeholder="e.g. Wayne Zeringue III">
+          </div>
+          <div>
+            <label style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Law Firm</label>
+            <input type="text" id="live-firm" class="search-input" style="width: 100%;" placeholder="e.g. Sidley Austin LLP">
+          </div>
+          <div>
+            <label style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">City</label>
+            <input type="text" id="live-city" class="search-input" style="width: 100%;" placeholder="e.g. Dallas">
+          </div>
+          <div>
+            <label style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">JD Year</label>
+            <input type="number" id="live-jd" class="search-input" style="width: 100%;" placeholder="e.g. 2017">
+          </div>
+          <div>
+            <label style="font-size: 0.7rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Email</label>
+            <input type="email" id="live-email" class="search-input" style="width: 100%;" placeholder="e.g. jzeringue@sidley.com">
+          </div>
+        </div>
+
+        <button class="btn btn-primary" onclick="executeLiveLookup()" id="btn-live-submit" style="padding: 0.6rem 1.5rem; font-weight: 600;">
+          ⚡ Query Texas Bar Live
+        </button>
+
+        <!-- Live Results Box -->
+        <div id="live-result-box" style="display: none; margin-top: 1.5rem; border-top: 1px solid var(--card-border); padding-top: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div>
+              <span id="live-res-name" style="font-size: 1.1rem; font-weight: 700; color: #fff;"></span>
+              <span id="live-res-score-badge" class="score-badge score-high" style="margin-left: 0.75rem;"></span>
+              <span id="live-res-status" class="status-tag status-auto_approved" style="margin-left: 0.5rem;"></span>
+              <span id="live-res-firm-change" class="firm-change-pill" style="display: none;">Firm Move Detected</span>
+            </div>
+            <span id="live-res-time" style="font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);"></span>
+          </div>
+
+          <p id="live-res-explanation" style="font-size: 0.8rem; color: #cbd5e1; margin-bottom: 1rem; font-style: italic;"></p>
+
+          <div class="compare-grid" style="margin-bottom: 1rem;">
+            <div class="compare-box">
+              <div class="compare-title">Verified Bar Record</div>
+              <div class="compare-row"><span class="compare-key">Bar Card Number:</span><span class="compare-val" id="live-res-bar" style="font-family: var(--font-mono);">-</span></div>
+              <div class="compare-row"><span class="compare-key">Current Firm:</span><span class="compare-val" id="live-res-firm">-</span></div>
+              <div class="compare-row"><span class="compare-key">Preferred Name:</span><span class="compare-val" id="live-res-pref">-</span></div>
+              <div class="compare-row"><span class="compare-key">License Status:</span><span class="compare-val" id="live-res-lic-status">-</span></div>
+            </div>
+            <div class="compare-box">
+              <div class="compare-title">Contact & Education</div>
+              <div class="compare-row"><span class="compare-key">Phone (E.164):</span><span class="compare-val" id="live-res-phone" style="font-family: var(--font-mono);">-</span></div>
+              <div class="compare-row"><span class="compare-key">Law School / Grad:</span><span class="compare-val" id="live-res-school">-</span></div>
+              <div class="compare-row"><span class="compare-key">Address:</span><span class="compare-val" id="live-res-addr">-</span></div>
+              <div class="compare-row"><span class="compare-key">Search Stage:</span><span class="compare-val" id="live-res-stage" style="font-family: var(--font-mono); font-size: 0.75rem;">-</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-container" id="main-table-view">
+      <table>
+        <thead>
+          <tr>
+            <th>Attorney / Input</th>
+            <th>Texas Bar Verified Match</th>
+            <th>Confidence</th>
+            <th>Status</th>
+            <th>Bar Card #</th>
+            <th>Phone (E.164)</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="results-body">
+          <tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 3rem;">Loading records...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <!-- Review Drawer -->
+  <div id="drawer" class="drawer-overlay" onclick="closeDrawerOnOverlay(event)">
+    <div class="drawer-panel" onclick="event.stopPropagation()">
+      <div class="drawer-header">
+        <div>
+          <h2 id="drawer-title" style="font-size: 1.1rem; font-weight: 600;">Attorney Review</h2>
+          <p id="drawer-subtitle" style="font-size: 0.75rem; color: var(--text-muted);">Auditing entity resolution decision</p>
+        </div>
+        <button class="drawer-close" onclick="closeDrawer()">&times;</button>
+      </div>
+
+      <div class="compare-grid">
+        <div class="compare-box">
+          <div class="compare-title">Recruiter Input</div>
+          <div class="compare-row"><span class="compare-key">Name:</span><span class="compare-val" id="drawer-in-name">-</span></div>
+          <div class="compare-row"><span class="compare-key">Firm:</span><span class="compare-val" id="drawer-in-firm">-</span></div>
+          <div class="compare-row"><span class="compare-key">City / State:</span><span class="compare-val" id="drawer-in-geo">-</span></div>
+          <div class="compare-row"><span class="compare-key">JD Year:</span><span class="compare-val" id="drawer-in-jd">-</span></div>
+          <div class="compare-row"><span class="compare-key">Email:</span><span class="compare-val" id="drawer-in-email" style="font-family: var(--font-mono); font-size: 0.75rem;">-</span></div>
+        </div>
+        <div class="compare-box">
+          <div class="compare-title">Texas Bar Profile</div>
+          <div class="compare-row"><span class="compare-key">Official Name:</span><span class="compare-val" id="drawer-out-name">-</span></div>
+          <div class="compare-row"><span class="compare-key">Current Firm:</span><span class="compare-val" id="drawer-out-firm">-</span></div>
+          <div class="compare-row"><span class="compare-key">License Status:</span><span class="compare-val" id="drawer-out-status">-</span></div>
+          <div class="compare-row"><span class="compare-key">Admission / Grad:</span><span class="compare-val" id="drawer-out-dates">-</span></div>
+          <div class="compare-row"><span class="compare-key">Phone:</span><span class="compare-val" id="drawer-out-phone">-</span></div>
+        </div>
+      </div>
+
+      <div class="score-breakdown">
+        <div class="compare-title">Confidence Score Breakdown (<span id="drawer-total-score">0</span>%)</div>
+        <div class="score-bar-row">
+          <div class="score-bar-label"><span>Name & Email Hints</span><span id="bar-name-val">0 / 35</span></div>
+          <div class="score-bar-track"><div id="bar-name-fill" class="score-bar-fill" style="width: 0%"></div></div>
+        </div>
+        <div class="score-bar-row">
+          <div class="score-bar-label"><span>Firm & Alias Match</span><span id="bar-firm-val">0 / 25</span></div>
+          <div class="score-bar-track"><div id="bar-firm-fill" class="score-bar-fill" style="width: 0%"></div></div>
+        </div>
+        <div class="score-bar-row">
+          <div class="score-bar-label"><span>Temporal Consistency</span><span id="bar-temp-val">0 / 25</span></div>
+          <div class="score-bar-track"><div id="bar-temp-fill" class="score-bar-fill" style="width: 0%"></div></div>
+        </div>
+        <div class="score-bar-row">
+          <div class="score-bar-label"><span>Geographic Alignment</span><span id="bar-geo-val">0 / 15</span></div>
+          <div class="score-bar-track"><div id="bar-geo-fill" class="score-bar-fill" style="width: 0%"></div></div>
+        </div>
+        <p id="drawer-explanation" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.75rem; font-style: italic;"></p>
+      </div>
+
+      <div class="candidates-list">
+        <div class="compare-title">Evaluated Candidates</div>
+        <div id="drawer-candidates-container">Loading candidate profiles...</div>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <label style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Auditor Review Note:</label>
+        <textarea id="drawer-note" style="width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 6px; padding: 0.5rem; color: #fff; font-size: 0.8rem; font-family: inherit; resize: vertical;" rows="2" placeholder="Optional rationale for this decision..."></textarea>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: auto;">
+        <button class="btn btn-danger" onclick="submitReviewAction('reject')">Reject (Not Found)</button>
+        <button class="btn btn-success" onclick="submitReviewAction('approve')">Approve Match (OK)</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    let currentTab = 'queue';
+    let currentRecords = [];
+    let selectedAttorney = null;
+    let selectedCandidateContactId = null;
+
+    async function init() {
+      await checkHealth();
+      await loadStats();
+      await loadTab(currentTab);
+    }
+
+    async function checkHealth() {
+      try {
+        const res = await fetch('/health');
+        const data = await res.json();
+        const indicator = document.getElementById('health-indicator');
+        const text = document.getElementById('health-text');
+        if (data.status === 'healthy') {
+          text.innerText = `Site Online (${(data.latency_s || 0).toFixed(2)}s)`;
+          indicator.style.color = 'var(--success)';
+        } else {
+          text.innerText = 'Degraded';
+          indicator.style.color = 'var(--warning)';
+        }
+      } catch (e) {
+        document.getElementById('health-text').innerText = 'Offline';
+        document.getElementById('health-indicator').style.color = 'var(--danger)';
+      }
+    }
+
+    async function loadStats() {
+      try {
+        const res = await fetch('/api/v1/stats');
+        const s = await res.json();
+        document.getElementById('stat-total').innerText = s.total || 0;
+        document.getElementById('stat-approved').innerText = (s.auto_approved + (s.human_approved || 0)) || 0;
+        document.getElementById('stat-queue').innerText = s.pending_review || 0;
+        document.getElementById('stat-moves').innerText = s.firm_changes || 0;
+        document.getElementById('badge-queue').innerText = s.pending_review || 0;
+      } catch (e) { console.error('Failed loading stats', e); }
+    }
+
+    async function setTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById('tab-' + tab);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const liveView = document.getElementById('live-lookup-view');
+      const tableView = document.getElementById('main-table-view');
+
+      if (tab === 'live') {
+        liveView.style.display = 'block';
+        tableView.style.display = 'none';
+      } else {
+        liveView.style.display = 'none';
+        tableView.style.display = 'block';
+        await loadTab(tab);
+      }
+    }
+
+    function fillLivePreset(name, firm, city, jd, email) {
+      document.getElementById('live-name').value = name;
+      document.getElementById('live-firm').value = firm;
+      document.getElementById('live-city').value = city;
+      document.getElementById('live-jd').value = jd;
+      document.getElementById('live-email').value = email;
+    }
+
+    async function executeLiveLookup() {
+      const name = document.getElementById('live-name').value.trim();
+      if (!name) {
+        showToast('Please enter an attorney name', true);
+        return;
+      }
+      const firm = document.getElementById('live-firm').value.trim();
+      const city = document.getElementById('live-city').value.trim();
+      const jd = document.getElementById('live-jd').value.trim();
+      const email = document.getElementById('live-email').value.trim();
+
+      const btn = document.getElementById('btn-live-submit');
+      btn.disabled = true;
+      btn.innerText = '⚡ Querying Texas Bar...';
+
+      const t0 = performance.now();
+      try {
+        const res = await fetch('/api/v1/lookup-live', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: name,
+            firm: firm,
+            city: city,
+            jd_year: jd ? parseInt(jd, 10) : null,
+            email: email
+          })
+        });
+
+        const data = await res.json();
+        const latency = ((performance.now() - t0) / 1000).toFixed(2);
+
+        const box = document.getElementById('live-result-box');
+        box.style.display = 'block';
+
+        const best = data.best_candidate;
+        document.getElementById('live-res-time').innerText = `${latency}s response`;
+
+        if (!best) {
+          document.getElementById('live-res-name').innerText = 'No matching attorney found';
+          document.getElementById('live-res-score-badge').innerText = '0%';
+          document.getElementById('live-res-score-badge').className = 'score-badge score-low';
+          document.getElementById('live-res-status').innerText = 'not found';
+          document.getElementById('live-res-explanation').innerText = data.match_explanation || 'No candidates found in directory.';
+          document.getElementById('live-res-bar').innerText = '-';
+          document.getElementById('live-res-firm').innerText = '-';
+          document.getElementById('live-res-pref').innerText = '-';
+          document.getElementById('live-res-lic-status').innerText = '-';
+          document.getElementById('live-res-phone').innerText = '-';
+          document.getElementById('live-res-school').innerText = '-';
+          document.getElementById('live-res-addr').innerText = '-';
+          document.getElementById('live-res-stage').innerText = data.search_stage || '-';
+          return;
+        }
+
+        document.getElementById('live-res-name').innerText = best.full_name || name;
+        const score = data.match_score || 0;
+        const badge = document.getElementById('live-res-score-badge');
+        badge.innerText = `${score.toFixed(0)}% Match`;
+        badge.className = `score-badge ${score >= 85 ? 'score-high' : score >= 55 ? 'score-mid' : 'score-low'}`;
+
+        document.getElementById('live-res-status').innerText = (data.match_status || '').replace(/_/g, ' ');
+        document.getElementById('live-res-firm-change').style.display = data.firm_changed ? 'inline-block' : 'none';
+        document.getElementById('live-res-explanation').innerText = data.match_explanation || '';
+
+        document.getElementById('live-res-bar').innerText = best.bar_card_number || 'N/A';
+        document.getElementById('live-res-firm').innerText = best.current_firm || 'None reported';
+        document.getElementById('live-res-pref').innerText = best.preferred_name ? `'${best.preferred_name}'` : 'None';
+        document.getElementById('live-res-lic-status').innerText = best.license_status || '-';
+        document.getElementById('live-res-phone').innerText = best.phone || 'None reported';
+        document.getElementById('live-res-school').innerText = `${best.law_school || 'Unknown'} (${best.grad_year || 'N/A'})`;
+        document.getElementById('live-res-addr').innerText = best.address || '-';
+        document.getElementById('live-res-stage').innerText = data.search_stage || '-';
+
+        showToast(`Lookup complete (${latency}s)`);
+      } catch (e) {
+        showToast(`Lookup error: ${e}`, true);
+      } finally {
+        btn.disabled = false;
+        btn.innerText = '⚡ Query Texas Bar Live';
+      }
+    }
+
+    async function promptRunBatch() {
+      const choice = prompt('Run batch enrichment:\nEnter number of attorneys to process (e.g. 5 for quick demo, or leave blank for full 100):', '5');
+      if (choice === null) return;
+      const limit = choice.trim() ? parseInt(choice.trim(), 10) : null;
+
+      const token = document.getElementById('reviewer-token').value;
+      const btn = document.getElementById('btn-run-batch');
+      const spinner = document.getElementById('run-spinner');
+      const text = document.getElementById('run-btn-text');
+
+      btn.disabled = true;
+      spinner.style.display = 'inline';
+      text.innerText = 'Starting...';
+
+      try {
+        const res = await fetch('/api/v1/trigger-run', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Reviewer-Token': token
+          },
+          body: JSON.stringify({ limit: limit })
+        });
+        const data = await res.json();
+        if (data.status === 'started') {
+          showToast(`Batch run started (${limit ? limit + ' records' : 'full 100'})!`);
+          pollBatchStatus();
+        } else if (data.status === 'already_running') {
+          showToast('A batch run is already in progress.', true);
+          pollBatchStatus();
+        }
+      } catch (e) {
+        showToast(`Error: ${e}`, true);
+        btn.disabled = false;
+        spinner.style.display = 'none';
+        text.innerText = '▶ Run Batch';
+      }
+    }
+
+    async function pollBatchStatus() {
+      const btn = document.getElementById('btn-run-batch');
+      const spinner = document.getElementById('run-spinner');
+      const text = document.getElementById('run-btn-text');
+
+      const interval = setInterval(async () => {
+        try {
+          const res = await fetch('/api/v1/run-status');
+          const data = await res.json();
+          if (data.is_running) {
+            text.innerText = 'Running...';
+          } else {
+            clearInterval(interval);
+            btn.disabled = false;
+            spinner.style.display = 'none';
+            text.innerText = '▶ Run Batch';
+            showToast('Batch run completed!');
+            await loadStats();
+            await loadTab(currentTab);
+          }
+        } catch (e) {
+          clearInterval(interval);
+          btn.disabled = false;
+          spinner.style.display = 'none';
+          text.innerText = '▶ Run Batch';
+        }
+      }, 2500);
+    }
+
+    async function loadTab(tab) {
+      const tbody = document.getElementById('results-body');
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 3rem;">Loading...</td></tr>';
+      try {
+        let url = '/api/v1/results';
+        if (tab === 'queue') url = '/api/v1/queue';
+        const res = await fetch(url);
+        let records = await res.json();
+        if (tab === 'moves') {
+          records = records.filter(r => r.firm_changed === true);
+        }
+        currentRecords = records;
+        renderTable(records);
+      } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--danger); padding: 3rem;">Failed loading records: ${e}</td></tr>`;
+      }
+    }
+
+    function renderTable(records) {
+      const tbody = document.getElementById('results-body');
+      if (records.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 3rem;">No records found.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = records.map(r => {
+        const score = r.match_score || 0;
+        let scoreClass = 'score-low';
+        if (score >= 85) scoreClass = 'score-high';
+        else if (score >= 55) scoreClass = 'score-mid';
+
+        const firmMoveBadge = r.firm_changed ? '<span class="firm-change-pill">Firm Move</span>' : '';
+
+        return `
+          <tr>
+            <td>
+              <div style="font-weight: 600;">${r.input_name || ''}</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">${r.input_firm || 'No firm'} &bull; ${r.input_city || ''}</div>
+            </td>
+            <td>
+              <div style="font-weight: 500;">${r.full_name || '<span style="color: var(--text-muted);">Not Found</span>'} ${firmMoveBadge}</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">${r.current_firm || ''}</div>
+            </td>
+            <td>
+              <span class="score-badge ${scoreClass}">${score.toFixed(0)}%</span>
+            </td>
+            <td>
+              <span class="status-tag status-${r.review_status}">${(r.review_status || '').replace('_', ' ')}</span>
+            </td>
+            <td style="font-family: var(--font-mono); font-size: 0.75rem;">${r.bar_card_number || '-'}</td>
+            <td style="font-family: var(--font-mono); font-size: 0.75rem;">${r.phone || '<span style="color: var(--text-muted);">None</span>'}</td>
+            <td>
+              <button class="btn btn-primary" onclick="openDrawer('${r.attorney_uuid}')">Audit</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function handleSearch(query) {
+      const q = query.trim().toLowerCase();
+      if (!q) { renderTable(currentRecords); return; }
+      const filtered = currentRecords.filter(r =>
+        (r.input_name && r.input_name.toLowerCase().includes(q)) ||
+        (r.input_firm && r.input_firm.toLowerCase().includes(q)) ||
+        (r.full_name && r.full_name.toLowerCase().includes(q)) ||
+        (r.current_firm && r.current_firm.toLowerCase().includes(q))
+      );
+      renderTable(filtered);
+    }
+
+    async function openDrawer(attorneyUuid) {
+      selectedAttorney = currentRecords.find(r => r.attorney_uuid === attorneyUuid);
+      if (!selectedAttorney) return;
+
+      selectedCandidateContactId = selectedAttorney.contact_id;
+
+      // Populate input side
+      document.getElementById('drawer-in-name').innerText = selectedAttorney.input_name || '-';
+      document.getElementById('drawer-in-firm').innerText = selectedAttorney.input_firm || '-';
+      document.getElementById('drawer-in-geo').innerText = `${selectedAttorney.input_city || '-'}, ${selectedAttorney.input_state || 'TX'}`;
+      document.getElementById('drawer-in-jd').innerText = selectedAttorney.input_jd_year || '-';
+      document.getElementById('drawer-in-email').innerText = selectedAttorney.input_email || '-';
+
+      // Populate matched profile side
+      document.getElementById('drawer-out-name').innerText = selectedAttorney.full_name || 'Not Found';
+      document.getElementById('drawer-out-firm').innerText = selectedAttorney.current_firm || '-';
+      document.getElementById('drawer-out-status').innerText = selectedAttorney.license_status || '-';
+      document.getElementById('drawer-out-dates').innerText = `Lic: ${selectedAttorney.license_date || '-'} / Grad: ${selectedAttorney.grad_year || '-'}`;
+      document.getElementById('drawer-out-phone').innerText = selectedAttorney.phone || 'None reported';
+
+      // Score breakdown
+      const score = selectedAttorney.match_score || 0;
+      document.getElementById('drawer-total-score').innerText = score.toFixed(0);
+
+      const sName = selectedAttorney.score_name || 0;
+      document.getElementById('bar-name-val').innerText = `${sName.toFixed(1)} / 35`;
+      document.getElementById('bar-name-fill').style.width = `${(sName / 35) * 100}%`;
+
+      const sFirm = selectedAttorney.score_firm || 0;
+      document.getElementById('bar-firm-val').innerText = `${sFirm.toFixed(1)} / 25`;
+      document.getElementById('bar-firm-fill').style.width = `${(sFirm / 25) * 100}%`;
+
+      const sTemp = selectedAttorney.score_temporal || 0;
+      document.getElementById('bar-temp-val').innerText = `${sTemp.toFixed(1)} / 25`;
+      document.getElementById('bar-temp-fill').style.width = `${(sTemp / 25) * 100}%`;
+
+      const sGeo = selectedAttorney.score_geo || 0;
+      document.getElementById('bar-geo-val').innerText = `${sGeo.toFixed(1)} / 15`;
+      document.getElementById('bar-geo-fill').style.width = `${(sGeo / 15) * 100}%`;
+
+      document.getElementById('drawer-explanation').innerText = selectedAttorney.match_explanation || '';
+      document.getElementById('drawer-note').value = selectedAttorney.review_note || '';
+
+      // Load candidates
+      const candContainer = document.getElementById('drawer-candidates-container');
+      candContainer.innerHTML = 'Loading evaluated candidates...';
+
+      try {
+        const cRes = await fetch(`/api/v1/candidates/${attorneyUuid}`);
+        const cands = await cRes.json();
+        if (cands.length === 0) {
+          candContainer.innerHTML = '<p style="font-size: 0.75rem; color: var(--text-muted);">No candidate cards were logged for this record.</p>';
+        } else {
+          candContainer.innerHTML = cands.map(c => `
+            <div class="candidate-card ${c.contact_id === selectedCandidateContactId ? 'selected' : ''}" onclick="selectCandidate('${c.contact_id}')">
+              <input type="radio" name="cand-pick" ${c.contact_id === selectedCandidateContactId ? 'checked' : ''}>
+              <div style="flex: 1;">
+                <div style="font-weight: 600; font-size: 0.8rem;">${c.full_name} <span style="font-family: var(--font-mono); color: var(--accent); font-size: 0.75rem;">(${c.score}%)</span></div>
+                <div style="font-size: 0.7rem; color: var(--text-muted);">${c.firm || 'No firm'} &bull; ${c.city || ''} &bull; Bar #${c.bar_card_number || 'N/A'}</div>
+                <div style="font-size: 0.65rem; color: #64748b; font-style: italic;">${c.explanation || ''}</div>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        candContainer.innerHTML = `<p style="color: var(--danger); font-size: 0.75rem;">Failed loading candidates: ${e}</p>`;
+      }
+
+      document.getElementById('drawer').classList.add('open');
+    }
+
+    function selectCandidate(contactId) {
+      selectedCandidateContactId = contactId;
+      document.querySelectorAll('.candidate-card').forEach(c => c.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
+      const radio = event.currentTarget.querySelector('input[type="radio"]');
+      if (radio) radio.checked = true;
+    }
+
+    function closeDrawer() {
+      document.getElementById('drawer').classList.remove('open');
+      selectedAttorney = null;
+    }
+
+    function closeDrawerOnOverlay(e) {
+      if (e.target.id === 'drawer') closeDrawer();
+    }
+
+    async function submitReviewAction(action) {
+      if (!selectedAttorney) return;
+      const token = document.getElementById('reviewer-token').value;
+      const note = document.getElementById('drawer-note').value;
+
+      try {
+        const payload = {
+          action: action === 'approve' && selectedCandidateContactId !== selectedAttorney.contact_id ? 'select_candidate' : action,
+          chosen_contact_id: selectedCandidateContactId,
+          note: note,
+          reviewer_name: 'Lead Researcher'
+        };
+
+        const res = await fetch(`/api/v1/review/${selectedAttorney.attorney_uuid}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Reviewer-Token': token
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          showToast(`Error: ${err.detail || 'Review update failed'}`, true);
+          return;
+        }
+
+        showToast(`Record ${action === 'approve' ? 'approved & cached' : 'rejected'} successfully!`);
+        closeDrawer();
+        await loadStats();
+        await loadTab(currentTab);
+      } catch (e) {
+        showToast(`Network error: ${e}`, true);
+      }
+    }
+
+    function showToast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      t.innerText = msg;
+      t.style.borderColor = isError ? 'var(--danger)' : 'var(--success)';
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 3500);
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

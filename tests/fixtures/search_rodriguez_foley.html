@@ -1,0 +1,2071 @@
+<!DOCTYPE html>
+
+<html class="no-js" lang="en">
+
+
+<head>
+
+	<meta http-equiv="x-ua-compatible" content="IE=Edge">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2, minimal-ui" />
+    <meta name="robots" content="noarchive"/>
+
+    <link rel="apple-touch-icon" href="/am/SBOT_Seal.png" />
+    <link rel="shortcut icon" href="/am/favicon.ico" />
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+   	<link href="/am/styles/assets/css/jquery-ui.css?v=2" rel="stylesheet" />
+    <link href="/am/styles/assets/css/screen.css?v=2" rel="stylesheet" />
+    <link href="/am/styles/assets/css/print.css?v=2" type="text/css" media="print" rel="stylesheet"/>
+    <link rel="stylesheet" href="/am/styles/assets/css/remodal.css">
+    <link rel="stylesheet" href="/am/styles/assets/css/remodal-default-theme.css">
+	<link rel="stylesheet" href="/sso/spinner.css">
+
+    <!--[if IE]>
+        <link href="/am/styles/assets/css/ie.css?v=2" media="screen" rel="stylesheet" type="text/css" />
+    <![endif]-->
+
+
+    <title>State Bar of Texas |&nbsp;Find A Lawyer 
+        </title>
+    
+
+    
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+          _gaq.push(['_setAccount', 'UA-2472012-1']);
+          _gaq.push(['_trackPageview']);
+
+          (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+          })();
+
+
+     function trackOutboundLink(link, category, action) {
+         try {
+        _gaq.push(['_trackEvent', category , action]);
+        } catch(err){}
+
+         setTimeout(function() {
+         document.location.href = link.href;
+         }, 100);
+         }
+     </script>
+    
+
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-5Y585SDP78"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-5Y585SDP78');
+    </script>
+    
+
+    
+    <script type="text/javascript">
+        try {
+            var pageTracker = _gat._getTracker("UA-2472012-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+    </script>
+    
+
+    <!-- Google Tag Manager -->
+    <script>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-MMR54TT');
+    </script>
+    <!-- End Google Tag Manager -->
+
+    
+	        <script>
+            function MCLElogin(enteredBarcard, enteredPassword, formName) {
+
+                var url = "https://mymcle.texasbar.com/SBOTExtensions/MemberLogin/MemberSingleSignOn"
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                   contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    timeout: 30000,
+                    data: { barcard: enteredBarcard, password: enteredPassword },
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (response) {
+                                      $('[name='+formName+']').submit();
+                        if (response = 'valid') {
+                            //valid ADX user
+                        } else {
+                            //invalid ADX user
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        //ADX user not logged in
+                                     $('[name='+formName+']').submit();
+                    }
+                });
+            }
+
+
+            function MCLElogoff(logOffUrl) {
+
+                var url = "https://mymcle.texasbar.com/SBOTExtensions/MemberLogin/MemberSingleSignOff"
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    timeout: 30000,
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    success: function (response) {
+                        if (response = 'success') {
+                            //valid ADX user signoff
+                        } else {
+                            //invalid ADX user signoff
+                        }
+                                      window.location.href(logOffUrl);
+                    },
+                    error: function (data) {
+                        //ADX signoff error
+                                      window.location.href(logOffUrl);
+                    }
+                });
+            }
+            </script>
+    
+
+
+    
+
+
+    <script type='text/javascript'>
+  var googletag = googletag || {};
+  googletag.cmd = googletag.cmd || [];
+  (function() {
+    var gads = document.createElement('script');
+    gads.async = true;
+    gads.type = 'text/javascript';
+    var useSSL = 'https:' == document.location.protocol;
+    gads.src = (useSSL ? 'https:' : 'http:') +
+      '//www.googletagservices.com/tag/js/gpt.js';
+    var node = document.getElementsByTagName('script')[0];
+    node.parentNode.insertBefore(gads, node);
+  })();
+</script>
+
+<script type='text/javascript'>
+  googletag.cmd.push(function() {
+    googletag.defineSlot('/1030081/160x600_Skyscraper_TestSecureAdUnit', [160, 600], 'div-gpt-ad-1433349653648-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/180x150_SmallRectangle_TestSecureAdUnit', [180, 150], 'div-gpt-ad-1433349653648-1').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/300x250_MediumRectangle_TestSecureAdUnit', [300, 250], 'div-gpt-ad-1433349653648-2').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/728x90_BottomLeaderboard_TestSecureAdUnit', [728, 90], 'div-gpt-ad-1433349653648-3').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/728x90_TopLeaderboard_TestSecureAdUnit', [728, 90], 'div-gpt-ad-1433349653648-4').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/728x90_HomePage_TopLeaderboard_SecureAdUnit', [728, 90], 'div-gpt-ad-1480696894538-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/MyBarPage_Text_SecureAdUnit', [700, 55], 'div-gpt-ad-1433946365313-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/MobileAd_320x50', [320, 50], 'div-gpt-ad-1443197274352-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/160x600_ForLawyers_Skyscraper_SecureAdUnit', [160, 600], 'div-gpt-ad-1454011612501-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/Paragraph2_Mobile_300x250_Secure', [300, 250], 'div-gpt-ad-1473778850233-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/Paragraph4_Mobile_300x250_Secure', [300, 250], 'div-gpt-ad-1473778911713-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/MyBarPage_Mobile_300x250_Secure', [300, 250], 'div-gpt-ad-1473778998426-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/MyBarPage_HorizontalBanner_728x90_Secure', [728, 90], 'div-gpt-ad-1473778786681-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/ForLawyersLanding_300x250_Secure', [300, 250], 'div-gpt-ad-1473778496872-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/ForthePublicLanding_300x250_Secure', [300, 250], 'div-gpt-ad-1473778425478-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/AboutTexasBar_Landing_300x250_Secure', [300, 250], 'div-gpt-ad-1473778590560-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/NewsandPublications__Landing_300x250_Secure', [300, 250], 'div-gpt-ad-1473778649412-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/AccesstoJustice__Landing_300x250_Secure', [300, 250], 'div-gpt-ad-1473778714799-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/DuesandOtherFees_ForLawyers_MediumRectangle', [300, 250], 'div-gpt-ad-1479333714751-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/EditYourProfileandContactInformation_ForLawyers_MediumRectangle', [300, 250], 'div-gpt-ad-1479333828011-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/728x90_ForLawyers_BottomLeaderboard_SecureAdUnit', [728, 90], 'div-gpt-ad-1481298400862-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/300x250_ForLawyers_MediumRectangle_SecureAdUnit', [300, 250], 'div-gpt-ad-1481298334442-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/160x600_ForLawyers_Skyscraper_SecureAdUnit', [160, 600], 'div-gpt-ad-1481298205488-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/728x90_ForLawyers_TopLeaderboard_SecureAdUnit', [728, 90], 'div-gpt-ad-1481298490172-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/160x600FindaLawyerSkyscraperSecureAdUnit', [160, 600], 'div-gpt-ad-1500563132600-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/728x90FindaLawyerTopLeaderboardSecureAdUnit', [728, 90], 'div-gpt-ad-1500563263263-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/160x600MyBarPageSkyscraperSecureAdUnit', [160, 600], 'div-gpt-ad-1500563203166-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/728x90MyBarPageTopLeaderboardSecureAdUnit', [728, 90], 'div-gpt-ad-1500563308027-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/728x90_News_and_Publications_Top_Leaderboard', [728, 90], 'div-gpt-ad-1556660081646-0').addService(googletag.pubads());
+    googletag.defineSlot('/1030081/728x90_News_and_Publications_Bottom_Leaderboard', [728, 90], 'div-gpt-ad-1556660195971-0').addService(googletag.pubads());
+    googletag.pubads().enableSingleRequest();
+    googletag.enableServices();
+  });
+</script>
+
+
+
+    <!-- Added 4/28/15 - Added Google Translate meta tag -->
+    
+    <!--<meta name="google-translate-customization" content="4a43c6b5fee6292f-eaf8015295464197-gc6fd1139c880f48c-11"></meta>-->
+
+	
+    
+
+
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <link href="/AM/Styles/CMDEV_1601_20100312T094417.css" rel="stylesheet" type="text/css" >
+  
+  <script src="/AM/Templates/LayoutAPI/javascript/global.js" type="text/javascript"></script>
+  
+    <SCRIPT TYPE="text/javascript">
+    <!--
+      
+    //-->
+    </SCRIPT>
+  <title>sbot | </title><title>TexasBar.com | Find A Lawyer</title></head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+        <noscript>
+            <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MMR54TT" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+        </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+ <!--[if lt IE 9]>
+        <div style="width:100%; margin: 0 auto; padding: 3px;background-color: lemonchiffon; text-align: center;">
+        Please visit your browser's web site and upgrade to the most current browser version to address compatibility and security issues.<br />
+        </div>
+<![Endif]-->
+    <!--Advertising: display top leader -->
+    <div class="ad show-desktop header-ad">
+        <div class="border">
+            
+		<!-- /1030081/728x90FindaLawyerTopLeaderboardSecureAdUnit -->
+		<div id='div-gpt-ad-1500563263263-0' style='height:90px; width:728px;'>
+		<script>
+		googletag.cmd.push(function() { googletag.display('div-gpt-ad-1500563263263-0'); });
+		</script>
+		</div>
+	
+        </div>
+    </div>
+
+    <header class="main-navigation">
+        <div class="container">
+            <nav class="left">
+                <ul>
+                    <li><a href="#nav-search" class="search-trigger" data-toggle title="Search"><i class="fa fa-search"></i></a></li>
+                    <li>
+                        <!-- toggle shopping cart display if products exist -->
+                       
+                           <i class="fa"></i>
+                       
+                    </li>
+                </ul>
+            </nav>
+            <h1><a href="/" title="State Bar of Texas" class="logo"><span>State Bar of Texas</span></a></h1>
+            <nav class="right">
+                <a href="#main-menu" data-toggle>Menu</a>
+            </nav>
+        </div>
+    </header>
+
+    <div id="nav-search">
+        <div class="container">
+
+
+        
+            <!-- Google Site Search -->
+            <script>
+    			var gcseInitialized = function() {
+    				var e = document.getElementById('gsc-i-id1');
+    				e.style.background = 'none';
+    				e.setAttribute("placeholder",'SEARCH THIS SITE');
+    			}
+    			window.__gcse = { callback: gcseInitialized };
+
+              (function() {
+                var cx = '011645703561130907069:ma5smk8pb6q';
+                var gcse = document.createElement('script');
+                gcse.type = 'text/javascript';
+                gcse.async = true;
+                gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+                   '//cse.google.com/cse.js?cx=' + cx;
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(gcse, s);
+              })();
+            </script>
+            <gcse:searchbox-only resultsUrl="/AM/Template.cfm?Section=Search&amp;Template=/Search/SearchDisplay.cfm"></gcse:searchbox-only>
+            <a class="close-btn" href="#nav-search" data-toggle=""><i class="fa fa-times"></i></a>
+        
+
+        </div>
+    </div>
+
+    <nav id="main-menu" class="data-toggle-closed">
+        <div class="container">
+            <div class="gray-container">
+                <ul>
+                    <li class="profile" id="user-options" style="line-height: 18px;">
+                        <!-- logged out version -->
+                        
+                            <div id="navigation-login" class="navigation-login data-toggle-closed">
+                                <a href="#navigation-login" class="login-trigger" data-toggle>LOGIN <i class="fa fa-user user-icon"></i><i class="fa fa-angle-down"></i></a>
+                                <div class="navigation-login-form hidden-menu">
+                                    <form name="navBar" action="/AM/Template.cfm?Section=MyPage&Template=/Security/Login.cfm" method="post" >
+                                        <input type="text" placeholder="Bar number" name="EmailAddress" id="EmailAddress"/>
+                                        <input type="password" placeholder="Password" name="Password" id="Password" style="padding-left: 0.5em !important;padding-right: 0.5em !important;"/>
+
+                                        <button class="blue-bg button" type="button" value="Login" name="LoginButton" style="width:100%;height:30px;line-height: 30px;">Login</button>
+                                        <a href="/AM/Template.cfm?Section=MyPage&Template=Security/NoPassword.cfm">Forgot your password?</a><br>
+                                        <a href="/AM/Template.cfm?Section=MyPage&Template=Security/NoPassword.cfm&newwebuser=1">First time logging in?</a>
+                                        
+                                    </form>
+                                </div>
+                            </div>
+                            
+                        
+                    </li>
+
+
+                   
+                   
+		<li id="For-The-Public">
+			<a href="http://www.texasbar.com/AM/Template.cfm?Section=Public_Home" data-target="#For-The-Public" data-toggle data-follow >For The Public</a>
+
+				
+						<ul>
+								
+									<li id="subnav44" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Public_Home&Template=/CM/HTMLDisplay.cfm&ContentID=72489"  >Public Home</a>
+
+										
+									</li>
+								
+									<li id="subnav45" class="toggle-hover-disabled ">
+                                		<a href="#subnav45" data-toggle data-equal-height  >Do You Need a Lawyer?</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Find_A_Lawyer&Template=/CustomSource/MemberDirectory/Search_Form_Client_Main.cfm&Find=0" >Find a Lawyer</a>
+															</li>
+															
+															<li>
+																<a href="https://www.texasbar.com/AM/Template.cfm?Section=Our_Legal_System1&Template=/CM/ContentDisplay.cfm&ContentID=23462" >How to Select a Lawyer</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Lawyer_Referral_Service_LRIS_&Template=/CM/HTMLDisplay.cfm&ContentID=67925" >Lawyer Referral & Information Service</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=LRIS_Online_Referral_Form&Template=/CM/HTMLDisplay.cfm&ContentID=70815" >LRIS Online Attorney Referral</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Can_t_Afford_an_Attorney_&Template=/CM/HTMLDisplay.cfm&ContentID=63462" >Can't Afford a Lawyer?</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+									<li id="subnav1" class="toggle-hover-disabled ">
+                                		<a href="#subnav1" data-toggle data-equal-height  >Problems with an Attorney</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Grievance_and_Ethics_Information1&Template=/CM/HTMLDisplay.cfm&ContentID=72540" >Grievance & Ethics Information</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Resolve_a_Dispute&Template=/CM/HTMLDisplay.cfm&ContentID=63978" >Resolve a Dispute</a>
+															</li>
+															
+															<li>
+																<a href="https://www.texasbar.com/Content/NavigationMenu/ForThePublic/ProblemswithanAttorney/GrievanceEthicsInfo1/File_a_Grievance.htm" >File a Grievance</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbarcle.com/materials/special/3_Whattodo_1.html" >Get Help When You Can’t Locate Your Lawyer</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Client_Security_Fund1&Template=/CM/HTMLDisplay.cfm&ContentID=69888" >Client Security Fund</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+									<li id="subnav2" class="toggle-hover-disabled ">
+                                		<a href="https://www.texasbar.com/AM/Template.cfm?Section=cdrr&Template=/cdrr/home.cfm"  >Committee on Disciplinary Rules and Referenda</a>
+
+										
+									</li>
+								
+									<li id="subnav3" class="toggle-hover-disabled ">
+                                		<a href="#subnav3" data-toggle data-equal-height  >Información en Español</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=_Necesita_un_Abogado_1&Template=/CM/HTMLDisplay.cfm&ContentID=63665" >¿Necesita un Abogado?</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Resolver_una_Disputa&Template=/CM/HTMLDisplay.cfm&ContentID=63984" >Resolver una Disputa</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=El_Proceso_de_Quejas_Formales2&Template=/CM/HTMLDisplay.cfm&ContentID=69688" >Información Sobre Quejas y Etica</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=_No_Puede_Pagar_un_Abogado_&Template=/CM/HTMLDisplay.cfm&ContentID=63698" >¿No Puede Pagar un Abogado?</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+									<li id="subnav4" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Affordable_Legal_Services&Template=/CM/HTMLDisplay.cfm&ContentID=48970"  >Affordable Legal Services</a>
+
+										
+									</li>
+								
+									<li id="subnav5" class="toggle-hover-disabled ">
+                                		<a href="#subnav5" data-toggle data-equal-height  >Free Legal Resources</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Free_Legal_Information2&Template=/CM/HTMLDisplay.cfm&ContentID=70675" >Pamphlets</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Immigration_Fraud1&Template=/CM/HTMLDisplay.cfm&ContentID=63458" >Immigration</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Free_DVDs&Template=/CM/HTMLDisplay.cfm&ContentID=58873" >Videos</a>
+															</li>
+															
+															<li>
+																<a href="http://texaslawhelp.org/" >TexasLawHelp</a>
+															</li>
+															
+															<li>
+																<a href="https://www.txcourts.gov/rules-forms/rules-standards/" >Texas Court Rules</a>
+															</li>
+															
+															<li>
+																<a href="https://www.texasbar.com/Content/NavigationMenu/ForLawyers/ResourceGuides1/Libraries/default.htm" >Libraries</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+									<li id="subnav6" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Open_Records_Requests&Template=/CM/HTMLDisplay.cfm&ContentID=71457"  >Open Records Requests</a>
+
+										
+									</li>
+								
+									<li id="subnav7" class="toggle-hover-disabled ">
+                                		<a href="https://www.texasbar.com/juryservice"  >Juror Resources</a>
+
+										
+									</li>
+								
+									<li id="subnav8" class="toggle-hover-disabled ">
+                                		<a href="#subnav8" data-toggle data-equal-height  >Law-Related Education</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="http://www.texaslre.org/" >Law-Related Education</a>
+															</li>
+															
+															<li>
+																<a href="https://oyezoyezohyay.org/" >Civics Resources: Oyez, Oyez, Oh Yay!</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/iwasthefirst" >Civics Resources: I was the the first. Vote for Me!</a>
+															</li>
+															
+															<li>
+																<a href="https://tyla.org/educators/" >Texas Young Lawyers Association Curricula</a>
+															</li>
+															
+															<li>
+																<a href="https://www.americanbar.org/groups/public_education/" >American Bar Association Law-Related Education Projects</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+									<li id="subnav9" class="toggle-hover-disabled ">
+                                		<a href="#subnav9" data-toggle data-equal-height  >Do You Want to Be a Lawyer?</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="http://wdld.tyla.org/" >What Do Lawyers Do?</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Frequently_Asked_Questions&Template=/CM/HTMLDisplay.cfm&ContentID=70321" >Frequently Asked Questions</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Texas_Law_School_Information1&Template=/CM/HTMLDisplay.cfm&ContentID=57297" >Texas Law School Information</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Loan_Calculator1&Template=/CM/HTMLDisplay.cfm&ContentID=30157" >Loan Calculator</a>
+															</li>
+															
+															<li>
+																<a href="https://ble.texas.gov/home" >Texas Board of Law Examiners</a>
+															</li>
+															
+															<li>
+																<a href="http://www.lsac.org/" >Law School Admissions Council</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/TemplateRedirect.cfm?Template=/CM/ContentDisplay.cfm&ContentID=24230" >Financial Resources Guide for a Public Interest Legal Career</a>
+															</li>
+															
+															<li>
+																<a href="http://tyla.org/" >Texas Young Lawyers Association</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+									<li id="subnav10" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Disaster_Relief_Resources1&Template=/CM/HTMLDisplay.cfm&ContentID=68748"  >Disaster Relief Resources</a>
+
+										
+									</li>
+								
+									<li id="subnav11" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Jobs_in_the_Legal_Profession&Template=/CM/HTMLDisplay.cfm&ContentID=40953"  >Jobs in the Legal Profession</a>
+
+										
+									</li>
+								
+									<li id="subnav12" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=FAQs_for_the_Public&Template=/CM/HTMLDisplay.cfm&ContentID=70591"  >FAQs for the Public</a>
+
+										
+									</li>
+								
+
+						</ul>
+					
+		</li>
+
+	
+		<li id="For-Lawyers">
+			<a href="http://www.texasbar.com/AM/Template.cfm?Section=Lawyers_Home" data-target="#For-Lawyers" data-toggle data-follow >For Lawyers</a>
+
+				
+						<ul>
+								
+									<li id="subnav13" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Lawyers_Home&Template=/CM/HTMLDisplay.cfm&ContentID=72118"  >Lawyers Home</a>
+
+										
+									</li>
+								
+									<li id="subnav34" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Find_A_Lawyer&Template=/CustomSource/MemberDirectory/Search_Form_Client_Main.cfm&Find=1"  >Find a Colleague</a>
+
+										
+									</li>
+								
+									<li id="subnav35" class="toggle-hover-disabled ">
+                                		<a href="#subnav35" data-toggle data-equal-height  >Membership</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="https://www.texasbar.com/AM/Template.cfm?Section=MyPage" >My Bar Page</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Your_Profile_and_Contact_Info&Template=/CM/HTMLDisplay.cfm&ContentID=70748" >Your Profile & Contact Information</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Your_Login_and_Password1&Template=/CM/HTMLDisplay.cfm&ContentID=68058" >Your Login & Password</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Common_Lawyer_Requests1&Template=/CM/HTMLDisplay.cfm&ContentID=72222" >Common Requests & Membership Forms</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Dues_and_Other_Fees1&Template=/CM/HTMLDisplay.cfm&ContentID=67659" >Dues & Other Fees</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=New_Lawyer_Forms_and_Fees1&Template=/CM/HTMLDisplay.cfm&ContentID=67333" >New Lawyer Oath & Fees</a>
+															</li>
+															
+															<li>
+																<a href="https://ble.texas.gov/" >Texas Board of Law Examiners</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Paralegal_Division1&Template=/CM/HTMLDisplay.cfm&ContentID=51819" >Paralegal Division</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Law_Student_Info1&Template=/CM/HTMLDisplay.cfm&ContentID=72651" >Law Student Information</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Supervised_Practice_Cards&Template=/CM/HTMLDisplay.cfm&ContentID=68236" >Supervised Practice Cards</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Foreign_Legal_Consultants1&Template=/CM/HTMLDisplay.cfm&ContentID=48647" >Foreign Legal Consultants</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Military_Spouse_Attorney&Template=/CM/HTMLDisplay.cfm&ContentID=71943" >Military Spouse Attorney</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Military_Attorney_Registration1&Template=/CM/HTMLDisplay.cfm&ContentID=34266" >Military Attorney Registration</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Ineligible_Attorney_List1&Template=/CM/HTMLDisplay.cfm&ContentID=58151" >Ineligible Attorney List</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+									<li id="subnav36" class="toggle-hover-disabled ">
+                                		<a href="#subnav36" data-toggle data-equal-height  >Member Benefits</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="http://www.texasbar.com/benefits" >Member Benefits and Services</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Free_Trust_and_Billing_Software_by_Smokeball&Template=/CM/HTMLDisplay.cfm&ContentID=64690" >Free Trust & Billing Software by Smokeball</a>
+															</li>
+															
+															<li>
+																<a href="http://texasbar.memberbenefits.com/" >Texas Bar Private Insurance Exchange</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbarcle.com/CLE/LMHome.asp" >Law Practice Management Program</a>
+															</li>
+															
+															<li>
+																<a href="http://l.tx.bar.associationcareernetwork.com/Common/HomePage.aspx" >Career Center</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbarcle.com/CLE/OLEthics.asp" >Ethics Library</a>
+															</li>
+															
+															<li>
+																<a href="https://www.legalethicstexas.com/resources/opinions/" >Ethics Opinions</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=See_New_Member_Information&Template=/CM/HTMLDisplay.cfm&ContentID=32255" >New Member Information</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Join_or_Manage_Your_LRIS_Account&Template=/CM/HTMLDisplay.cfm&ContentID=64938" >Lawyer Referral & Information Service</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+									<li id="subnav37" class="toggle-hover-disabled ">
+                                		<a href="https://www.texasbarcle.com/new/home.asp"  >TexasBarCLE</a>
+
+										
+									</li>
+								
+									<li id="subnav38" class="toggle-hover-disabled ">
+                                		<a href="#subnav38" data-toggle data-equal-height  >MCLE and CLE Sponsors</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=MCLE_Homepage&Template=/CM/HTMLDisplay.cfm&ContentID=72096" >MCLE Homepage</a>
+															</li>
+															
+															<li>
+																<a href="https://www.texasbar.com/AM/Template.cfm?Section=MyPage&Template=/Security/Login.cfm" >Your MCLE Hours</a>
+															</li>
+															
+															<li>
+																<a href="https://www.texasbar.com/AM/Template.cfm?Section=articles&Template=/CM/HTMLDisplay.cfm&ContentID=49668" >MCLE Requirements for Newly Licensed Attorneys</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Reporting_MCLE_Hours&Template=/CM/HTMLDisplay.cfm&ContentID=71748" >About Reporting Your MCLE Hours</a>
+															</li>
+															
+															<li>
+																<a href="https://www.texasbar.com/AM/Template.cfm?Section=MCLE_Homepage&Template=/CM/HTMLDisplay.cfm&ContentID=64917" >MCLE Sponsors</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Definition_of_MCLE_Credit&Template=/CM/HTMLDisplay.cfm&ContentID=64919" >Definition of MCLE Credit</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Definition_of_Compliance_Year1&Template=/CM/HTMLDisplay.cfm&ContentID=64920" >Definition of Compliance Year</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=MCLE_Exemptions1&Template=/CM/HTMLDisplay.cfm&ContentID=71389" >MCLE Exemptions</a>
+															</li>
+															
+															<li>
+																<a href="https://www.texasbar.com/AM/Template.cfm?Section=Course_Search&Template=/CustomSource/mcle/search/course.cfm" >MCLE Course Search</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=MCLE_Rules1&Template=/CM/HTMLDisplay.cfm&ContentID=71386" >MCLE Rules</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Guardianship_Ad_Litem1&Template=/CM/HTMLDisplay.cfm&ContentID=72080" >Guardianship Ad Litem</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+									<li id="subnav39" class="toggle-hover-disabled ">
+                                		<a href="https://tyla.org/"  >Texas Young Lawyers Association</a>
+
+										
+									</li>
+								
+									<li id="subnav40" class="toggle-hover-disabled ">
+                                		<a href="https://knowledge.texasbar.com/"  >Knowledge Center</a>
+
+										
+									</li>
+								
+									<li id="subnav41" class="toggle-hover-disabled ">
+                                		<a href="#subnav41" data-toggle data-equal-height  >Bar Service Opportunities</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="https://www.texasbar.com/board" >Board of Directors</a>
+															</li>
+															
+															<li>
+																<a href="https://www.texasbar.com/Content/NavigationMenu/AboutUs/SectionsandDivisions/SectionsandDivisions1/default.htm" >Sections</a>
+															</li>
+															
+															<li>
+																<a href="https://www.texasbar.com/Content/NavigationMenu/ForLawyers/MembershipInformation/ParalegalDivision/default.htm" >Paralegal Division</a>
+															</li>
+															
+															<li>
+																<a href="https://www.texasbar.com/Content/NavigationMenu/ForLawyers/MembershipInformation/LawStudentInfo/default.htm" >Law Student Division</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/committees" >Committees</a>
+															</li>
+															
+															<li>
+																<a href="https://www.texasbar.com/Content/NavigationMenu/ForLawyers/GetInvolved/default.htm" >Other Opportunities</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Find_Local_and_Regional_Bars&Template=/CM/HTMLDisplay.cfm&ContentID=43297" >Local and Regional Bars</a>
+															</li>
+															
+															<li>
+																<a href="https://www.texasbar.com/Content/NavigationMenu/AboutUs/StateBarPresident/BoardofDirectors/MembersoftheBoard/default.htm" >Leadership</a>
+															</li>
+															
+															<li>
+																<a href="http://www.tyla.org/" >Texas Young Lawyers Association</a>
+															</li>
+															
+															<li>
+																<a href="https://texasbarcollege.com/" >Texas Bar College</a>
+															</li>
+															
+															<li>
+																<a href="https://attorneyintheclassroom.org/" >Law-Related Education</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+									<li id="subnav42" class="toggle-hover-disabled ">
+                                		<a href="#subnav42" data-toggle data-equal-height  >Resource Guides</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Mentoring_Resources&Template=/CM/HTMLDisplay.cfm&ContentID=65209" >Mentoring</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/TemplateRedirect.cfm?Template=/CM/ContentDisplay.cfm&ContentID=29497" >Performance Guidelines for Non-Capital Criminal Defense Representation</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Resources_for_New_Lawyers1&Template=/CM/HTMLDisplay.cfm&ContentID=72109" >New Lawyers</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Resources_for_Tough_Times&Template=/CM/HTMLDisplay.cfm&ContentID=59141" >Resources for Difficult Times</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Ethics_Resources&Template=/CM/HTMLDisplay.cfm&ContentID=69987" >Texas Ethics Resources</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Trust_Accounts&Template=/CM/HTMLDisplay.cfm&ContentID=64488" >Trust Accounts</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Libraries&Template=/CM/HTMLDisplay.cfm&ContentID=63663" >Libraries</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+									<li id="subnav43" class="toggle-hover-disabled ">
+                                		<a href="#subnav43" data-toggle data-equal-height  >Disciplinary Process, Grievance, and Ethics</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Disciplinary_Process_Overview&Template=/CM/HTMLDisplay.cfm&ContentID=69985" >Disciplinary Process Overview</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Complaint_and_Response&Template=/CM/HTMLDisplay.cfm&ContentID=60328" >Complaint & Response</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Toll_Free_Ethics_Helpline_for_Lawyers&Template=/CM/HTMLDisplay.cfm&ContentID=69899" >Toll-Free Ethics Helpline for Lawyers</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/pec" >Professional Ethics Committee</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Required_Notice_to_Clients&Template=/CM/HTMLDisplay.cfm&ContentID=61827" >Required Notice to Clients</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Solicitation_and_Barratry&Template=/CM/HTMLDisplay.cfm&ContentID=62827" >Solicitation and Barratry</a>
+															</li>
+															
+															<li>
+																<a href="https://www.texasbar.com/AM/Template.cfm?Section=cdrr&Template=/cdrr/home.cfm" >Committee on Disciplinary Rules and Referenda</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/tdrpc" >Texas Disciplinary Rules of Professional Conduct</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/trdp" >Texas Rules of Disciplinary Procedure</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Commission_for_Lawyer_Discipline_Internal_Operating_Rules&Template=/CM/ContentDisplay.cfm&ContentID=44081" >Commission for Lawyer Discipline Internal Operating Rules</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+									<li id="subnav26" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Advertising_Review&Template=/CM/HTMLDisplay.cfm&ContentID=60143"  >Advertising Review</a>
+
+										
+									</li>
+								
+									<li id="subnav27" class="toggle-hover-disabled ">
+                                		<a href="#subnav27" data-toggle data-equal-height  >Texas Lawyers' Assistance Program (TLAP)</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="https://www.tlaphelps.org/" >Texas Lawyers' Assistance Program (TLAP)</a>
+															</li>
+															
+															<li>
+																<a href="https://www.sheerancrowley.org/" >Sheeran-Crowley Lawyer Wellness Trust</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+									<li id="subnav28" class="toggle-hover-disabled ">
+                                		<a href="https://www.tbls.org/login;for=myapp"  >Apply for Board Certification</a>
+
+										
+									</li>
+								
+									<li id="subnav29" class="toggle-hover-disabled ">
+                                		<a href="https://www.texasbarpractice.com/"  >Texas Bar Practice</a>
+
+										
+									</li>
+								
+									<li id="subnav30" class="toggle-hover-disabled ">
+                                		<a href="#subnav30" data-toggle data-equal-height  >Judiciary</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="http://www.txcourts.gov/supreme" >Texas Supreme Court</a>
+															</li>
+															
+															<li>
+																<a href="http://www.txcourts.gov/cca" >Texas Court of Criminal Appeals</a>
+															</li>
+															
+															<li>
+																<a href="http://www.txcourts.gov/about-texas-courts/courts-of-appeals.aspx" >Texas Courts of Appeals</a>
+															</li>
+															
+															<li>
+																<a href="http://www.txcourts.gov/" >Texas Courts Online</a>
+															</li>
+															
+															<li>
+																<a href="http://www.txcourts.gov/oca.aspx" >Office of Court Administration</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=E_filing&Template=/CM/HTMLDisplay.cfm&ContentID=47485" >E-filing</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Texas_Uniform_Jury_Handbook&Template=/CM/HTMLDisplay.cfm&ContentID=61455" >Texas Uniform Jury Handbook</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+									<li id="subnav31" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=CAAP1&Template=/CM/HTMLDisplay.cfm&ContentID=43322"  >Client-Attorney Assistance (CAAP)</a>
+
+										
+									</li>
+								
+									<li id="subnav32" class="toggle-hover-disabled ">
+                                		<a href="https://www.texasbar.com/AM/Template.cfm?Section=articles&Template=/CM/HTMLDisplay.cfm&ContentID=58040"  >Technology Resources</a>
+
+										
+									</li>
+								
+									<li id="subnav33" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Disaster_Resources_for_Attorneys&Template=/CM/HTMLDisplay.cfm&ContentID=69205"  >Disaster Resources</a>
+
+										
+									</li>
+								
+									<li id="subnav65" class="toggle-hover-disabled ">
+                                		<a href="https://texasbar.com/professionalism"  >Professionalism Resources</a>
+
+										
+									</li>
+								
+									<li id="subnav66" class="toggle-hover-disabled ">
+                                		<a href="https://www.texasbar.com/AM/Template.cfm?Section=Succession_Planning&Template=/Succession/home.cfm"  >Succession Planning</a>
+
+										
+									</li>
+								
+									<li id="subnav67" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Get_Involved&Template=/CM/HTMLDisplay.cfm&ContentID=72613"  >Get Involved</a>
+
+										
+									</li>
+								
+									<li id="subnav68" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Attorney_Career_Development&Template=/CM/HTMLDisplay.cfm&ContentID=71969"  >Attorney Career Development</a>
+
+										
+									</li>
+								
+									<li id="subnav69" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=FAQs_for_Lawyers&Template=/CM/HTMLDisplay.cfm&ContentID=71855"  >FAQs for Lawyers</a>
+
+										
+									</li>
+								
+
+						</ul>
+					
+		</li>
+
+	
+		<li id="About-Texas-Bar">
+			<a href="http://www.texasbar.com/AM/Template.cfm?Section=About_Texas_Bar_Home" data-target="#About-Texas-Bar" data-toggle data-follow >About Texas Bar</a>
+
+				
+						<ul>
+								
+									<li id="subnav70" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=About_Texas_Bar_Home&Template=/CM/HTMLDisplay.cfm&ContentID=71837"  >About Texas Bar Home</a>
+
+										
+									</li>
+								
+									<li id="subnav71" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Our_Mission&Template=/CM/HTMLDisplay.cfm&ContentID=64509"  >Our Mission</a>
+
+										
+									</li>
+								
+									<li id="subnav72" class="toggle-hover-disabled ">
+                                		<a href="#subnav72" data-toggle data-equal-height  >Our Leadership</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=State_Bar_President2&Template=/CM/HTMLDisplay.cfm&ContentID=71836" >President</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=President_elect&Template=/CM/HTMLDisplay.cfm&ContentID=71726" >President-elect</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Immediate_Past_President&Template=/CM/HTMLDisplay.cfm&ContentID=71727" >Immediate Past President</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Board_of_Directors&Template=/CM/HTMLDisplay.cfm&ContentID=72017" >Board of Directors</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Executive_Team&Template=/CM/HTMLDisplay.cfm&ContentID=72609" >Executive Team</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+									<li id="subnav73" class="toggle-hover-disabled ">
+                                		<a href="https://www.texasbar.com/Content/NavigationMenu/AboutUs/OurFinances/Finances.htm"  >Our Finances</a>
+
+										
+									</li>
+								
+									<li id="subnav74" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Governing_Documents1&Template=/CM/HTMLDisplay.cfm&ContentID=72475"  >Governing Documents</a>
+
+										
+									</li>
+								
+									<li id="subnav75" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Annual_Reports&Template=/CM/HTMLDisplay.cfm&ContentID=72315"  >Annual Reports</a>
+
+										
+									</li>
+								
+									<li id="subnav76" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=BIDS_RFPS&Template=/CM/HTMLDisplay.cfm&ContentID=72392"  >BIDS/RFPS</a>
+
+										
+									</li>
+								
+									<li id="subnav77" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Research_and_Analysis&Template=/CM/HTMLDisplay.cfm&ContentID=72115"  >Research & Analysis</a>
+
+										
+									</li>
+								
+									<li id="subnav78" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=State_Bar_Archives&Template=/CM/HTMLDisplay.cfm&ContentID=70571"  >Archives</a>
+
+										
+									</li>
+								
+									<li id="subnav79" class="toggle-hover-disabled ">
+                                		<a href="#subnav79" data-toggle data-equal-height  >Governmental Relations</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Friday_Update&Template=/CM/HTMLDisplay.cfm&ContentID=60428" >Friday Update</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Legislative_Program_Home&Template=/CM/HTMLDisplay.cfm&ContentID=71938" >Legislative Program Home</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+									<li id="subnav80" class="toggle-hover-disabled ">
+                                		<a href="#subnav80" data-toggle data-equal-height  >Local Bars & Organizations</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Local_Bar_Services1&Template=/CM/HTMLDisplay.cfm&ContentID=68661" >Local Bar Services</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Local_Bar_Leaders_Conference&Template=/CM/HTMLDisplay.cfm&ContentID=72083" >Local Bar Leaders Conference</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Planning_Resources&Template=/CM/HTMLDisplay.cfm&ContentID=47589" >Strategic Planning & Other Resources</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Roster_of_Local_Regional_Specialty_and_Statewide_Bar_Associations&Template=/CM/HTMLDisplay.cfm&ContentID=72619" >Roster of Local, Regional, Specialty, & Statewide Bar Associations</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Bar_Related_Entities&Template=/CM/HTMLDisplay.cfm&ContentID=72041" >Bar-Related Entities</a>
+															</li>
+															
+															<li>
+																<a href="https://www.texaslawyersauxiliary.org/" >Texas Lawyers Auxiliary</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+									<li id="subnav81" class="toggle-hover-disabled ">
+                                		<a href="#subnav81" data-toggle data-equal-height  >Sections and Divisions</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Find_Sections_and_Divisions&Template=/CM/HTMLDisplay.cfm&ContentID=72611" >Sections</a>
+															</li>
+															
+															<li>
+																<a href="https://www.texasbar.com/Content/NavigationMenu/ForLawyers/MembershipInformation/ParalegalDivision/default.htm" >Paralegal Division</a>
+															</li>
+															
+															<li>
+																<a href="https://www.texasbar.com/Content/NavigationMenu/ForLawyers/MembershipInformation/LawStudentInfo/default.htm" >Law Student Division</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+									<li id="subnav46" class="toggle-hover-disabled ">
+                                		<a href="https://texasbar.com/Content/NavigationMenu/ForThePublic/FAQsforthePublic/default.htm"  >FAQs for the Public</a>
+
+										
+									</li>
+								
+									<li id="subnav47" class="toggle-hover-disabled ">
+                                		<a href="#subnav47" data-toggle data-equal-height  >Contact Us</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Department_Listings1&Template=/CM/HTMLDisplay.cfm&ContentID=72485" >Department Listings</a>
+															</li>
+															
+															<li>
+																<a href="https://www.texasbar.com/ContactUs" >Contact Us</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+
+						</ul>
+					
+		</li>
+
+	
+		<li id="News-and-Publications2">
+			<a href="http://www.texasbar.com/AM/Template.cfm?Section=News_and_Publications_Home" data-target="#News-and-Publications2" data-toggle data-follow >News & Publications</a>
+
+				
+						<ul>
+								
+									<li id="subnav48" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=News_and_Publications_Home&Template=/CM/HTMLDisplay.cfm&ContentID=72592"  >News & Publications Home</a>
+
+										
+									</li>
+								
+									<li id="subnav49" class="toggle-hover-disabled ">
+                                		<a href="#subnav49" data-toggle data-equal-height  >Texas Bar Journal</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="https://lsc-pagepro.mydigitalpublication.com/publication/?m=21412&l=1&p=&pn=" >Digital Edition</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Table_of_Contents&Template=/CM/HTMLDisplay.cfm&ContentID=72547" >Table of Contents</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Past_Issues&Template=/CM/HTMLDisplay.cfm&ContentID=72464" >Past Issues</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Search_TBJ_Archives&Template=/CM/HTMLDisplay.cfm&ContentID=40668" >Search TBJ Archives</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Submissions_and_Subscriptions&Template=/CM/HTMLDisplay.cfm&ContentID=71251" >Submissions & Subscriptions</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Readership_Surveys&Template=/CM/HTMLDisplay.cfm&ContentID=69869" >Readership Surveys</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=About_Texas_Bar_Journal&Template=/CM/HTMLDisplay.cfm&ContentID=67453" >About</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+									<li id="subnav50" class="toggle-hover-disabled ">
+                                		<a href="http://blog.texasbar.com/"  >Texas Bar Blog</a>
+
+										
+									</li>
+								
+									<li id="subnav51" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/podcast"  >State Bar of Texas Podcast</a>
+
+										
+									</li>
+								
+									<li id="subnav52" class="toggle-hover-disabled ">
+                                		<a href="https://www.youtube.com/user/statebaroftexas"  >Texas Bar TV</a>
+
+										
+									</li>
+								
+									<li id="subnav53" class="toggle-hover-disabled ">
+                                		<a href="https://www.texasbarpractice.com/texas-bar-books/"  >Texas Bar Books</a>
+
+										
+									</li>
+								
+									<li id="subnav54" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Newsletters&Template=/CM/HTMLDisplay.cfm&ContentID=55285"  >Newsletters</a>
+
+										
+									</li>
+								
+									<li id="subnav55" class="toggle-hover-disabled ">
+                                		<a href="#subnav55" data-toggle data-equal-height  >For the Media</a>
+
+										
+												<ul>
+													
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Media_Resources&Template=/CM/HTMLDisplay.cfm&ContentID=72088" >For the Media Hub</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Press_Releases&Template=/CM/HTMLDisplay.cfm&ContentID=72550" >Press Releases</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Leadership_Photos_and_Bios&Template=/CM/HTMLDisplay.cfm&ContentID=71780" >Leadership Photos</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Grievance_and_Ethics_Information2&Template=/CM/HTMLDisplay.cfm&ContentID=61549" >Grievance and Ethics Information</a>
+															</li>
+															
+															<li>
+																<a href="http://www.texasbar.com/AM/Template.cfm?Section=Elections&Template=/CM/HTMLDisplay.cfm&ContentID=72184" >Elections</a>
+															</li>
+															
+												</ul>
+											
+									</li>
+								
+									<li id="subnav56" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Advertise_with_Us&Template=/CM/HTMLDisplay.cfm&ContentID=71249"  >Advertise with Us</a>
+
+										
+									</li>
+								
+
+						</ul>
+					
+		</li>
+
+	
+		<li id="Access-To-Justice">
+			<a href="http://www.texasbar.com/AM/Template.cfm?Section=Access_To_Justice_Home" data-target="#Access-To-Justice" data-toggle data-follow >Access To Justice</a>
+
+				
+						<ul>
+								
+									<li id="subnav57" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Access_To_Justice_Home&Template=/CM/HTMLDisplay.cfm&ContentID=69918"  >Access To Justice Home</a>
+
+										
+									</li>
+								
+									<li id="subnav58" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Legal_Access_Division&Template=/CM/HTMLDisplay.cfm&ContentID=69630"  >Legal Access Department</a>
+
+										
+									</li>
+								
+									<li id="subnav59" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Pro_Bono_Awards1&Template=/CM/HTMLDisplay.cfm&ContentID=70129"  >Pro Bono Awards</a>
+
+										
+									</li>
+								
+									<li id="subnav60" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Care_Campaign&Template=/CM/HTMLDisplay.cfm&ContentID=62514"  >Pro Bono Texas Campaign</a>
+
+										
+									</li>
+								
+									<li id="subnav61" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Volunteer_Affiliates&Template=/CM/HTMLDisplay.cfm&ContentID=40794"  >Volunteer Partners</a>
+
+										
+									</li>
+								
+
+						</ul>
+					
+		</li>
+
+	
+		<li id="Events1">
+			<a href="http://www.texasbar.com/AM/Template.cfm?Section=Events1&Template=/Calendar/CalendarEventList.cfm&list=false" data-target="#Events1" data-toggle data-follow >Events</a>
+
+				
+						<ul>
+								
+									<li id="subnav62" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Annual_Meeting&Template=/CM/HTMLDisplay.cfm&ContentID=72634"  >Annual Meeting</a>
+
+										
+									</li>
+								
+									<li id="subnav63" class="toggle-hover-disabled hidden-mobile">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?Section=Events1&Template=/Calendar/CalendarEventList.cfm&list=false"  >View Event Calendar</a>
+
+										
+									</li>
+								
+									<li id="subnav64" class="toggle-hover-disabled ">
+                                		<a href="http://www.texasbar.com/AM/Template.cfm?section=Events1&template=Calendar/CalendarEventList.cfm&List=True"  >View Event List</a>
+
+										
+									</li>
+								
+
+						</ul>
+					
+		</li>
+
+	
+
+
+                </ul>
+
+                <ul class="external">
+                    <li><a href="https://www.texasbarcle.com/new/home.asp">TexasBarCLE</a></li>
+                    <li><a href="https://www.texasbarpractice.com/texas-bar-books/">Bar Books</a></li>
+                    <li><a href="/MemberBenefits">Member Benefits</a></li>
+                    <li><a href="https://l.tx.bar.associationcareernetwork.com/">Career Center</a></li>
+                    
+                </ul>
+
+                
+                        <!-- GOOGLE TRANS -->
+                            <div id="google_translate_element"></div>
+
+                            <script type="text/javascript">
+                                function googleTranslateElementInit() {
+                                    new google.translate.TranslateElement({
+                                        pageLanguage: 'en',
+                                        includedLanguages: 'ar,de,en,es,hi,it,ko,ur,zh-CN'
+                                    }, 'google_translate_element');
+                                }
+                            </script>
+
+                            <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+                        <!-- END GOOGLE TRANS -->
+                        <!-- End Modified 4/28/15 -->
+                    
+
+            </div>
+        </div>
+        <div id="navigation-find-lawyer" class="navigation-find-lawyer show-tablet show-desktop">
+            <a href="#navigation-find-lawyer" class="find-lawyer-trigger" data-toggle>Find a Lawyer <i class="fa fa-angle-down"></i></a>
+            <div class="navigation-find-lawyer-form">
+                <form action="/AM/Template.cfm?Section=Find_A_Lawyer&Template=/CustomSource/MemberDirectory/Result_form_client.cfm" method="post">
+                    <input type="hidden" name="Submitted" value="1">
+                    <input type="text" name="Firstname" placeholder="First Name" />
+                    <input type="text" name="LastName" placeholder="Last Name" />
+                    <input type="text" name="CompanyName" placeholder="Law Firm" />
+                    <input type="submit" value="Submit" class="button blue-bg" />
+                    <a href="/AM/Template.cfm?Section=Find_A_Lawyer&Template=/CustomSource/MemberDirectory/Search_Form_Client_Main.cfm">Advanced search</a>
+                </form>
+            </div>
+        </div>
+
+        
+        <a href="#main-menu" data-toggle class="close-overlay"></a>
+    </nav>
+
+
+    
+    
+                    <section class="page search-results sidebar-ad-enabled">
+                
+
+	
+
+	<!--<h3>Search Results</h3>-->
+
+	<!-- You may re-sort your search results with the "sort by" menu below.  -->
+
+
+
+
+	<h1 class="page-title">
+        
+            Find a Colleague
+        
+    </h1>
+	<div class="full-width">
+	   <form id="results-sort">
+		<div class="sort-options">
+            		<label for="sort-category">Sort by:</label>
+            		<div class="select-container">
+                		<select name="" id="sort-category" onChange="SubmitForSort(this.options[this.selectedIndex].value);">
+                            
+                              <option value="WeightedRank DESC, ltrim(a.LastName), ltrim(a.FirstName)" selected >Relevance</option>
+                            
+                            <option value="LastName"  >Last Name</option>
+                            <option value="FirstName"  >First Name</option>
+                            <option value="CompanyName"  >Organization</option>
+                            <option value="City"  >City</option>
+                            <option value="StateCode"  >State</option>
+                            <option value="MemberStatus"  >Status</option>
+                		</select>
+            		</div>
+        	</div>
+	   </form>
+
+
+		<div class="filters">
+            		<em>Filter by: </em>
+            		<nav>
+                        <form name="ShowForm" action="/AM/Template.cfm?Section=Find_A_Lawyer&template=/Customsource/MemberDirectory/Result_form_client.cfm" method="post">
+                            <input type=hidden name="ShowOnlyTypes"  id="SOT" value="ALL">
+                            <input type=hidden name="Submitted" value = "1">
+                            <input type=hidden name="SortName" value="">
+                            <input type=hidden name="Name" value="Rodriguez"> <input type=hidden name="CompanyName" value="Foley"> 
+                        </form>
+                        <a href="javascript:document.ShowForm.submit();"    onClick='document.getElementById("SOT").value="ALL EVENTS"'   >ALL </a>
+                		<a href="javascript:document.ShowForm.submit();"    onClick='document.getElementById("SOT").value="Eligible"'     >Eligible to practice <span class="status-icon green circle"></span></a>
+                		<a href="javascript:document.ShowForm.submit();"    onClick='document.getElementById("SOT").value="NotEligible"'  >Not Eligible to practice <span class="status-icon red square"></span></a>
+                        <a href="javascript:document.ShowForm.submit();"    onClick='document.getElementById("SOT").value="NonPracticing"'  >Non-Practicing <span class="status-icon yellow club"></span></a>
+                		<a href="javascript:document.ShowForm.submit();"    onClick='document.getElementById("SOT").value="Inactive"'     >Inactive <span class="status-icon aqua diamond"></span></a>
+                		<a href="javascript:document.ShowForm.submit();"    onClick='document.getElementById("SOT").value="Deceased"'     >Deceased <span class="status-icon blue triangle"></span></a>
+            		</nav>
+        	</div>
+
+	</div>
+
+
+
+
+	<div id="result-set">
+		<a name="results"></a>
+
+    
+		  <div class="back-link"><p><a href="/AM/Template.cfm?Section=Find_A_Lawyer&Template=/CustomSource/MemberDirectory/Search_Form_Client_Main.cfm">&larr; Back to Search</a> </p></div>
+    
+
+			<div class="results">
+
+				<article class="lawyer">
+
+
+					
+						<a href="/AM/Template.cfm?Section=Find_A_Lawyer&template=/Customsource/MemberDirectory/MemberDirectoryDetail.cfm&ContactID=355771">
+                          <!--
+                          <img src="/AM/Images/DirectoryInformation-Images/Image-ContactID-355771.jpg" title="Reymundo G. Rodriguez" alt="Reymundo G. Rodriguez" class="avatar"/>
+                          -->
+                          <img style="background: url(/AM/Images/DirectoryInformation-Images/Image-ContactID-355771.jpg?v=15);" class="avatar" />
+                        </a>
+					
+
+					<div class="avatar-column">
+
+						<!-- Determine which status class should be displayed -->
+						
+
+						<h3>
+						   <span class="status-icon green circle"></span>
+						   <a href="/AM/Template.cfm?Section=Find_A_Lawyer&template=/Customsource/MemberDirectory/MemberDirectoryDetail.cfm&ContactID=355771">
+							<span class="honorific-prefix"></span>
+							<span class="given-name">Reymundo</span>
+							<span class="given-name">G. </span> <span class="additional-name">'Rey'</span>
+							<span class="family-name">Rodriguez</span>
+							<span class="honorific-suffix">IV</span>
+						   </a>
+						</h3>
+
+						<h5>Foley & Lardner LLP</h5>
+
+					
+						<p>
+							
+                            					<strong>Primary Practice Location:</strong>
+                            					Houston,&nbsp;TX 
+
+						</p>
+
+						
+						   <p class="address">
+                        				1000 Louisiana St, #2000<br/> Houston, TX&nbsp;77002
+							
+						   </p>
+						
+
+						<p class="areas">
+							<strong>Practice Areas:</strong>
+
+							 Litigation: Commercial 
+						</p>
+
+						<a href="/AM/Template.cfm?Section=Find_A_Lawyer&template=/Customsource/MemberDirectory/MemberDirectoryDetail.cfm&ContactID=355771" class="read-more">Full profile</a>
+
+
+					
+
+
+						
+
+					<!--
+						<h4 class="wai">Memberships</h4>
+							
+
+
+						<ul class="memberships">
+							
+
+						</ul>
+
+					-->
+
+					</div> 
+
+					<div class="contact">
+            
+							<a href="https://www.foley.com/reymundo-rodriguez/" target="_blank">VISIT WEBSITE <i class="fa fa-link"></i></a>
+						
+							<a href="/AM/Template.cfm?Section=Find_A_Lawyer&template=/MemberDirectory/MemberDirectoryEmail.cfm&ContactID=355771" target="_blank">EMAIL NOW <i class="fa fa-envelope-o"></i></a>
+						
+							<a href="tel:713-276-5145">Tel: 713-276-5145 <i class="fa fa-phone"></i></a>
+						
+                    </div>
+
+					
+					
+
+					<div class="badges">
+						
+            				</div>
+
+				</article><!-- END of article lawyer -->
+
+
+
+
+			<!--
+				<div class="search-result-links">
+					<h4 class="wai">Learn more about this lawyer.</h4>
+					<ul>
+						<li>{ <a href="/AM/Template.cfm?Section=Find_A_Lawyer&template=/Customsource/MemberDirectory/MemberDirectoryDetail.cfm&ContactID=355771">View Full Profile</a> }</li>
+						
+							<li>{ <a href="https://www.foley.com/reymundo-rodriguez/" target="_blank">View Firm Website</a> }</li>
+						
+							<li>{ <a href="/AM/Template.cfm?Section=Find_A_Lawyer&template=/MemberDirectory/MemberDirectoryEmail.cfm&ContactID=355771" target="_blank">Send an Email</a> }</li>
+						
+					</ul>
+				</div>
+			-->
+
+
+			</div><!-- END of search-result -->
+
+		    
+	</div>
+	 
+
+	  <div class="pagination show-mobile">
+
+
+		  
+		  <form action="/AM/Template.cfm?Section=Find_A_Lawyer&template=/Customsource/MemberDirectory/Result_form_client.cfm" name="HiddenFormFieldsMobile" method="post">
+			<input type="hidden" name="SortName" value="">
+			<input type="hidden" name="Submitted" value="1">
+			<input type="hidden" name="BarCardNumber" value="">
+			<input type="hidden" name="FirstName" value="">
+			<input type="hidden" name="Name" value="Rodriguez">
+			<input type="hidden" name="LastName" value="">
+			<input type="hidden" name="CompanyName" value="Foley">
+			<input type="hidden" name="InformalName" value="">
+			<input type="hidden" name="PPlCityName" value="">
+			<input type="hidden" name="Zip" value="">
+			<input type="hidden" name="Region" value="">
+			<input type="hidden" name="State" value="">
+			<input type="hidden" name="Country" value="">
+			<input type="hidden" name="MaxNumber" value="25">
+			<input type="hidden" name="ShowPrinter" value="1">
+			<input type="hidden" name="FilterName" value="">
+      <input type="hidden" name="FORM.ShowOnlyTypes" value="">
+			
+			  <input type="hidden" name="County" value="">
+			
+			  <input type="hidden" name="BarDistrict" value="">
+			
+			  <input type="hidden" name="TYLADistrict" value="">
+			
+			<input type="hidden" name="ButtonName">
+			<input type="hidden" name="Start">
+		  
+		<!--<h3 class="wai">Results Pagination</h3>-->
+
+		 
+
+		</form>
+
+
+
+
+
+
+
+    	   </div>
+
+
+	   <div class="pagination show-tablet show-desktop numbered">
+		
+			<form action="/AM/Template.cfm?Section=Find_A_Lawyer&template=/Customsource/MemberDirectory/Result_form_client.cfm" name="HiddenFormFields" method="post">
+			<input type="hidden" name="SortName" value="">
+			<input type="hidden" name="Submitted" value="1">
+			<input type="hidden" name="BarCardNumber" value="">
+			<input type="hidden" name="FirstName" value="">
+			<input type="hidden" name="Name" value="Rodriguez">
+			<input type="hidden" name="LastName" value="">
+			<input type="hidden" name="CompanyName" value="Foley">
+			<input type="hidden" name="InformalName" value="">
+			<input type="hidden" name="PPlCityName" value="">
+			<input type="hidden" name="Zip" value="">
+			<input type="hidden" name="Region" value="">
+			<input type="hidden" name="State" value="">
+			<input type="hidden" name="Country" value="">
+			<input type="hidden" name="MaxNumber" value="25">
+			<input type="hidden" name="ShowPrinter" value="1">
+			<input type="hidden" name="FilterName" value="">
+      <input type="hidden" name="ShowOnlyTypes" value="">
+			
+			  <input type="hidden" name="County" value="">
+			
+			  <input type="hidden" name="BarDistrict" value="">
+			
+			  <input type="hidden" name="TYLADistrict" value="">
+			
+			<input type="hidden" name="ButtonName">
+			<input type="hidden" name="Start">
+		  
+		<!--<h3 class="wai">Results Pagination</h3>-->
+
+		 
+
+		</form>
+	   </div>
+	
+
+<!--
+<br/>
+<div id="status-key" style="_height: 40px;">
+	<div class="button-link">
+		
+		<a href="/AM/Template.cfm?Section=Find_A_Lawyer&template=/Customsource/MemberDirectory/Search_form_client_main.cfm">Return to Search</a>
+		
+	</div>
+</div>
+-->
+
+<br/>
+<footer id="status-key" class="legal">
+  The Online Membership Directory provides basic information about 
+Attorneys 
+ licensed to practice in Texas. Attorney profile information is provided 
+
+
+
+ as a public service by the State Bar of Texas as outlined in Section 
+81.115 
+ of the Texas Government Code. The information contained herein is 
+provided 
+ "as is" with no warranty of any kind, express or implied. Neither the 
+State 
+ Bar of Texas, nor its Board of Directors, nor any employee thereof may 
+be 
+ held responsible for the accuracy of the data.  
+Access 
+ to this site is authorized for public use only. Any unauthorized use of 
+
+
+
+ this system is subject to both civil and criminal penalties. This does 
+not 
+constitute a certified lawyer referral service.&#160; 
+</footer>
+
+
+<script language="JavaScript">
+    function SubmitForSort(Param)
+    {
+      document.HiddenFormFields.SortName.value=Param;
+      
+      document.HiddenFormFields.submit();
+    }
+    function ButtonClick(ButtonValue)
+    {
+      document.HiddenFormFields.ButtonName.value=ButtonValue;
+    }
+    function PageClick(pageNbr, maxRows)
+    {
+		document.HiddenFormFields.ButtonName.value = 'Page';
+		document.HiddenFormFields.Page.value = ( ( (pageNbr - 1) * maxRows ) + 1).toString()  ;
+    }
+
+    function SubmitForFilter(filter)
+    {
+      document.HiddenFormFields.FilterName.value=filter;
+      
+      document.HiddenFormFields.submit();
+    }
+</script>
+                    <div class="ad show-desktop sidebar-ad left-ad">
+                        
+		<!-- /1030081/160x600FindaLawyerSkyscraperSecureAdUnit -->
+		<div id='div-gpt-ad-1500563132600-0' style='height:600px; width:160px;'>
+		<script>
+		googletag.cmd.push(function() { googletag.display('div-gpt-ad-1500563132600-0'); });
+		</script>
+		</div>
+	
+                   </div>
+                
+</section>
+
+
+
+
+
+<div class="footer-ad ad">
+    <div class="show-tablet show-desktop">
+        <div class="ad-container">
+           <div class="ad-explicit">
+                
+		<!-- /1030081/728x90_ForLawyers_BottomLeaderboard_SecureAdUnit -->
+        <div id='div-gpt-ad-1481298400862-0' style='height:90px; width:728px;'>
+        <script>
+        googletag.cmd.push(function() { googletag.display('div-gpt-ad-1481298400862-0'); });
+        </script>
+        </div>
+	
+            </div>
+        </div>
+        <div class="ad-explicit">
+            <!-- /1030081/180x150_SmallRectangle_TestSecureAdUnit -->
+<div id='div-gpt-ad-1433349653648-1' style='height:150px; width:180px;'>
+<script type='text/javascript'>
+googletag.cmd.push(function() { googletag.display('div-gpt-ad-1433349653648-1'); });
+</script>
+</div>
+        </div>
+    </div>
+    <div class="show-mobile">
+        
+
+<a href="http://www.tlie.org/?utm_source=StateBarMobile&utm_medium=banner&utm_content=brand&utm_campaign=2020AdCampaign"><img src="/am/templates/templateadvert/TLIE.png">
+
+    </div>
+</div>
+
+
+
+
+
+
+
+<footer class="main-footer">
+    <div class="container">
+        <nav class="footer-links">
+            <ul>
+                <li><a href="https://knowledge.texasbar.com/">Knowledge Center</a></li>
+                <li><a href="/AM/Template.cfm?Section=Legal_Vendors">Legal Vendors</a></li>
+                <li><a href="https://store.texasbar.com/" target="_blank">Merchandise</a></li>
+                <li><a href="https://careers-texasbar.icims.com/jobs/search?ss=1&hashed=-435712791" target="_blank">State Bar Jobs</a></li>
+                
+                <li><a href="/AM/template.cfm?section=advertise_with_us">Advertise</a></li>
+                <li><a href="/AM/template.cfm?section=sitemap">Site map</a></li>
+            </ul>
+        </nav>
+        <span class="logo"></span>
+        <small class="legal">The State Bar of Texas is committed to keeping our site compliant with all applicable laws and regulations, including the Americans with Disabilities Act (ADA). Please contact us <a href="https://www.texasbar.com/AM/Template.cfm?Section=Contact_Us&Template=/customsource/ContactUs/ContactUs.cfm">here</a> with any needs, suggestions, or questions regarding ADA accessibility. The State Bar of Texas presents the information on this web site as a service to our members and other Internet users. While the information on this site is about legal issues, it is not legal advice. Moreover, due to the rapidly changing nature of the law and our reliance on information provided by outside sources, we make no warranty or guarantee concerning the accuracy or reliability of the content at this site or at other sites to which we link.</small>
+        <a href="/contactus" class="contact"><i class="fa fa-envelope"></i> Contact</a>
+        <nav class="social">
+            <ul>
+                <li><a href="https://www.linkedin.com/company/state-bar-of-texas" target="_blank"><i class="fa-brands fa-linkedin"></i></a></li>
+                <li><a href="https://www.facebook.com/statebaroftexas" target="_blank"><i class="fa-brands fa-facebook"></i></a></li>
+                <li><a href="https://twitter.com/statebaroftexas" target="_blank"><i class="fa-brands fa-x-twitter"></i></a></li>
+                <li><a href="https://www.instagram.com/statebaroftexas/" target="_blank"><i class="fa-brands fa-instagram"></i></a></li>
+                <li><a href="https://www.flickr.com/photos/texasbar" target="_blank"><i class="fa-brands fa-flickr"></i></a></li>
+                <li><a href="https://www.youtube.com/user/statebaroftexas" target="_blank"><i class="fa fa-youtube"></i></a></li>
+                <li><a href="https://blog.texasbar.com/" target="_blank"><i class="fa fa-rss"></i></a></li>
+            </ul>
+        </nav>
+        <div class="bottom">
+            <div class="left">&copy; 2026&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/contactus">State Bar of Texas</a> | <a href="tel:18002042222">800.204.2222</a> </div>
+            <div class="right">
+                <a href="/AM/template.cfm?section=terms_of_use">Terms of Use</a>
+                <a href="/AM/template.cfm?section=privacy_policy">Privacy Policy</a>
+                <a href="/AM/template.cfm?section=cookie_notice">Cookie Policy</a>
+                
+                <a href="/objections">Member Fees Objections</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+    
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    
+
+
+    
+    <script>window.jQuery || document.write('<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"><\/script>')</script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="/am/styles/assets/js/vendor/jquery.flexslider-min.js?v=2"></script>
+    <script src="/am/styles/assets/js/vendor/jquery-ui.js?v=2"></script>
+    <script src="/am/styles/assets/js/app.js?v=2"></script>
+    <script src="/am/styles/assets/js/vendor/iscroll.js?v=2"></script>
+    <script src="/am/styles/assets/js/vendor/remodal.js"></script>
+    
+            <script src="/am/styles/assets/js/adInject.js"></script>
+        
+
+
+
+	<script>
+
+        
+
+        $(document).ready(function() {
+
+			var multiSelects = $('.multi-select-container');	// find any multiselects on this page (advanced lawyer search)
+			if (multiSelects.length) {							// If found, register the rest of the code for multi-select
+				$('.multi-select-content').hide();				// Close all the content
+				$('.multi-select').on('click', function() {
+					$(this).next('.multi-select-content').slideToggle(200);
+				});
+
+				// add the counter element to the container
+				$('.multi-select-container .multi-select').append('<span class="multi-select-counter pull-right"></span>');
+
+				$.each(multiSelects, function (i,obj) {
+					setMultiSelectCount(this);					// initialize count display
+					$(obj).change(function(){					// register so will update count display on changes
+						setMultiSelectCount(this);
+					})
+					.attr("onselectstart","return false");		// so text cannot be selected/hightlighted when clicking inside the containers.
+				});
+
+				var clearBtns = $('.clear-btn');
+				$.each(clearBtns, function(i,obj) {
+					$(obj).click(function() {
+						clearReset(this);
+					});
+				});
+			}
+
+             
+                adMobileInject();
+                adLandingInject();
+            
+
+        });
+
+		function setMultiSelectCount(e) {						// each time checkbox changed, count up the total checked
+			var cnt = $(e).find(':checkbox:checked').length;
+			if (cnt ==0) { cnt = ' ' }
+			$(e).find('.multi-select-counter')[0].innerHTML=cnt;
+		}
+		function clearReset(e) {
+			var tt= $(e);
+			var child = tt.children(0);
+			child.addClass('fa-spin');
+			window.setTimeout(function () {
+				child.removeClass('fa-spin');
+			}, 900);
+
+			var frm = tt.closest('form')[0];  // find parent form and reset it
+			frm.reset();
+
+			$('.multi-select-content').hide(200);
+
+			var multiSelects = $(frm).find('.multi-select-container'); 	// find all the multiselects within the form and reset their counts
+			$.each(multiSelects, function(i,obj) {
+				setMultiSelectCount(this);
+			});
+		}
+
+	</script>
+
+    <!-- Added 4/28/15 -->
+    <script type="text/javascript">
+
+        $(function(){
+
+            // Modify Google Translate defaults
+            setTimeout(googleTranslateMods, 500);
+
+        });
+
+        function googleTranslateMods() {
+
+            var elToChange = $('.goog-te-combo > option:first-child');
+            var oldText = elToChange .text();
+            var newText = "Language";
+
+            // Change Google Translate's "Set Language" text in the drop down menu to read "Language" and then display the menu once changed
+            if (oldText != 'Language') {
+                oldText = elToChange.text(newText);
+            }
+
+            // Remove the "Powered By text" and google logo
+            $('.goog-te-gadget').contents().filter(function(){
+                return this.nodeType === 3;
+            }).remove();
+            $('.goog-te-gadget .goog-logo-link').remove();
+
+            // Add the custom arrow markup
+            $('.goog-te-gadget > div').append('<i class="fa fa-angle-down"></i>');
+
+            // Display the language menu after mods are complete
+            $('.goog-te-gadget').css('visibility', 'visible');
+        }
+
+        $(document).ready(function() {
+
+            // Hide the Google Translate field when the user profile menu is
+            $('#user-options').hover(
+              function() {
+                $('#google_translate_element').css('display', 'none');
+              }, function() {
+                $('#google_translate_element').css('display', 'block');
+              }
+            );
+        });
+    </script>
+    <!-- End Added 4/28/15 -->
+
+
+
+
+
+
+  </body>
+      
+  </html>
+
+
+<script type="text/javascript" src="//script.crazyegg.com/pages/scripts/0083/2098.js" async="async" ></script>
+
+<!-- saved from url=(0022)http://internet.e-mail -->
+<!-- Source Code Copyright © 2005 by Advanced Solutions International, Inc. -->
+
+    <script src="/sso/config.js"></script>
+    <script src="/sso/app.js"></script>
+    <div id="spinner" style="display: none;" class="loading"></div>
+    <iframe id="oidc-frame" src="/sso/oidc.html" width="0" height="0"></iframe>

@@ -1,0 +1,15 @@
+[
+  {"name": "attorney_uuid", "type": "STRING", "mode": "REQUIRED", "description": "Immutable primary key. Never match on name."},
+  {"name": "name", "type": "STRING", "mode": "REQUIRED", "description": "Name as provided by the recruiting team."},
+  {"name": "firm", "type": "STRING", "mode": "NULLABLE", "description": "Firm as provided (may be stale)."},
+  {"name": "title", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "practice", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "city", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "state", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "jd_year", "type": "INT64", "mode": "NULLABLE", "description": "Low-trust field: 43% of the test sheet is 2017."},
+  {"name": "email", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "txbar_contact_id", "type": "STRING", "mode": "NULLABLE", "description": "Cached Texas Bar ContactID once confirmed. Enables direct lookups."},
+  {"name": "bar_card_number", "type": "STRING", "mode": "NULLABLE", "description": "Cached 8-digit bar card (STRING to preserve leading zeros)."},
+  {"name": "last_verified_at", "type": "TIMESTAMP", "mode": "NULLABLE", "description": "Freshness watermark used to build the work queue."},
+  {"name": "ingested_at", "type": "TIMESTAMP", "mode": "REQUIRED"}
+]

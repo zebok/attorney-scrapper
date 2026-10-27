@@ -1,0 +1,13 @@
+[
+  {"name": "event_id", "type": "STRING", "mode": "REQUIRED"},
+  {"name": "attorney_uuid", "type": "STRING", "mode": "REQUIRED"},
+  {"name": "run_id", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "action", "type": "STRING", "mode": "REQUIRED", "description": "approve | reject | select_candidate | reopen"},
+  {"name": "previous_status", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "new_status", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "previous_contact_id", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "new_contact_id", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "actor", "type": "STRING", "mode": "REQUIRED"},
+  {"name": "note", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "created_at", "type": "TIMESTAMP", "mode": "REQUIRED"}
+]
