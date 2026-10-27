@@ -85,8 +85,11 @@ def test_pipeline_with_mock_provider(tmp_path):
     )
     storage._write_table("attorneys_source", src_df)
 
-    # Inject mock provider into Pipeline!
-    pipeline = Pipeline(storage=storage, provider=MockProvider())  # type: ignore
+    # Inject mock provider into Pipeline with isolated output directory!
+    from txbar.config import Settings
+
+    settings = Settings(output_dir=tmp_path / "output")
+    pipeline = Pipeline(settings=settings, storage=storage, provider=MockProvider())  # type: ignore
     result = pipeline.run(limit=1, seed_if_empty=False)
 
     assert result["status"] == "succeeded"

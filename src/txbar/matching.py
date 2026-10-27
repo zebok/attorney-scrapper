@@ -27,6 +27,7 @@ from txbar.config import Settings, get_settings
 from txbar.normalize import (
     EmailHints,
     ParsedName,
+    alpha_key,
     canonical_firm,
     firm_search_term,
     parse_email,
@@ -280,9 +281,30 @@ class MatchEngine:
             except Exception as e:
                 logger.warning("Stage 1 search failed: %s", e)
 
+        # Verify if Stage 1 found at least one plausible candidate matching given name or nickname
+        has_plausible_hit = False
+        if search_hits and parsed_name.first:
+            first_k = alpha_key(parsed_name.first)
+            nicknames = self.kb.get_nicknames(first_k)
+            for h, _ in search_hits:
+                h_first_k = alpha_key(h.name.first_name)
+                h_pref_k = alpha_key(h.name.preferred_name)
+                if (
+                    h_first_k == first_k
+                    or h_pref_k == first_k
+                    or h_first_k in nicknames
+                    or h_pref_k in nicknames
+                ):
+                    has_plausible_hit = True
+                    break
+            if not has_plausible_hit:
+                # Discard firm hits that are pure surname coincidences (colleagues at firm)
+                search_hits = []
+        elif search_hits:
+            has_plausible_hit = True
+
         # Stage 2: Name + City (Standard geo targeted search)
-        # If Stage 1 produced 0 or only poor hits, or we want full recall:
-        if len(search_hits) == 0:
+        if not has_plausible_hit:
             query_name = (
                 parsed_name.last
                 if parsed_name.first_is_initial
@@ -294,22 +316,40 @@ class MatchEngine:
                     if h.contact_id not in seen_contact_ids:
                         seen_contact_ids.add(h.contact_id)
                         search_hits.append((h, "stage2_name_city"))
+                        has_plausible_hit = True
             except Exception as e:
                 logger.warning("Stage 2 search failed: %s", e)
 
-        # Stage 3: Statewide Last Name Relaxation (Catches lateral moves across Texas or suburban offices)
-        if len(search_hits) == 0:
-            for variant in parsed_name.last_variants:
-                try:
-                    hits = self._search_provider(name=variant)
-                    for h in hits:
-                        if h.contact_id not in seen_contact_ids:
-                            seen_contact_ids.add(h.contact_id)
-                            search_hits.append((h, f"stage3_statewide_{variant}"))
-                    if search_hits:
-                        break
-                except Exception as e:
-                    logger.warning("Stage 3 search failed for %s: %s", variant, e)
+        # Stage 3: Statewide Full Name or Last Name Relaxation
+        if not has_plausible_hit:
+            query_name = (
+                parsed_name.last
+                if parsed_name.first_is_initial
+                else f"{parsed_name.first} {parsed_name.last}"
+            )
+            try:
+                hits = self._search_provider(name=query_name)
+                for h in hits:
+                    if h.contact_id not in seen_contact_ids:
+                        seen_contact_ids.add(h.contact_id)
+                        search_hits.append((h, "stage3_statewide_fullname"))
+                        has_plausible_hit = True
+            except Exception as e:
+                logger.warning("Stage 3 full name search failed: %s", e)
+
+            # If still no hits, fallback to broad surname variants
+            if not has_plausible_hit:
+                for variant in parsed_name.last_variants:
+                    try:
+                        hits = self._search_provider(name=variant)
+                        for h in hits:
+                            if h.contact_id not in seen_contact_ids:
+                                seen_contact_ids.add(h.contact_id)
+                                search_hits.append((h, f"stage3_statewide_{variant}"))
+                        if search_hits:
+                            break
+                    except Exception as e:
+                        logger.warning("Stage 3 search failed for %s: %s", variant, e)
 
         if not search_hits:
             return MatchDecision(
