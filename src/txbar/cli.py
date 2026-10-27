@@ -58,6 +58,7 @@ def _find_free_port() -> int:
 
 def cmd_ui(args: argparse.Namespace) -> None:
     import os
+
     import uvicorn
 
     from txbar.web.app import app
@@ -85,7 +86,9 @@ def main() -> None:
     subparsers = parser.add_subparsers(dest="command", required=True)
 
     # Health
-    p_health = subparsers.add_parser("health", help="Check Texas Bar directory connectivity and DOM structure")
+    p_health = subparsers.add_parser(
+        "health", help="Check Texas Bar directory connectivity and DOM structure"
+    )
     p_health.set_defaults(func=cmd_health)
 
     # Seed
@@ -95,7 +98,9 @@ def main() -> None:
 
     # Run
     p_run = subparsers.add_parser("run", help="Execute the enrichment pipeline")
-    p_run.add_argument("--limit", type=int, default=None, help="Limit number of attorneys to process (for testing)")
+    p_run.add_argument(
+        "--limit", type=int, default=None, help="Limit number of attorneys to process (for testing)"
+    )
     p_run.set_defaults(func=cmd_run)
 
     # UI

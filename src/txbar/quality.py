@@ -87,9 +87,7 @@ class RunDQReport:
     rule_summary: dict[str, int]
 
 
-def evaluate_run_quality_gate(
-    results: list[dict[str, Any]], settings: Settings | None = None
-) -> RunDQReport:
+def evaluate_run_quality_gate(results: list[dict[str, Any]], settings: Settings | None = None) -> RunDQReport:
     """Evaluate batch-level anomaly metrics and determine if the data quality gate passes."""
     s = settings or get_settings()
     total = len(results)

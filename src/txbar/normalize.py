@@ -11,90 +11,18 @@ import re
 import unicodedata
 from dataclasses import dataclass, field
 
+from txbar.rules import get_knowledge_base
+
 SUFFIXES = {"jr", "sr", "ii", "iii", "iv", "v", "esq"}
 
-# Bidirectional nickname groups. Kept deliberately small and explicit: auditable > clever.
-_NICKNAME_GROUPS = [
-    {"samuel", "sam", "sammy"},
-    {"reymundo", "raymundo", "rey"},
-    {"brenton", "brent"},
-    {"john", "jack", "johnny", "jon"},
-    {"michael", "mike", "mick"},
-    {"christopher", "chris"},
-    {"theodore", "ted", "teddy", "theo"},
-    {"katherine", "kathryn", "catherine", "kate", "katie", "kathy", "cathy"},
-    {"matthew", "matt"},
-    {"joshua", "josh"},
-    {"gregory", "greg"},
-    {"jeffrey", "jeff"},
-    {"randall", "randy"},
-    {"andrew", "andy", "drew"},
-    {"nathaniel", "nathan", "nate"},
-    {"william", "will", "bill", "billy", "liam"},
-    {"robert", "rob", "bob", "bobby", "bert"},
-    {"james", "jim", "jimmy", "jamie"},
-    {"joseph", "joe", "joey"},
-    {"daniel", "dan", "danny"},
-    {"benjamin", "ben"},
-    {"thomas", "tom", "tommy"},
-    {"anthony", "tony"},
-    {"elizabeth", "liz", "beth", "betsy", "eliza"},
-    {"abigail", "abby", "abbie"},
-    {"jennifer", "jen", "jenny"},
-    {"virginia", "ginny"},
-    {"alexander", "alexandra", "alex"},
-    {"maxwell", "maximilian", "max"},
-    {"zachary", "zackary", "zach", "zack", "zac"},
-    {"jervonne", "jay"},
-    {"patrick", "pat"},
-    {"susan", "sue", "suzy"},
-    {"mitchell", "mitch"},
-    {"collin", "colin"},
-]
-NICKNAMES: dict[str, set[str]] = {}
-for _group in _NICKNAME_GROUPS:
-    for _n in _group:
-        NICKNAMES.setdefault(_n, set()).update(_group)
-
-# Firms that merged or rebranded. Canonical key -> aliases (normalized form).
-FIRM_ALIASES: dict[str, set[str]] = {
-    "perkins coie": {"ashurst perkins coie", "ashurstperkins", "perkins"},
-    "ogletree deakins": {"ogletree deakins nash smoak stewart", "ogletree"},
-    "norton rose fulbright": {"norton rose fulbright us", "fulbright jaworski"},
-    "morgan lewis bockius": {"morgan lewis"},
-    "skadden arps slate meagher flom": {"skadden"},
-    "akin gump strauss hauer feld": {"akin gump", "akin"},
-    "mehaffyweber": {"mehaffy weber"},
-}
-
-# Email domains that identify a firm better than its name does.
-DOMAIN_FIRMS: dict[str, str] = {
-    "ashurstperkins.com": "perkins coie",
-    "jw.com": "jackson walker",
-    "kslaw.com": "king spalding",
-    "velaw.com": "vinson elkins",
-    "gtlaw.com": "greenberg traurig",
-    "lw.com": "latham watkins",
-    "fr.com": "fish richardson",
-    "hklaw.com": "holland knight",
-    "stblaw.com": "simpson thacher bartlett",
-}
+_kb = get_knowledge_base()
+NICKNAMES: dict[str, set[str]] = _kb.nicknames_map
+FIRM_ALIASES: dict[str, set[str]] = _kb.firm_aliases_map
+DOMAIN_FIRMS: dict[str, str] = _kb.firm_domains_map
+METRO: dict[str, str] = _kb.metro_map
 
 _LEGAL_SUFFIX_TOKENS = {"llp", "pllc", "pc", "llc", "lp", "pa", "ltd", "inc", "plc", "p", "c", "l"}
 _FIRM_STOPWORDS = {"the", "and", "of", "law", "firm", "group", "office", "offices", "attorneys", "at"}
-
-METRO: dict[str, str] = {}
-for _metro, _cities in {
-    "dfw": ["dallas", "fort worth", "plano", "irving", "frisco", "arlington", "richardson", "addison",
-            "mckinney", "grapevine", "southlake", "denton", "carrollton", "allen", "garland", "las colinas"],
-    "houston": ["houston", "the woodlands", "sugar land", "katy", "pasadena", "spring", "pearland",
-                "bellaire", "conroe", "humble", "league city", "galveston"],
-    "austin": ["austin", "round rock", "cedar park", "georgetown", "san marcos", "pflugerville",
-               "lakeway", "bee cave", "west lake hills"],
-    "san antonio": ["san antonio", "new braunfels", "boerne"],
-}.items():
-    for _c in _cities:
-        METRO[_c] = _metro
 
 
 def strip_accents(s: str) -> str:

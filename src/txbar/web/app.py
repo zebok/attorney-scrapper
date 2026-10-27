@@ -165,7 +165,9 @@ def post_lookup_live(payload: LiveLookupRequest) -> dict[str, Any]:
             "best_candidate": {
                 "contact_id": best.contact_id if best else None,
                 "full_name": prof.name.full_name if prof else (best.full_name if best else None),
-                "preferred_name": prof.name.preferred_name if prof else (best.preferred_name if best else None),
+                "preferred_name": prof.name.preferred_name
+                if prof
+                else (best.preferred_name if best else None),
                 "bar_card_number": prof.bar_card_number if prof else (best.bar_card_number if best else None),
                 "license_status": prof.license_status if prof else (best.license_status if best else None),
                 "license_date": prof.license_date.isoformat() if (prof and prof.license_date) else None,

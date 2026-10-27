@@ -196,7 +196,9 @@ def parse_search_results(html: str) -> tuple[list[SearchHit], bool]:
         )
     if not hits:
         raise DomDriftError("Results page had no parsable lawyer cards and no 'no results' message.")
-    has_more = bool(re.search(r"(?i)>\s*Next\s*<|name=\"ButtonName\"[^>]*value=\"Next", html)) and len(hits) >= 25
+    has_more = (
+        bool(re.search(r"(?i)>\s*Next\s*<|name=\"ButtonName\"[^>]*value=\"Next", html)) and len(hits) >= 25
+    )
     return hits, has_more
 
 
@@ -248,7 +250,9 @@ def parse_profile(html: str, contact_id: str) -> Profile:
     if first_td is not None:
         parts = [
             _clean(re.sub(r"<[^>]+>", " ", x))
-            for x in re.split(r"<br\s*/?>", re.sub(r"(?s)<span class=\"show-mobile\">.*?</span>", "", first_td.html or ""))
+            for x in re.split(
+                r"<br\s*/?>", re.sub(r"(?s)<span class=\"show-mobile\">.*?</span>", "", first_td.html or "")
+            )
         ]
         parts = [x for x in parts if x]
         p.law_school = parts[0] if parts else ""

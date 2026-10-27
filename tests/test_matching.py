@@ -26,7 +26,9 @@ def test_score_exact_match():
 
     hit = SearchHit(
         contact_id="350258",
-        name=NameParts(first_name="William", middle_name="Bryant", last_name="Buechele", preferred_name="Bryant Buechele"),
+        name=NameParts(
+            first_name="William", middle_name="Bryant", last_name="Buechele", preferred_name="Bryant Buechele"
+        ),
         firm="Winstead PC",
         city="Dallas",
         license_status="Eligible to Practice in Texas",
@@ -66,14 +68,32 @@ def test_homonym_disambiguation_with_email_middle_initial():
     email_hints = parse_email(input_rec["email"], parsed_name)
 
     # Candidate A: Michael Lee Roberts (Roberts Law Firm)
-    hit_a = SearchHit(contact_id="288529", name=NameParts(first_name="Michael", middle_name="Lee", last_name="Roberts"), firm="Roberts Law Firm", city="Dallas")
-    prof_a = Profile(contact_id="288529", name=hit_a.name, firm="Roberts Law Firm", city="Dallas", grad_year=1990)
-    cand_a = engine.evaluate_candidate(hit_a, input_rec, parsed_name, email_hints, prof_a, stage="test", rank=1)
+    hit_a = SearchHit(
+        contact_id="288529",
+        name=NameParts(first_name="Michael", middle_name="Lee", last_name="Roberts"),
+        firm="Roberts Law Firm",
+        city="Dallas",
+    )
+    prof_a = Profile(
+        contact_id="288529", name=hit_a.name, firm="Roberts Law Firm", city="Dallas", grad_year=1990
+    )
+    cand_a = engine.evaluate_candidate(
+        hit_a, input_rec, parsed_name, email_hints, prof_a, stage="test", rank=1
+    )
 
     # Candidate B: Michael L. Roberts (Sidley Austin, LLP)
-    hit_b = SearchHit(contact_id="354809", name=NameParts(first_name="Michael", middle_name="L.", last_name="Roberts"), firm="Sidley Austin, LLP", city="Dallas")
-    prof_b = Profile(contact_id="354809", name=hit_b.name, firm="Sidley Austin, LLP", city="Dallas", grad_year=2017)
-    cand_b = engine.evaluate_candidate(hit_b, input_rec, parsed_name, email_hints, prof_b, stage="test", rank=2)
+    hit_b = SearchHit(
+        contact_id="354809",
+        name=NameParts(first_name="Michael", middle_name="L.", last_name="Roberts"),
+        firm="Sidley Austin, LLP",
+        city="Dallas",
+    )
+    prof_b = Profile(
+        contact_id="354809", name=hit_b.name, firm="Sidley Austin, LLP", city="Dallas", grad_year=2017
+    )
+    cand_b = engine.evaluate_candidate(
+        hit_b, input_rec, parsed_name, email_hints, prof_b, stage="test", rank=2
+    )
 
     assert cand_b.score > cand_a.score
     assert cand_b.score >= 85.0

@@ -23,25 +23,24 @@ import logging
 from dataclasses import dataclass, field
 from typing import Any
 
-from rapidfuzz import fuzz
-from rapidfuzz.distance import JaroWinkler
-
-from txbar.client import TexasBarClient
 from txbar.config import Settings, get_settings
 from txbar.normalize import (
-    DOMAIN_FIRMS,
     EmailHints,
     ParsedName,
-    alpha_key,
     canonical_firm,
-    firm_key,
     firm_search_term,
-    given_names_compatible,
-    metro_of,
     parse_email,
     parse_input_name,
 )
 from txbar.parser import Profile, SearchHit
+from txbar.rules import KnowledgeBase, get_knowledge_base
+from txbar.signals import (
+    FirmAffiliationSignal,
+    GeographicSignal,
+    NameMatchSignal,
+    ScoringConfig,
+    TemporalCareerSignal,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -86,9 +85,32 @@ class MatchDecision:
 
 
 class MatchEngine:
-    def __init__(self, client: TexasBarClient, settings: Settings | None = None) -> None:
-        self.client = client
+    """Configurable, modular Entity Resolution & Match Scoring Engine."""
+
+    def __init__(
+        self,
+        client: Any | None = None,
+        provider: Any | None = None,
+        kb: KnowledgeBase | None = None,
+        scoring_config: ScoringConfig | None = None,
+        settings: Settings | None = None,
+    ) -> None:
         self.settings = settings or get_settings()
+        self.client = client or provider
+        self.provider = provider or self.client
+        self.kb = kb or get_knowledge_base()
+        self.scoring_config = scoring_config or ScoringConfig(
+            weight_name=35.0,
+            weight_firm=25.0,
+            weight_temporal=25.0,
+            weight_geo=15.0,
+            auto_approve_threshold=self.settings.match_auto_approve,
+            review_floor=self.settings.match_review_floor,
+        )
+        self.signal_name = NameMatchSignal()
+        self.signal_firm = FirmAffiliationSignal()
+        self.signal_temporal = TemporalCareerSignal()
+        self.signal_geo = GeographicSignal()
 
     def evaluate_candidate(
         self,
@@ -100,184 +122,45 @@ class MatchEngine:
         stage: str,
         rank: int,
     ) -> CandidateEvaluation:
-        """Score an individual candidate profile against the input record."""
-        reasons: list[str] = []
-
-        # Candidate name pieces
-        cand_first = (profile.name.first_name if profile else hit.name.first_name).strip()
-        cand_middle = (profile.name.middle_name if profile else hit.name.middle_name).strip()
-        cand_last = (profile.name.last_name if profile else hit.name.last_name).strip()
+        """Score an individual candidate profile against the input record using composite signals."""
         cand_pref = (profile.name.preferred_name if profile else hit.name.preferred_name).strip()
         cand_full = profile.name.full_name if profile else hit.name.full_name
-
-        # -------------------------------------------------------------
-        # 1. NAME SIMILARITY (Max 35)
-        # -------------------------------------------------------------
-        name_score = 0.0
-        # Check last name first
-        last_match = False
-        for v in parsed_name.last_variants:
-            if alpha_key(v) == alpha_key(cand_last) or JaroWinkler.similarity(alpha_key(v), alpha_key(cand_last)) > 0.92:
-                last_match = True
-                break
-
-        if not last_match:
-            # Maybe last name is compound in the candidate (e.g. Rivera-Alvarado)
-            if any(alpha_key(v) in alpha_key(cand_last) for v in parsed_name.last_variants):
-                last_match = True
-
-        first_match = False
-        first_detail = ""
-        # 1a. Direct given name or nickname match
-        if given_names_compatible(parsed_name.first, cand_first):
-            first_match = True
-            first_detail = "First name / nickname match"
-        # 1b. Preferred name match (e.g. Jack for Wayne Zeringue, Bryant for William Bryant Buechele)
-        elif cand_pref and given_names_compatible(parsed_name.first, cand_pref):
-            first_match = True
-            first_detail = f"Matched preferred name '{cand_pref}'"
-        # 1c. Middle name match if input first was initial or second name
-        elif cand_middle and given_names_compatible(parsed_name.first, cand_middle):
-            first_match = True
-            first_detail = f"Matched middle name '{cand_middle}'"
-        # 1d. Email hints disambiguation
-        elif email_hints and email_hints.given_token and (
-            given_names_compatible(email_hints.given_token, cand_first)
-            or (cand_pref and given_names_compatible(email_hints.given_token, cand_pref))
-            or (cand_middle and given_names_compatible(email_hints.given_token, cand_middle))
-        ):
-            first_match = True
-            first_detail = f"Matched email name prefix '{email_hints.given_token}'"
-
-        if last_match and first_match:
-            name_score = 35.0
-            reasons.append(f"Full name matched ({first_detail})")
-        elif last_match:
-            # Check if email middle initial matches
-            if email_hints and email_hints.middle_initial and cand_middle:
-                if alpha_key(cand_middle).startswith(email_hints.middle_initial):
-                    name_score = 30.0
-                    reasons.append(f"Family name matched + email middle initial '{email_hints.middle_initial}'")
-                else:
-                    name_score = 15.0
-                    reasons.append("Family name matched but first/middle name differs")
-            else:
-                sim = JaroWinkler.similarity(alpha_key(parsed_name.first), alpha_key(cand_first))
-                name_score = 15.0 + (sim * 15.0)
-                reasons.append(f"Family name matched, first name partial similarity ({sim:.2f})")
-        else:
-            sim = JaroWinkler.similarity(alpha_key(parsed_name.raw), alpha_key(cand_full))
-            name_score = sim * 25.0
-            reasons.append(f"Approximate name similarity ({sim:.2f})")
-
-        # -------------------------------------------------------------
-        # 2. FIRM SIMILARITY (Max 25)
-        # -------------------------------------------------------------
-        firm_score = 0.0
-        input_firm = input_record.get("firm") or ""
         cand_firm = (profile.firm if profile else hit.firm).strip()
-        norm_input_firm = canonical_firm(input_firm)
-        norm_cand_firm = canonical_firm(cand_firm)
-
-        # Also check email domain mapping
-        email_val = input_record.get("email") or ""
-        domain = email_val.split("@")[-1].lower() if "@" in email_val else ""
-        domain_canon = DOMAIN_FIRMS.get(domain, "")
-
-        firm_matched = False
-        if norm_input_firm and norm_cand_firm and norm_input_firm == norm_cand_firm:
-            firm_score = 25.0
-            firm_matched = True
-            reasons.append(f"Firm exact match: '{cand_firm}'")
-        elif domain_canon and norm_cand_firm and (domain_canon == norm_cand_firm or domain_canon in norm_cand_firm):
-            firm_score = 25.0
-            firm_matched = True
-            reasons.append(f"Firm matched via email domain alias ({domain} -> '{cand_firm}')")
-        elif norm_input_firm and norm_cand_firm:
-            fuzz_ratio = fuzz.token_sort_ratio(firm_key(input_firm), firm_key(cand_firm))
-            if fuzz_ratio >= 80:
-                firm_score = 22.0
-                firm_matched = True
-                reasons.append(f"Firm fuzzy match ({fuzz_ratio}%): '{cand_firm}'")
-            elif fuzz_ratio >= 50:
-                firm_score = 12.0
-                reasons.append(f"Firm partial overlap ({fuzz_ratio}%): '{cand_firm}'")
-            else:
-                firm_score = 0.0
-                reasons.append(f"Different firm reported: '{cand_firm}' vs '{input_firm}'")
-        elif cand_firm:
-            firm_score = 5.0
-            reasons.append(f"Candidate firm present: '{cand_firm}'")
-
-        # -------------------------------------------------------------
-        # 3. TEMPORAL CONSISTENCY (Max 25)
-        # -------------------------------------------------------------
-        temp_score = 0.0
-        input_jd = input_record.get("jd_year")
         cand_grad = profile.grad_year if profile else None
-        cand_lic_year = profile.license_date.year if (profile and profile.license_date) else None
 
-        # Compare with grad year if available, else license year
-        ref_year = cand_grad or cand_lic_year
+        res_name = self.signal_name.evaluate(
+            input_record, parsed_name, email_hints, hit, profile, self.kb, self.scoring_config
+        )
+        res_firm = self.signal_firm.evaluate(
+            input_record, parsed_name, email_hints, hit, profile, self.kb, self.scoring_config
+        )
+        res_temporal = self.signal_temporal.evaluate(
+            input_record, parsed_name, email_hints, hit, profile, self.kb, self.scoring_config
+        )
+        res_geo = self.signal_geo.evaluate(
+            input_record, parsed_name, email_hints, hit, profile, self.kb, self.scoring_config
+        )
 
-        if input_jd and ref_year:
-            diff = abs(int(input_jd) - int(ref_year))
-            if diff == 0:
-                temp_score = 25.0
-                reasons.append(f"Exact graduation/admission year match ({ref_year})")
-            elif diff == 1:
-                temp_score = 22.0
-                reasons.append(f"Close graduation/admission year (+-{diff} year: {ref_year} vs {input_jd})")
-            elif diff <= 2:
-                temp_score = 16.0
-                reasons.append(f"Acceptable graduation/admission year delta (+-{diff} years)")
-            elif diff <= 4:
-                temp_score = 8.0
-                reasons.append(f"Moderate graduation delta (+-{diff} years)")
-            else:
-                # If input_jd is 2017 (the suspicious batch default), don't penalize harshly if firm and name match
-                if int(input_jd) == 2017 and (name_score >= 30 and firm_matched):
-                    temp_score = 12.0
-                    reasons.append(f"Year delta {diff} discounted (input 2017 batch anomaly; high name & firm match)")
-                else:
-                    temp_score = 0.0
-                    reasons.append(f"Large graduation/admission gap ({diff} years: {ref_year} vs {input_jd})")
-        else:
-            # No temporal info to compare
-            temp_score = 12.5  # neutral baseline
-            reasons.append("Temporal data partially missing (awarded neutral score)")
+        total_score = min(
+            100.0,
+            max(0.0, res_name.score + res_firm.score + res_temporal.score + res_geo.score),
+        )
 
-        # -------------------------------------------------------------
-        # 4. GEOGRAPHIC MATCH (Max 15)
-        # -------------------------------------------------------------
-        geo_score = 0.0
-        input_city = (input_record.get("city") or "").strip().lower()
-        cand_city = ((profile.city if profile else hit.city) or "").strip().lower()
-
-        if input_city and cand_city:
-            if input_city == cand_city:
-                geo_score = 15.0
-                reasons.append(f"Same city: '{cand_city.title()}'")
-            elif metro_of(input_city) == metro_of(cand_city):
-                geo_score = 12.0
-                reasons.append(f"Same metro area ({metro_of(input_city).upper()}): '{cand_city.title()}'")
-            else:
-                geo_score = 5.0
-                reasons.append(f"Different Texas city: '{cand_city.title()}' vs '{input_city.title()}'")
-        else:
-            geo_score = 8.0
-
-        total_score = min(100.0, max(0.0, name_score + firm_score + temp_score + geo_score))
+        reasons = [
+            r.explanation
+            for r in (res_name, res_firm, res_temporal, res_geo)
+            if r.explanation and not r.explanation.startswith(("No input", "City unspecified"))
+        ]
 
         return CandidateEvaluation(
             contact_id=hit.contact_id,
             search_stage=stage,
             rank=rank,
             score=round(total_score, 1),
-            score_name=round(name_score, 1),
-            score_firm=round(firm_score, 1),
-            score_temporal=round(temp_score, 1),
-            score_geo=round(geo_score, 1),
+            score_name=round(res_name.score, 1),
+            score_firm=round(res_firm.score, 1),
+            score_temporal=round(res_temporal.score, 1),
+            score_geo=round(res_geo.score, 1),
             full_name=cand_full,
             preferred_name=cand_pref,
             firm=cand_firm,
@@ -290,6 +173,45 @@ class MatchEngine:
             explanation="; ".join(reasons),
             profile=profile,
         )
+
+    def _search_provider(self, name: str, firm_core: str = "", city: str = "") -> list[SearchHit]:
+        """Query directory provider using either standardized protocol or colleague search."""
+        if hasattr(self.client, "search_by_affiliation") and firm_core:
+            dir_hits = self.client.search_by_affiliation(last_name=name, firm_core=firm_core)
+        elif hasattr(self.client, "search_by_location") and city:
+            dir_hits = self.client.search_by_location(name=name, city=city)
+        elif hasattr(self.client, "search_statewide") and not firm_core and not city:
+            dir_hits = self.client.search_statewide(last_name=name)
+        elif hasattr(self.client, "search_colleague"):
+            return self.client.search_colleague(name=name, company_name=firm_core, city=city)
+        else:
+            return []
+
+        from txbar.parser import NameParts
+
+        converted: list[SearchHit] = []
+        for dh in dir_hits:
+            if isinstance(dh, SearchHit):
+                converted.append(dh)
+            else:
+                converted.append(
+                    SearchHit(
+                        contact_id=getattr(dh, "external_id", getattr(dh, "contact_id", "")),
+                        name=NameParts(
+                            first_name=getattr(dh, "first_name", ""),
+                            middle_name=getattr(dh, "middle_name", ""),
+                            last_name=getattr(dh, "last_name", ""),
+                            suffix=getattr(dh, "suffix", ""),
+                            preferred_name=getattr(dh, "preferred_name", ""),
+                        ),
+                        firm=getattr(dh, "firm", ""),
+                        city=getattr(dh, "city", ""),
+                        address=getattr(dh, "address", ""),
+                        phone=getattr(dh, "phone", ""),
+                        license_status=getattr(dh, "license_status", ""),
+                    )
+                )
+        return converted
 
     def resolve_attorney(self, input_record: dict[str, Any]) -> MatchDecision:
         """Execute the multi-stage waterfall search and scoring for an attorney."""
@@ -331,10 +253,14 @@ class MatchEngine:
                     match_explanation=f"Direct cache hit via ContactID {cached_contact_id}",
                     firm_changed=False,
                     search_stage="cached_lookup",
-                    review_status="auto_approved" if eval_cand.score >= self.settings.match_auto_approve else "pending_review",
+                    review_status="auto_approved"
+                    if eval_cand.score >= self.settings.match_auto_approve
+                    else "pending_review",
                 )
             except Exception as e:
-                logger.warning("Cached contact_id %s failed: %s. Falling back to search.", cached_contact_id, e)
+                logger.warning(
+                    "Cached contact_id %s failed: %s. Falling back to search.", cached_contact_id, e
+                )
 
         # -------------------------------------------------------------
         # Waterfall Searches
@@ -346,7 +272,7 @@ class MatchEngine:
         firm_term = firm_search_term(firm_val)
         if parsed_name.last and firm_term:
             try:
-                hits = self.client.search_colleague(name=parsed_name.last, company_name=firm_term)
+                hits = self._search_provider(name=parsed_name.last, firm_core=firm_term)
                 for h in hits:
                     if h.contact_id not in seen_contact_ids:
                         seen_contact_ids.add(h.contact_id)
@@ -357,9 +283,13 @@ class MatchEngine:
         # Stage 2: Name + City (Standard geo targeted search)
         # If Stage 1 produced 0 or only poor hits, or we want full recall:
         if len(search_hits) == 0:
-            query_name = parsed_name.last if parsed_name.first_is_initial else f"{parsed_name.first} {parsed_name.last}"
+            query_name = (
+                parsed_name.last
+                if parsed_name.first_is_initial
+                else f"{parsed_name.first} {parsed_name.last}"
+            )
             try:
-                hits = self.client.search_colleague(name=query_name, city=city_val)
+                hits = self._search_provider(name=query_name, city=city_val)
                 for h in hits:
                     if h.contact_id not in seen_contact_ids:
                         seen_contact_ids.add(h.contact_id)
@@ -371,7 +301,7 @@ class MatchEngine:
         if len(search_hits) == 0:
             for variant in parsed_name.last_variants:
                 try:
-                    hits = self.client.search_colleague(name=variant)
+                    hits = self._search_provider(name=variant)
                     for h in hits:
                         if h.contact_id not in seen_contact_ids:
                             seen_contact_ids.add(h.contact_id)
@@ -441,7 +371,9 @@ class MatchEngine:
             )
         elif firm_changed and best.score >= self.settings.match_review_floor:
             match_status = "firm_change_match"
-            review_status = "pending_review" if best.score < self.settings.match_auto_approve else "auto_approved"
+            review_status = (
+                "pending_review" if best.score < self.settings.match_auto_approve else "auto_approved"
+            )
             explanation = (
                 f"Lateral move detected! Candidate matches identity but firm changed from "
                 f"'{firm_val}' to '{best.firm}'. Confidence: {best.score:.1f}%."
@@ -453,7 +385,9 @@ class MatchEngine:
         elif best.score >= self.settings.match_review_floor:
             match_status = "low_confidence"
             review_status = "pending_review"
-            explanation = f"Moderate confidence ({best.score:.1f}%). Requires human verification: {best.explanation}"
+            explanation = (
+                f"Moderate confidence ({best.score:.1f}%). Requires human verification: {best.explanation}"
+            )
         else:
             match_status = "not_found"
             review_status = "not_found"

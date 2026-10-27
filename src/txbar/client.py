@@ -20,6 +20,7 @@ import httpx
 
 from txbar.config import Settings, get_settings
 from txbar.parser import DomDriftError, Profile, SearchHit, parse_profile, parse_search_results
+from txbar.provider import DirectoryHit, DirectoryProfile, ProviderHealth
 
 logger = logging.getLogger(__name__)
 
@@ -36,7 +37,55 @@ class ClientMetrics:
     total_latency_s: float = 0.0
 
 
+def hit_to_directory_hit(hit: SearchHit) -> DirectoryHit:
+    return DirectoryHit(
+        external_id=hit.contact_id,
+        first_name=hit.name.first_name,
+        middle_name=hit.name.middle_name,
+        last_name=hit.name.last_name,
+        suffix=hit.name.suffix,
+        preferred_name=hit.name.preferred_name,
+        full_name=hit.name.full_name,
+        firm=hit.firm,
+        city=hit.city,
+        address=hit.address,
+        phone=hit.phone,
+        license_status=hit.license_status,
+        practice_areas=hit.practice_areas,
+    )
+
+
+def profile_to_directory_profile(p: Profile) -> DirectoryProfile:
+    return DirectoryProfile(
+        external_id=p.contact_id,
+        bar_card_number=p.bar_card_number,
+        first_name=p.name.first_name,
+        middle_name=p.name.middle_name,
+        last_name=p.name.last_name,
+        suffix=p.name.suffix,
+        preferred_name=p.name.preferred_name,
+        full_name=p.name.full_name,
+        license_status=p.license_status,
+        license_date=p.license_date,
+        current_firm=p.firm,
+        firm_size=p.firm_size,
+        occupation=p.occupation,
+        address=p.address,
+        city=p.city,
+        state=p.state,
+        zip_code=p.zip,
+        phone=p.phone,
+        practice_areas=p.practice_areas,
+        law_school=p.law_school,
+        grad_year=p.grad_year,
+        profile_url=p.profile_url,
+    )
+
+
 class TexasBarClient:
+    provider_id: str = "tx_bar"
+    provider_name: str = "State Bar of Texas"
+
     def __init__(self, settings: Settings | None = None) -> None:
         self.settings = settings or get_settings()
         self.client = httpx.Client(
@@ -169,6 +218,39 @@ class TexasBarClient:
             self.bootstrap_session(force=True)
             retry_resp = self._send_request("GET", url)
             return parse_profile(retry_resp.text, contact_id)
+
+    # -------------------------------------------------------------
+    # DirectoryProvider Protocol Implementation
+    # -------------------------------------------------------------
+    def search_by_affiliation(self, last_name: str, firm_core: str) -> list[DirectoryHit]:
+        """Search directory filtering by attorney surname and firm/organization core."""
+        hits = self.search_colleague(name=last_name, company_name=firm_core)
+        return [hit_to_directory_hit(h) for h in hits]
+
+    def search_by_location(self, name: str, city: str) -> list[DirectoryHit]:
+        """Search directory filtering by attorney name and city/metro jurisdiction."""
+        hits = self.search_colleague(name=name, city=city)
+        return [hit_to_directory_hit(h) for h in hits]
+
+    def search_statewide(self, last_name: str) -> list[DirectoryHit]:
+        """Broad statewide search by surname when targeted criteria return 0 hits."""
+        hits = self.search_colleague(name=last_name)
+        return [hit_to_directory_hit(h) for h in hits]
+
+    def get_directory_profile(self, external_id: str) -> DirectoryProfile:
+        """Fetch and parse full profile details as a DirectoryProfile."""
+        prof = self.get_profile(external_id)
+        return profile_to_directory_profile(prof)
+
+    def check_health(self) -> ProviderHealth:
+        """Probe remote directory availability returning a structured ProviderHealth."""
+        res = self.health_check()
+        return ProviderHealth(
+            status=res.get("status", "unhealthy"),
+            latency_s=res.get("latency_s", 0.0),
+            canary_passed=res.get("canary_passed", False),
+            details=res,
+        )
 
     def health_check(self) -> dict[str, Any]:
         """Fast health check to verify site connectivity and DOM structure."""

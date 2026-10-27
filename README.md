@@ -47,6 +47,26 @@ flowchart TD
     end
 ```
 
+### 1.1 Extensible Senior Architecture & Design Patterns
+
+The codebase avoids hardcoded values and tight coupling by implementing enterprise design patterns:
+
+1. **Directory Provider Abstraction (Adapter Pattern)**:
+   * `DirectoryProvider` (`src/txbar/provider.py`) decouples the matching engine from Texas Bar HTML forms.
+   * `TexasBarClient` implements `DirectoryProvider`. Adding California (`ca_bar`) or New York (`ny_bar`) requires zero changes to the entity resolution engine, data quality gate, or BigQuery schemas.
+2. **Data-Driven Declarative Rules (`data/rules/`)**:
+   * Domain dictionaries are externalized into declarative JSON files:
+     * `data/rules/nicknames.json`: Legal nickname equivalence clusters.
+     * `data/rules/firm_aliases.json`: Law firm mergers, rebrandings, and historical aliases.
+     * `data/rules/firm_domains.json`: Corporate email domain mappings.
+     * `data/rules/metro_areas.json`: Metropolitan statistical area clusters.
+   * Managed via `KnowledgeBase` (`src/txbar/rules.py`). Business analysts can add firm mergers or aliases without touching Python code or triggering redeployments.
+3. **Composite Scoring Strategy (`txbar.signals`)**:
+   * Evaluates identity through 4 isolated, testable signals (`NameMatchSignal`, `FirmAffiliationSignal`, `TemporalCareerSignal`, `GeographicSignal`).
+   * Governed by `ScoringConfig` (Pydantic), eliminating hardcoded magic numbers and enabling runtime tuning.
+4. **Dependency Injection**:
+   * `Pipeline` accepts an injected `DirectoryProvider` and `MatchEngine`, enabling fast, 100% mocked testing with zero external HTTP dependencies (`tests/test_pipeline_di.py`).
+
 ---
 
 ## 2. Answers to Technical Challenge Questions

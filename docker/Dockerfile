@@ -31,9 +31,10 @@ COPY --from=builder --chown=appuser:appgroup /app/.venv /app/.venv
 COPY --from=builder --chown=appuser:appgroup /app/src /app/src
 COPY --from=builder --chown=appuser:appgroup /app/schemas /app/schemas
 
-# Create directories for data and checkpoints
-RUN mkdir -p /app/data/input /app/data/output /app/data/warehouse && \
-    chown -R appuser:appgroup /app/data
+# Create directories for data and copy seeded files
+RUN mkdir -p /app/data/input /app/data/output /app/data/warehouse
+COPY --chown=appuser:appgroup data/ /app/data/
+RUN chown -R appuser:appgroup /app/data
 
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \

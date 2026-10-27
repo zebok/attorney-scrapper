@@ -23,6 +23,7 @@ from txbar.client import TexasBarClient
 from txbar.config import Settings, get_settings
 from txbar.matching import MatchEngine
 from txbar.normalize import normalize_phone
+from txbar.provider import DirectoryProvider
 from txbar.quality import evaluate_run_quality_gate, validate_enriched_record
 from txbar.storage import StorageBackend, get_storage
 
@@ -31,9 +32,17 @@ logger = logging.getLogger(__name__)
 
 
 class Pipeline:
-    def __init__(self, settings: Settings | None = None, storage: StorageBackend | None = None) -> None:
+    def __init__(
+        self,
+        settings: Settings | None = None,
+        storage: StorageBackend | None = None,
+        provider: DirectoryProvider | None = None,
+        resolver: MatchEngine | None = None,
+    ) -> None:
         self.settings = settings or get_settings()
         self.storage = storage or get_storage(self.settings)
+        self.provider = provider
+        self.resolver = resolver
 
     def run(
         self,
@@ -74,13 +83,21 @@ class Pipeline:
 
         now_utc = datetime.now(UTC)
 
-        with TexasBarClient(self.settings) as client:
-            engine = MatchEngine(client, self.settings)
+        client_instance = self.provider or TexasBarClient(self.settings)
+        with client_instance as client:
+            engine = self.resolver or MatchEngine(provider=client, settings=self.settings)
 
             for idx, att in enumerate(attorneys, start=1):
                 att_uuid = str(att["attorney_uuid"])
                 name_val = att.get("name") or ""
-                logger.info("[%d/%d] Resolving '%s' (%s, %s)...", idx, len(attorneys), name_val, att.get("firm"), att.get("city"))
+                logger.info(
+                    "[%d/%d] Resolving '%s' (%s, %s)...",
+                    idx,
+                    len(attorneys),
+                    name_val,
+                    att.get("firm"),
+                    att.get("city"),
+                )
 
                 decision = engine.resolve_attorney(att)
                 best = decision.best_candidate
@@ -130,13 +147,17 @@ class Pipeline:
                     "input_jd_year": att.get("jd_year"),
                     "input_email": att.get("email"),
                     "contact_id": best.contact_id if best else None,
-                    "bar_card_number": prof.bar_card_number if prof else (best.bar_card_number if best else None),
+                    "bar_card_number": prof.bar_card_number
+                    if prof
+                    else (best.bar_card_number if best else None),
                     "first_name": prof.name.first_name if prof else "",
                     "middle_name": prof.name.middle_name if prof else "",
                     "last_name": prof.name.last_name if prof else "",
                     "preferred_name": prof.name.preferred_name if prof else "",
                     "full_name": prof.name.full_name if prof else (best.full_name if best else ""),
-                    "license_status": prof.license_status if prof else (best.license_status if best else None),
+                    "license_status": prof.license_status
+                    if prof
+                    else (best.license_status if best else None),
                     "license_date": prof.license_date.isoformat() if (prof and prof.license_date) else None,
                     "current_firm": prof.firm if prof else (best.firm if best else None),
                     "firm_size": prof.firm_size if prof else "",
@@ -182,7 +203,8 @@ class Pipeline:
                 with chk_file.open("a", encoding="utf-8") as f:
                     f.write(json.dumps(result_rec, default=str) + "\n")
 
-            metrics = client.metrics
+            metrics = getattr(client, "metrics", None)
+            total_reqs = metrics.total_requests if metrics else len(all_results) * 2
 
         # 2. Evaluate batch-level Quality Gate
         dq_report = evaluate_run_quality_gate(all_results, self.settings)
@@ -204,7 +226,7 @@ class Pipeline:
             "not_found": dq_report.not_found,
             "errors": dq_report.errors,
             "firm_changes": firm_changes_count,
-            "http_requests": metrics.total_requests,
+            "http_requests": total_reqs,
             "dq_gate_passed": dq_report.gate_passed,
             "dq_report": json.dumps(
                 {
@@ -295,7 +317,9 @@ class Pipeline:
             "match_explanation": "Audit_Explanation",
             "firm_changed": "Firm_Change_Detected",
         }
-        final_csv_df = delivery_df.rename({k: v for k, v in clean_renames.items() if k in delivery_df.columns})
+        final_csv_df = delivery_df.rename(
+            {k: v for k, v in clean_renames.items() if k in delivery_df.columns}
+        )
         csv_path = out_dir / "enriched_tx_lawyers.csv"
         final_csv_df.write_csv(csv_path)
         logger.info("Exported delivery CSV to %s", csv_path)
@@ -311,7 +335,9 @@ class Pipeline:
         report_path = out_dir / "run_report.json"
         summary_payload = {
             "run_id": run_id,
-            "timestamp": run_record["finished_at"].isoformat() if isinstance(run_record["finished_at"], datetime) else str(run_record["finished_at"]),
+            "timestamp": run_record["finished_at"].isoformat()
+            if isinstance(run_record["finished_at"], datetime)
+            else str(run_record["finished_at"]),
             "metrics": {
                 "total": run_record["total"],
                 "auto_approved": run_record["auto_approved"],

@@ -1,0 +1,19 @@
+{
+  "dfw": [
+    "dallas", "fort worth", "plano", "irving", "frisco", "arlington",
+    "richardson", "addison", "mckinney", "grapevine", "southlake",
+    "denton", "carrollton", "allen", "garland", "las colinas"
+  ],
+  "houston": [
+    "houston", "the woodlands", "sugar land", "katy", "pasadena",
+    "spring", "pearland", "bellaire", "conroe", "humble",
+    "league city", "galveston"
+  ],
+  "austin": [
+    "austin", "round rock", "cedar park", "georgetown", "san marcos",
+    "pflugerville", "lakeway", "bee cave", "west lake hills"
+  ],
+  "san antonio": [
+    "san antonio", "new braunfels", "boerne"
+  ]
+}

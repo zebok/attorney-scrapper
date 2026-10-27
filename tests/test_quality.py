@@ -36,10 +36,9 @@ def test_field_level_validations():
 def test_run_quality_gate_evaluator():
     # Healthy batch: 90 auto approved, 10 pending review, low missing phone
     healthy_results = [
-        {"review_status": "auto_approved", "contact_id": f"c_{i}", "phone": "+12147455214"}
-        for i in range(90)
+        {"review_status": "auto_approved", "contact_id": f"c_{i}", "phone": "+12147455214"} for i in range(90)
     ] + [
-        {"review_status": "pending_review", "contact_id": f"c_{i+90}", "phone": "+12147455214"}
+        {"review_status": "pending_review", "contact_id": f"c_{i + 90}", "phone": "+12147455214"}
         for i in range(10)
     ]
     rep = evaluate_run_quality_gate(healthy_results)
@@ -48,12 +47,8 @@ def test_run_quality_gate_evaluator():
 
     # Unhealthy batch: 40% not found (exceeds 20% threshold)
     bad_results = [
-        {"review_status": "auto_approved", "contact_id": f"c_{i}", "phone": "+12147455214"}
-        for i in range(60)
-    ] + [
-        {"review_status": "not_found", "contact_id": None, "phone": None}
-        for i in range(40)
-    ]
+        {"review_status": "auto_approved", "contact_id": f"c_{i}", "phone": "+12147455214"} for i in range(60)
+    ] + [{"review_status": "not_found", "contact_id": None, "phone": None} for i in range(40)]
     rep_bad = evaluate_run_quality_gate(bad_results)
     assert rep_bad.gate_passed is False
     assert any("NOT_FOUND_RATIO_EXCEEDED" in v for v in rep_bad.gate_violations)
