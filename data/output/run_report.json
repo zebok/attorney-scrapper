@@ -1,20 +1,20 @@
 {
-  "run_id": "run_20261027_151040_096e6b",
-  "timestamp": "2026-10-27T15:10:40.531009+00:00",
+  "run_id": "run_20261027_161715_ee7b76",
+  "timestamp": "2026-10-27T16:26:02.063593+00:00",
   "metrics": {
-    "total": 1,
-    "auto_approved": 1,
-    "auto_approved_pct": "100.0%",
-    "pending_review": 0,
-    "not_found": 0,
-    "firm_changes_detected": 0,
-    "http_requests": 2
+    "total": 100,
+    "auto_approved": 89,
+    "auto_approved_pct": "89.0%",
+    "pending_review": 9,
+    "not_found": 2,
+    "firm_changes_detected": 1,
+    "http_requests": 233
   },
   "quality_gate": {
     "passed": true,
     "violations": [],
-    "missing_phone_ratio": "0.0%",
-    "not_found_ratio": "0.0%",
+    "missing_phone_ratio": "17.2%",
+    "not_found_ratio": "2.0%",
     "rule_issues_summary": {}
   }
 }
