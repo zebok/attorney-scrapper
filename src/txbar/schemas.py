@@ -15,7 +15,14 @@ from txbar.config import PROJECT_ROOT
 
 SCHEMA_DIR = PROJECT_ROOT / "schemas"
 
-TABLES = ("attorneys_source", "match_candidates", "match_results", "review_events", "pipeline_runs")
+TABLES = (
+    "attorneys_source",
+    "match_candidates",
+    "match_results",
+    "attorneys_master",
+    "review_events",
+    "pipeline_runs",
+)
 
 _BQ_TO_POLARS: dict[str, pl.DataType] = {
     "STRING": pl.Utf8,
@@ -29,7 +36,8 @@ _BQ_TO_POLARS: dict[str, pl.DataType] = {
 
 @lru_cache
 def bq_schema(table: str) -> list[dict]:
-    return json.loads((SCHEMA_DIR / f"{table}.json").read_text())
+    schema_file = "match_results" if table == "attorneys_master" else table
+    return json.loads((SCHEMA_DIR / f"{schema_file}.json").read_text())
 
 
 @lru_cache

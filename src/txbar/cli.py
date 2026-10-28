@@ -32,6 +32,22 @@ def cmd_seed(args: argparse.Namespace) -> None:
     print(f"Successfully seeded {count} attorneys into source table.")
 
 
+def cmd_export_csv(args: argparse.Namespace) -> None:
+    from txbar.pipeline import format_delivery_dataframe
+
+    settings = get_settings()
+    storage = get_storage(settings)
+    df = storage.get_all_results()
+    if len(df) == 0:
+        print("Error: No enriched records found in storage.", file=sys.stderr)
+        sys.exit(1)
+    out_path = Path(args.out) if args.out else settings.resolve(settings.output_dir / "enriched_tx_lawyers.csv")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    final_df = format_delivery_dataframe(df)
+    final_df.write_csv(out_path)
+    print(f"Exported {len(final_df)} enriched attorneys from {settings.storage_backend} to {out_path}")
+
+
 def cmd_run(args: argparse.Namespace) -> None:
     settings = get_settings()
     pipeline = Pipeline(settings=settings)
@@ -102,6 +118,13 @@ def main() -> None:
         "--limit", type=int, default=None, help="Limit number of attorneys to process (for testing)"
     )
     p_run.set_defaults(func=cmd_run)
+
+    # Export CSV
+    p_export = subparsers.add_parser(
+        "export-csv", help="Download enriched_tx_lawyers.csv directly from BigQuery"
+    )
+    p_export.add_argument("--out", type=str, default=None, help="Output CSV path")
+    p_export.set_defaults(func=cmd_export_csv)
 
     # UI
     p_ui = subparsers.add_parser("ui", help="Launch the Human-in-the-Loop Review UI and API")

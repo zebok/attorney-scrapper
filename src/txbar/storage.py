@@ -292,18 +292,86 @@ class BigQueryStorageBackend:
         self.bigquery = bigquery
         self.project_id = project_id
         self.dataset_id = dataset_id
-        self.client = bigquery.Client(project=project_id)
+        self.client = self._create_bq_client(project_id)
+
+    def _create_bq_client(self, project_id: str) -> Any:
+        from google.auth.exceptions import DefaultCredentialsError
+
+        try:
+            return self.bigquery.Client(project=project_id)
+        except DefaultCredentialsError:
+            import shutil
+            import subprocess
+
+            from google.oauth2.credentials import Credentials
+
+            gcloud_cmd = [shutil.which("gcloud") or "gcloud", "auth", "print-access-token"]
+            hb_py = Path("/opt/homebrew/bin/python3.12")
+            hb_gcloud = Path("/opt/homebrew/share/google-cloud-sdk/lib/gcloud.py")
+            if hb_py.exists() and hb_gcloud.exists():
+                gcloud_cmd = [str(hb_py), str(hb_gcloud), "auth", "print-access-token"]
+
+            token = subprocess.check_output(gcloud_cmd, text=True).strip()
+            creds = Credentials(token=token)
+            return self.bigquery.Client(project=project_id, credentials=creds)
 
     def _table_ref(self, table: str) -> str:
         return f"{self.project_id}.{self.dataset_id}.{table}"
+
+    def ensure_tables(self, location: str = "us-central1") -> None:
+        """Create the BigQuery dataset and all 6 tables from schemas/*.json if not present."""
+        from txbar.schemas import TABLES, bq_schema
+
+        dataset_ref = f"{self.project_id}.{self.dataset_id}"
+        ds = self.bigquery.Dataset(dataset_ref)
+        ds.location = location
+        self.client.create_dataset(ds, exists_ok=True)
+
+        for tbl_name in TABLES:
+            raw_fields = bq_schema(tbl_name)
+            schema_fields = [
+                self.bigquery.SchemaField(
+                    name=f["name"],
+                    field_type=f["type"],
+                    mode=f.get("mode", "NULLABLE"),
+                    description=f.get("description", ""),
+                )
+                for f in raw_fields
+            ]
+            tbl = self.bigquery.Table(self._table_ref(tbl_name), schema=schema_fields)
+            self.client.create_table(tbl, exists_ok=True)
+
+    def _query_to_df(self, query: str, table: str, job_config: Any = None) -> pl.DataFrame:
+        try:
+            row_iter = self.client.query(query, job_config=job_config).result()
+            rows = [dict(r.items()) for r in row_iter]
+        except Exception as e:
+            logger.warning("BigQuery query on %s returned error: %s", table, e)
+            return empty(table)
+        if not rows:
+            return empty(table)
+        return conform(pl.DataFrame(rows), table)
 
     def _load_rows(self, table: str, rows: list[dict[str, Any]], write_disposition: str = "WRITE_APPEND") -> None:
         if not rows:
             return
         import json
 
+        from txbar.schemas import bq_schema
+
         cleaned = json.loads(json.dumps(rows, default=str))
+        raw_fields = bq_schema(table)
+        schema_fields = [
+            self.bigquery.SchemaField(
+                name=f["name"],
+                field_type=f["type"],
+                mode=f.get("mode", "NULLABLE"),
+                description=f.get("description", ""),
+            )
+            for f in raw_fields
+        ]
         job_config = self.bigquery.LoadJobConfig(
+            schema=schema_fields,
             source_format=self.bigquery.SourceFormat.NEWLINE_DELIMITED_JSON,
             write_disposition=write_disposition,
         )
@@ -311,6 +379,7 @@ class BigQueryStorageBackend:
         job.result()
 
     def seed_source(self, input_csv_path: Path) -> int:
+        self.ensure_tables()
         raw_df = pl.read_csv(input_csv_path)
         col_map = {
             "Name": "name",
@@ -338,8 +407,7 @@ class BigQueryStorageBackend:
 
     def load_source(self) -> pl.DataFrame:
         query = f"SELECT * FROM `{self._table_ref('attorneys_source')}`"
-        arrow_table = self.client.query(query).to_arrow()
-        return pl.from_arrow(arrow_table)  # type: ignore
+        return self._query_to_df(query, "attorneys_source")
 
     def save_run(
         self,
@@ -347,11 +415,15 @@ class BigQueryStorageBackend:
         candidates: list[dict[str, Any]],
         results: list[dict[str, Any]],
     ) -> None:
+        self.ensure_tables()
         if candidates:
-            self._load_rows("match_candidates", candidates)
+            cand_df = conform(pl.DataFrame(candidates), "match_candidates")
+            self._load_rows("match_candidates", cand_df.to_dicts())
         if results:
-            self._load_rows("match_results", results)
-        self._load_rows("pipeline_runs", [run_record])
+            res_df = conform(pl.DataFrame(results), "match_results")
+            self._load_rows("match_results", res_df.to_dicts())
+        run_df = conform(pl.DataFrame([run_record]), "pipeline_runs")
+        self._load_rows("pipeline_runs", run_df.to_dicts())
 
     def merge_master(self, run_id: str) -> int:
         query = f"""
@@ -377,9 +449,9 @@ class BigQueryStorageBackend:
     def get_latest_run_id(self) -> str | None:
         query = f"SELECT run_id FROM `{self._table_ref('pipeline_runs')}` ORDER BY started_at DESC LIMIT 1"
         try:
-            arrow_table = self.client.query(query).to_arrow()
-            if len(arrow_table) > 0:
-                return str(arrow_table["run_id"][0])
+            rows = list(self.client.query(query).result())
+            if rows:
+                return str(rows[0]["run_id"])
         except Exception:
             pass
         return None
@@ -398,14 +470,14 @@ class BigQueryStorageBackend:
             q += " WHERE run_id = @run_id"
             params.append(self.bigquery.ScalarQueryParameter("run_id", "STRING", target_run_id))
         job_config = self.bigquery.QueryJobConfig(query_parameters=params)
-        return pl.from_arrow(self.client.query(q, job_config=job_config).to_arrow())  # type: ignore
+        return self._query_to_df(q, "match_results", job_config=job_config)
 
     def get_candidates(self, attorney_uuid: str) -> pl.DataFrame:
         q = f"SELECT * FROM `{self._table_ref('match_candidates')}` WHERE attorney_uuid = @attorney_uuid"
         job_config = self.bigquery.QueryJobConfig(
             query_parameters=[self.bigquery.ScalarQueryParameter("attorney_uuid", "STRING", attorney_uuid)]
         )
-        return pl.from_arrow(self.client.query(q, job_config=job_config).to_arrow())  # type: ignore
+        return self._query_to_df(q, "match_candidates", job_config=job_config)
 
     def apply_human_review(
         self,
@@ -438,10 +510,11 @@ class BigQueryStorageBackend:
         )
         self.client.query(update_query, job_config=job_config).result()
 
+        latest_run_id = self.get_latest_run_id()
         event = {
             "event_id": str(uuid.uuid4()),
             "attorney_uuid": attorney_uuid,
-            "run_id": self.get_latest_run_id(),
+            "run_id": latest_run_id,
             "action": action,
             "previous_status": "pending_review",
             "new_status": new_status,
@@ -451,28 +524,36 @@ class BigQueryStorageBackend:
             "note": note,
             "created_at": now_utc,
         }
-        self._load_rows("review_events", [event])
+        event_df = conform(pl.DataFrame([event]), "review_events")
+        self._load_rows("review_events", event_df.to_dicts())
 
-        if new_status == "human_approved" and chosen_contact_id:
-            cache_query = f"""
-            UPDATE `{self._table_ref('attorneys_source')}`
-            SET txbar_contact_id = @contact_id, last_verified_at = @verified_at
-            WHERE attorney_uuid = @attorney_uuid;
-            """
-            cache_cfg = self.bigquery.QueryJobConfig(
-                query_parameters=[
-                    self.bigquery.ScalarQueryParameter("contact_id", "STRING", chosen_contact_id),
-                    self.bigquery.ScalarQueryParameter("verified_at", "TIMESTAMP", now_utc),
-                    self.bigquery.ScalarQueryParameter("attorney_uuid", "STRING", attorney_uuid),
-                ]
-            )
-            self.client.query(cache_query, job_config=cache_cfg).result()
+        if new_status == "human_approved":
+            if chosen_contact_id:
+                cache_query = f"""
+                UPDATE `{self._table_ref('attorneys_source')}`
+                SET txbar_contact_id = @contact_id, last_verified_at = @verified_at
+                WHERE attorney_uuid = @attorney_uuid;
+                """
+                cache_cfg = self.bigquery.QueryJobConfig(
+                    query_parameters=[
+                        self.bigquery.ScalarQueryParameter("contact_id", "STRING", chosen_contact_id),
+                        self.bigquery.ScalarQueryParameter("verified_at", "TIMESTAMP", now_utc),
+                        self.bigquery.ScalarQueryParameter("attorney_uuid", "STRING", attorney_uuid),
+                    ]
+                )
+                self.client.query(cache_query, job_config=cache_cfg).result()
+            if latest_run_id:
+                self.merge_master(latest_run_id)
 
         return event
 
 
 def get_storage(settings: Settings | None = None) -> StorageBackend:
+    import os
+
     s = settings or get_settings()
+    if s.google_application_credentials:
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = s.google_application_credentials
     if s.storage_backend == "bigquery" and s.gcp_project_id:
         return BigQueryStorageBackend(project_id=s.gcp_project_id, dataset_id=s.bq_dataset)
     return CsvStorageBackend(warehouse_dir=s.resolve(s.local_warehouse_dir))

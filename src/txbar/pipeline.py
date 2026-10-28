@@ -31,6 +31,61 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(na
 logger = logging.getLogger(__name__)
 
 
+def format_delivery_dataframe(res_df: pl.DataFrame) -> pl.DataFrame:
+    """Format a match_results DataFrame into the clean enriched CSV delivery structure."""
+    delivery_cols = [
+        # Original 8 columns
+        "input_name",
+        "input_firm",
+        "input_title",
+        "input_practice",
+        "input_city",
+        "input_state",
+        "input_jd_year",
+        "input_email",
+        # Texas Bar Enriched Fields
+        "contact_id",
+        "bar_card_number",
+        "full_name",
+        "preferred_name",
+        "license_status",
+        "license_date",
+        "current_firm",
+        "firm_size",
+        "phone",
+        "address",
+        "practice_city",
+        "practice_areas",
+        "law_school",
+        "grad_year",
+        "profile_url",
+        # 4 Audit & Transparency Columns
+        "match_score",
+        "match_status",
+        "match_explanation",
+        "firm_changed",
+        "review_status",
+    ]
+    available_cols = [c for c in delivery_cols if c in res_df.columns]
+    delivery_df = res_df.select(available_cols)
+    clean_renames = {
+        "input_name": "Name",
+        "input_firm": "Original_Firm",
+        "input_title": "Title",
+        "input_practice": "Practice",
+        "input_city": "City",
+        "input_state": "State",
+        "input_jd_year": "Original_JD_Year",
+        "input_email": "Email",
+        "current_firm": "Verified_Firm",
+        "match_score": "Match_Confidence_Score",
+        "match_status": "Match_Status",
+        "match_explanation": "Audit_Explanation",
+        "firm_changed": "Firm_Change_Detected",
+    }
+    return delivery_df.rename({k: v for k, v in clean_renames.items() if k in delivery_df.columns})
+
+
 class Pipeline:
     def __init__(
         self,
@@ -265,61 +320,8 @@ class Pipeline:
 
         res_df = pl.DataFrame(results)
 
-        # A. Delivery CSV for Jose (original 8 columns + Texas Bar enrichment + 4 audit columns)
-        delivery_cols = [
-            # Original 8 columns
-            "input_name",
-            "input_firm",
-            "input_title",
-            "input_practice",
-            "input_city",
-            "input_state",
-            "input_jd_year",
-            "input_email",
-            # Texas Bar Enriched Fields
-            "contact_id",
-            "bar_card_number",
-            "full_name",
-            "preferred_name",
-            "license_status",
-            "license_date",
-            "current_firm",
-            "firm_size",
-            "phone",
-            "address",
-            "practice_city",
-            "practice_areas",
-            "law_school",
-            "grad_year",
-            "profile_url",
-            # 4 Audit & Transparency Columns
-            "match_score",
-            "match_status",
-            "match_explanation",
-            "firm_changed",
-            "review_status",
-        ]
-        available_cols = [c for c in delivery_cols if c in res_df.columns]
-        delivery_df = res_df.select(available_cols)
-        # Rename input_* back to clean original names
-        clean_renames = {
-            "input_name": "Name",
-            "input_firm": "Original_Firm",
-            "input_title": "Title",
-            "input_practice": "Practice",
-            "input_city": "City",
-            "input_state": "State",
-            "input_jd_year": "Original_JD_Year",
-            "input_email": "Email",
-            "current_firm": "Verified_Firm",
-            "match_score": "Match_Confidence_Score",
-            "match_status": "Match_Status",
-            "match_explanation": "Audit_Explanation",
-            "firm_changed": "Firm_Change_Detected",
-        }
-        final_csv_df = delivery_df.rename(
-            {k: v for k, v in clean_renames.items() if k in delivery_df.columns}
-        )
+        # A. Delivery CSV (original 8 columns + Texas Bar enrichment + 4 audit columns)
+        final_csv_df = format_delivery_dataframe(res_df)
         csv_path = out_dir / "enriched_tx_lawyers.csv"
         final_csv_df.write_csv(csv_path)
         logger.info("Exported delivery CSV to %s", csv_path)

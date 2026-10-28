@@ -12,8 +12,8 @@ def test_knowledge_base_singleton():
 def test_knowledge_base_nicknames():
     kb = get_knowledge_base()
     assert kb.are_nicknames("Sam", "Samuel")
-    assert kb.are_nicknames("Wayne", "Jack")
-    assert kb.are_nicknames("Theodore", "Taylor")
+    assert kb.are_nicknames("John", "Jack")
+    assert kb.are_nicknames("Theodore", "Ted")
     assert kb.are_nicknames("William", "Bill")
     assert not kb.are_nicknames("John", "Robert")
 

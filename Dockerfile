@@ -31,15 +31,16 @@ COPY --from=builder --chown=appuser:appgroup /app/.venv /app/.venv
 COPY --from=builder --chown=appuser:appgroup /app/src /app/src
 COPY --from=builder --chown=appuser:appgroup /app/schemas /app/schemas
 
-# Create directories for data and copy seeded files
-RUN mkdir -p /app/data/input /app/data/output /app/data/warehouse
+# Create directories for data and copy input/rules/output files
+RUN mkdir -p /app/data/input /app/data/output /app/data/rules
 COPY --chown=appuser:appgroup data/ /app/data/
 RUN chown -R appuser:appgroup /app/data
 
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
-    STORAGE_BACKEND=csv \
-    LOCAL_WAREHOUSE_DIR=/app/data/warehouse \
+    STORAGE_BACKEND=bigquery \
+    GCP_PROJECT_ID=txbar-pipeline-1027 \
+    BQ_DATASET=txbar \
     PORT=8080
 
 USER appuser

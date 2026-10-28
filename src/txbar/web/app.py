@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Literal
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Query, status
+from fastapi import Depends, FastAPI, Header, HTTPException, Query, Response, status
 from fastapi.responses import FileResponse, HTMLResponse
 from pydantic import BaseModel, Field
 
@@ -105,11 +105,27 @@ def get_stats(
 
 
 @app.get("/api/v1/export-csv")
-def export_csv(settings: Settings = Depends(get_settings)) -> FileResponse:
-    """Download the enriched Texas Bar CSV deliverable."""
+def export_csv(
+    run_id: str | None = Query(None),
+    storage: StorageBackend = Depends(get_current_storage),
+    settings: Settings = Depends(get_settings),
+) -> Response:
+    """Download the enriched Texas Bar CSV deliverable directly from cloud storage / BigQuery."""
+    from txbar.pipeline import format_delivery_dataframe
+
+    df = storage.get_all_results(run_id=run_id)
+    if len(df) > 0:
+        final_csv_df = format_delivery_dataframe(df)
+        csv_content = final_csv_df.write_csv()
+        return Response(
+            content=csv_content,
+            media_type="text/csv",
+            headers={"Content-Disposition": 'attachment; filename="enriched_tx_lawyers.csv"'},
+        )
+
     csv_path = settings.resolve(settings.output_dir / "enriched_tx_lawyers.csv")
     if not csv_path.exists():
-        raise HTTPException(status_code=404, detail="Enriched CSV file not found. Run pipeline first.")
+        raise HTTPException(status_code=404, detail="No enriched records found in storage.")
     return FileResponse(
         path=csv_path,
         media_type="text/csv",

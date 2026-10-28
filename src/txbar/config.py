@@ -14,16 +14,17 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=PROJECT_ROOT / ".env", extra="ignore")
 
-    # Storage
-    storage_backend: Literal["csv", "bigquery"] = "csv"
+    # Storage (Cloud-native BigQuery by default)
+    storage_backend: Literal["bigquery", "csv"] = "bigquery"
     local_warehouse_dir: Path = PROJECT_ROOT / "data" / "warehouse"
     output_dir: Path = PROJECT_ROOT / "data" / "output"
 
-    # GCP
-    gcp_project_id: str | None = None
+    # GCP / BigQuery
+    gcp_project_id: str | None = "txbar-pipeline-1027"
     gcp_region: str = "us-central1"
     bq_dataset: str = "txbar"
     gcs_raw_bucket: str | None = None
+    google_application_credentials: str | None = None
 
     # Scraper politeness / resilience
     scraper_min_delay_s: float = 1.2
