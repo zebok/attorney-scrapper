@@ -4,7 +4,6 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .env
-data/warehouse/
 data/output/raw/
 data/output/checkpoints/
 infra/terraform/.terraform/

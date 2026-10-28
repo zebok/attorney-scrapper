@@ -43,68 +43,43 @@ class KnowledgeBase:
     def _load_nicknames(self) -> None:
         file_path = self.rules_dir / "nicknames.json"
         self._nicknames.clear()
-        if file_path.exists():
-            try:
-                groups = json.loads(file_path.read_text(encoding="utf-8"))
-                for group in groups:
-                    s_group = {str(n).lower().strip() for n in group}
-                    for name in s_group:
-                        self._nicknames.setdefault(name, set()).update(s_group)
-                logger.debug("Loaded %d nickname mappings from %s", len(self._nicknames), file_path)
-                return
-            except Exception as e:
-                logger.warning("Failed loading %s: %s. Using default fallback.", file_path, e)
-
-        # Fallback default minimal groups
-        default_groups = [
-            {"samuel", "sam", "sammy"},
-            {"reymundo", "raymundo", "rey"},
-            {"brenton", "brent"},
-            {"john", "jack", "johnny", "jon"},
-            {"william", "will", "bill", "billy", "liam"},
-            {"theodore", "ted", "teddy", "theo", "taylor"},
-        ]
-        for g in default_groups:
-            for n in g:
-                self._nicknames.setdefault(n, set()).update(g)
+        if not file_path.exists():
+            return
+        try:
+            groups = json.loads(file_path.read_text(encoding="utf-8"))
+            for group in groups:
+                s_group = {str(n).lower().strip() for n in group}
+                for name in s_group:
+                    self._nicknames.setdefault(name, set()).update(s_group)
+            logger.debug("Loaded %d nickname mappings from %s", len(self._nicknames), file_path)
+        except Exception as e:
+            logger.warning("Failed loading %s: %s", file_path, e)
 
     def _load_firm_aliases(self) -> None:
         file_path = self.rules_dir / "firm_aliases.json"
         self._firm_aliases.clear()
-        if file_path.exists():
-            try:
-                raw = json.loads(file_path.read_text(encoding="utf-8"))
-                for canon, aliases in raw.items():
-                    s_aliases = {str(a).lower().strip() for a in aliases}
-                    self._firm_aliases[canon.lower().strip()] = s_aliases
-                logger.debug("Loaded %d firm alias mappings from %s", len(self._firm_aliases), file_path)
-                return
-            except Exception as e:
-                logger.warning("Failed loading %s: %s", file_path, e)
-
-        # Fallback
-        self._firm_aliases = {
-            "perkins coie": {"ashurst perkins coie", "ashurstperkins", "perkins"},
-            "ogletree deakins": {"ogletree deakins nash smoak stewart", "ogletree"},
-        }
+        if not file_path.exists():
+            return
+        try:
+            raw = json.loads(file_path.read_text(encoding="utf-8"))
+            for canon, aliases in raw.items():
+                s_aliases = {str(a).lower().strip() for a in aliases}
+                self._firm_aliases[canon.lower().strip()] = s_aliases
+            logger.debug("Loaded %d firm alias mappings from %s", len(self._firm_aliases), file_path)
+        except Exception as e:
+            logger.warning("Failed loading %s: %s", file_path, e)
 
     def _load_firm_domains(self) -> None:
         file_path = self.rules_dir / "firm_domains.json"
         self._firm_domains.clear()
-        if file_path.exists():
-            try:
-                raw = json.loads(file_path.read_text(encoding="utf-8"))
-                self._firm_domains = {k.lower().strip(): v.lower().strip() for k, v in raw.items()}
-                logger.debug("Loaded %d firm domain mappings from %s", len(self._firm_domains), file_path)
-                return
-            except Exception as e:
-                logger.warning("Failed loading %s: %s", file_path, e)
-
-        # Fallback
-        self._firm_domains = {
-            "ashurstperkins.com": "perkins coie",
-            "jw.com": "jackson walker",
-        }
+        if not file_path.exists():
+            return
+        try:
+            raw = json.loads(file_path.read_text(encoding="utf-8"))
+            self._firm_domains = {k.lower().strip(): v.lower().strip() for k, v in raw.items()}
+            logger.debug("Loaded %d firm domain mappings from %s", len(self._firm_domains), file_path)
+        except Exception as e:
+            logger.warning("Failed loading %s: %s", file_path, e)
 
     def _load_metro_areas(self) -> None:
         file_path = self.rules_dir / "metro_areas.json"

@@ -27,7 +27,6 @@ from txbar.config import Settings, get_settings
 from txbar.normalize import (
     EmailHints,
     ParsedName,
-    alpha_key,
     canonical_firm,
     firm_search_term,
     parse_email,

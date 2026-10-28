@@ -284,22 +284,60 @@ class CsvStorageBackend:
 
 
 class BigQueryStorageBackend:
-    """BigQuery storage backend using Load Jobs and atomic MERGE DML."""
+    """BigQuery storage backend using Load Jobs and parameterized atomic MERGE DML."""
 
     def __init__(self, project_id: str, dataset_id: str) -> None:
         from google.cloud import bigquery
 
+        self.bigquery = bigquery
         self.project_id = project_id
         self.dataset_id = dataset_id
         self.client = bigquery.Client(project=project_id)
-        # Note: In a complete GCP deployment, this implements the exact same protocol
-        # using client.load_table_from_file and client.query(MERGE_SQL).
+
+    def _table_ref(self, table: str) -> str:
+        return f"{self.project_id}.{self.dataset_id}.{table}"
+
+    def _load_rows(self, table: str, rows: list[dict[str, Any]], write_disposition: str = "WRITE_APPEND") -> None:
+        if not rows:
+            return
+        import json
+
+        cleaned = json.loads(json.dumps(rows, default=str))
+        job_config = self.bigquery.LoadJobConfig(
+            source_format=self.bigquery.SourceFormat.NEWLINE_DELIMITED_JSON,
+            write_disposition=write_disposition,
+        )
+        job = self.client.load_table_from_json(cleaned, self._table_ref(table), job_config=job_config)
+        job.result()
 
     def seed_source(self, input_csv_path: Path) -> int:
-        raise NotImplementedError("BigQuery seed implemented via bq load CLI or pipeline.")
+        raw_df = pl.read_csv(input_csv_path)
+        col_map = {
+            "Name": "name",
+            "Firm": "firm",
+            "Title": "title",
+            "Practice": "practice",
+            "City": "city",
+            "State": "state",
+            "JD Year": "jd_year",
+            "Email": "email",
+        }
+        renamed = raw_df.rename({k: v for k, v in col_map.items() if k in raw_df.columns})
+        now_utc = datetime.now(UTC)
+        uuids = [str(uuid.uuid4()) for _ in range(len(renamed))]
+        seeded = renamed.with_columns(
+            pl.Series("attorney_uuid", uuids),
+            pl.lit(None, dtype=pl.Utf8).alias("txbar_contact_id"),
+            pl.lit(None, dtype=pl.Utf8).alias("bar_card_number"),
+            pl.lit(None, dtype=pl.Datetime("us", "UTC")).alias("last_verified_at"),
+            pl.lit(now_utc).alias("ingested_at"),
+        )
+        conformed = conform(seeded, "attorneys_source")
+        self._load_rows("attorneys_source", conformed.to_dicts(), write_disposition="WRITE_TRUNCATE")
+        return len(conformed)
 
     def load_source(self) -> pl.DataFrame:
-        query = f"SELECT * FROM `{self.project_id}.{self.dataset_id}.attorneys_source`"
+        query = f"SELECT * FROM `{self._table_ref('attorneys_source')}`"
         arrow_table = self.client.query(query).to_arrow()
         return pl.from_arrow(arrow_table)  # type: ignore
 
@@ -309,28 +347,35 @@ class BigQueryStorageBackend:
         candidates: list[dict[str, Any]],
         results: list[dict[str, Any]],
     ) -> None:
-        raise NotImplementedError("BigQuery load jobs configured in pipeline.")
+        if candidates:
+            self._load_rows("match_candidates", candidates)
+        if results:
+            self._load_rows("match_results", results)
+        self._load_rows("pipeline_runs", [run_record])
 
     def merge_master(self, run_id: str) -> int:
         query = f"""
-        MERGE `{self.project_id}.{self.dataset_id}.attorneys_master` T
+        MERGE `{self._table_ref('attorneys_master')}` T
         USING (
-            SELECT * FROM `{self.project_id}.{self.dataset_id}.match_results`
-            WHERE run_id = '{run_id}' AND review_status IN ('auto_approved', 'human_approved')
+            SELECT * FROM `{self._table_ref('match_results')}`
+            WHERE run_id = @run_id AND review_status IN ('auto_approved', 'human_approved')
         ) S
         ON T.attorney_uuid = S.attorney_uuid
         WHEN MATCHED THEN
           UPDATE SET T.current_firm = S.current_firm, T.phone = S.phone, T.bar_card_number = S.bar_card_number,
-                     T.license_status = S.license_status, T.last_verified_at = S.scraped_at
+                     T.license_status = S.license_status, T.scraped_at = S.scraped_at, T.review_status = S.review_status
         WHEN NOT MATCHED THEN
           INSERT ROW;
         """
-        job = self.client.query(query)
+        job_config = self.bigquery.QueryJobConfig(
+            query_parameters=[self.bigquery.ScalarQueryParameter("run_id", "STRING", run_id)]
+        )
+        job = self.client.query(query, job_config=job_config)
         job.result()
         return job.num_dml_affected_rows or 0
 
     def get_latest_run_id(self) -> str | None:
-        query = f"SELECT run_id FROM `{self.project_id}.{self.dataset_id}.pipeline_runs` ORDER BY started_at DESC LIMIT 1"
+        query = f"SELECT run_id FROM `{self._table_ref('pipeline_runs')}` ORDER BY started_at DESC LIMIT 1"
         try:
             arrow_table = self.client.query(query).to_arrow()
             if len(arrow_table) > 0:
@@ -347,14 +392,20 @@ class BigQueryStorageBackend:
 
     def get_all_results(self, run_id: str | None = None) -> pl.DataFrame:
         target_run_id = run_id or self.get_latest_run_id()
-        q = f"SELECT * FROM `{self.project_id}.{self.dataset_id}.match_results`"
+        q = f"SELECT * FROM `{self._table_ref('match_results')}`"
+        params = []
         if target_run_id and target_run_id != "all":
-            q += f" WHERE run_id = '{target_run_id}'"
-        return pl.from_arrow(self.client.query(q).to_arrow())  # type: ignore
+            q += " WHERE run_id = @run_id"
+            params.append(self.bigquery.ScalarQueryParameter("run_id", "STRING", target_run_id))
+        job_config = self.bigquery.QueryJobConfig(query_parameters=params)
+        return pl.from_arrow(self.client.query(q, job_config=job_config).to_arrow())  # type: ignore
 
     def get_candidates(self, attorney_uuid: str) -> pl.DataFrame:
-        q = f"SELECT * FROM `{self.project_id}.{self.dataset_id}.match_candidates` WHERE attorney_uuid = '{attorney_uuid}'"
-        return pl.from_arrow(self.client.query(q).to_arrow())  # type: ignore
+        q = f"SELECT * FROM `{self._table_ref('match_candidates')}` WHERE attorney_uuid = @attorney_uuid"
+        job_config = self.bigquery.QueryJobConfig(
+            query_parameters=[self.bigquery.ScalarQueryParameter("attorney_uuid", "STRING", attorney_uuid)]
+        )
+        return pl.from_arrow(self.client.query(q, job_config=job_config).to_arrow())  # type: ignore
 
     def apply_human_review(
         self,
@@ -364,17 +415,60 @@ class BigQueryStorageBackend:
         actor: str,
         note: str = "",
     ) -> dict[str, Any]:
-        # Atomic DML UPDATE on match_results + INSERT into review_events + UPDATE attorneys_source
-        now_iso = datetime.now(UTC).isoformat()
+        now_utc = datetime.now(UTC)
         new_status = "human_approved" if action in ("approve", "select_candidate") else "human_rejected"
         update_query = f"""
-        UPDATE `{self.project_id}.{self.dataset_id}.match_results`
-        SET review_status = '{new_status}', reviewed_by = '{actor}',
-            reviewed_at = TIMESTAMP('{now_iso}'), review_note = '{note}'
-        WHERE attorney_uuid = '{attorney_uuid}';
+        UPDATE `{self._table_ref('match_results')}`
+        SET review_status = @new_status,
+            reviewed_by = @actor,
+            reviewed_at = @reviewed_at,
+            review_note = @note,
+            contact_id = COALESCE(@chosen_contact_id, contact_id)
+        WHERE attorney_uuid = @attorney_uuid;
         """
-        self.client.query(update_query).result()
-        return {"attorney_uuid": attorney_uuid, "new_status": new_status, "actor": actor}
+        job_config = self.bigquery.QueryJobConfig(
+            query_parameters=[
+                self.bigquery.ScalarQueryParameter("new_status", "STRING", new_status),
+                self.bigquery.ScalarQueryParameter("actor", "STRING", actor),
+                self.bigquery.ScalarQueryParameter("reviewed_at", "TIMESTAMP", now_utc),
+                self.bigquery.ScalarQueryParameter("note", "STRING", note),
+                self.bigquery.ScalarQueryParameter("chosen_contact_id", "STRING", chosen_contact_id),
+                self.bigquery.ScalarQueryParameter("attorney_uuid", "STRING", attorney_uuid),
+            ]
+        )
+        self.client.query(update_query, job_config=job_config).result()
+
+        event = {
+            "event_id": str(uuid.uuid4()),
+            "attorney_uuid": attorney_uuid,
+            "run_id": self.get_latest_run_id(),
+            "action": action,
+            "previous_status": "pending_review",
+            "new_status": new_status,
+            "previous_contact_id": None,
+            "new_contact_id": chosen_contact_id,
+            "actor": actor,
+            "note": note,
+            "created_at": now_utc,
+        }
+        self._load_rows("review_events", [event])
+
+        if new_status == "human_approved" and chosen_contact_id:
+            cache_query = f"""
+            UPDATE `{self._table_ref('attorneys_source')}`
+            SET txbar_contact_id = @contact_id, last_verified_at = @verified_at
+            WHERE attorney_uuid = @attorney_uuid;
+            """
+            cache_cfg = self.bigquery.QueryJobConfig(
+                query_parameters=[
+                    self.bigquery.ScalarQueryParameter("contact_id", "STRING", chosen_contact_id),
+                    self.bigquery.ScalarQueryParameter("verified_at", "TIMESTAMP", now_utc),
+                    self.bigquery.ScalarQueryParameter("attorney_uuid", "STRING", attorney_uuid),
+                ]
+            )
+            self.client.query(cache_query, job_config=cache_cfg).result()
+
+        return event
 
 
 def get_storage(settings: Settings | None = None) -> StorageBackend:

@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any, Literal
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Query, status
-from fastapi.responses import HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from pydantic import BaseModel, Field
 
 from txbar.client import TexasBarClient
@@ -79,7 +79,19 @@ def get_stats(
     results = storage.get_all_results(run_id=run_id)
     total = len(results)
     if total == 0:
-        return {"total": 0, "auto_approved": 0, "pending_review": 0, "not_found": 0, "firm_changes": 0}
+        return {
+            "total": 0,
+            "auto_approved": 0,
+            "pending_review": 0,
+            "not_found": 0,
+            "firm_changes": 0,
+            "phones_found": 0,
+        }
+    phones_found = int(
+        results["phone"].is_not_null().sum()
+        if "phone" in results.columns
+        else 0
+    )
     return {
         "total": total,
         "auto_approved": int((results["review_status"] == "auto_approved").sum()),
@@ -88,7 +100,21 @@ def get_stats(
         "human_rejected": int((results["review_status"] == "human_rejected").sum()),
         "not_found": int((results["review_status"] == "not_found").sum()),
         "firm_changes": int((results["firm_changed"] == True).sum()),  # noqa: E712
+        "phones_found": phones_found,
     }
+
+
+@app.get("/api/v1/export-csv")
+def export_csv(settings: Settings = Depends(get_settings)) -> FileResponse:
+    """Download the enriched Texas Bar CSV deliverable."""
+    csv_path = settings.resolve(settings.output_dir / "enriched_tx_lawyers.csv")
+    if not csv_path.exists():
+        raise HTTPException(status_code=404, detail="Enriched CSV file not found. Run pipeline first.")
+    return FileResponse(
+        path=csv_path,
+        media_type="text/csv",
+        filename="enriched_tx_lawyers.csv",
+    )
 
 
 @app.get("/api/v1/queue")

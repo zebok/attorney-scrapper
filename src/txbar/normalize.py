@@ -1,8 +1,8 @@
-"""Name, email, firm and geography normalization.
+"""Name, email, firm and geography normalization utilities.
 
-Every trap found in the test sheet is handled here and covered by tests/test_normalize.py:
-generational suffixes (III, IV), initials (W., J.W.), compound given/family names, hyphens,
-apostrophes, nicknames (Sam, Rey, Brent, Jack), firm legal suffixes and firm mergers.
+Handles generational suffixes (Jr., Sr., II, III, IV), first/middle initials,
+compound surnames, hyphenated surnames, corporate legal suffixes (LLP, PLLC, PC),
+and NANP / E.164 phone formatting.
 """
 
 from __future__ import annotations

@@ -229,12 +229,20 @@ class FirmAffiliationSignal:
         input_firm = (target_record.get("firm") or "").strip()
         cand_firm = (candidate_profile.firm if candidate_profile else candidate_hit.firm).strip()
 
-        if not input_firm or not cand_firm:
+        if not input_firm:
             return SignalResult(
                 signal_name=self.signal_name,
                 score=0.0,
                 max_weight=max_pts,
                 explanation="Firm unspecified",
+            )
+
+        if not cand_firm:
+            return SignalResult(
+                signal_name=self.signal_name,
+                score=round(max_pts * 0.50, 2),
+                max_weight=max_pts,
+                explanation="Firm not listed on Bar profile",
             )
 
         norm_input = canonical_firm(input_firm)
@@ -280,7 +288,7 @@ class FirmAffiliationSignal:
                 signal_name=self.signal_name,
                 score=round(max_pts * (sim / 100.0), 2),
                 max_weight=max_pts,
-                explanation=f"Firm high fuzzy match ({sim}%): '{cand_firm}'",
+                explanation=f"Firm high fuzzy match ({sim:.0f}%): '{cand_firm}'",
             )
 
         # 5. Distinctive word overlap
@@ -355,23 +363,33 @@ class TemporalCareerSignal:
                 explanation=f"Exact graduation/admission year match ({target_year})",
             )
 
-        # 2. Candidate admission within +-1 year of target JD
-        if cand_lic_year and abs(cand_lic_year - target_year) <= 1:
+        # 2. Candidate graduation or admission within +-1 year of target JD
+        if (cand_grad and abs(cand_grad - target_year) <= 1) or (
+            cand_lic_year and abs(cand_lic_year - target_year) <= 1
+        ):
+            matched_yr = cand_grad if (cand_grad and abs(cand_grad - target_year) <= 1) else cand_lic_year
             return SignalResult(
                 signal_name=self.signal_name,
-                score=max_pts * 0.90,
+                score=round(max_pts * 0.90, 2),
                 max_weight=max_pts,
-                explanation=f"Admission year {cand_lic_year} aligns closely with JD {target_year}",
+                explanation=f"Graduation/admission year {matched_yr} aligns closely with JD {target_year} (+-1 yr)",
             )
 
-        # 3. Candidate graduation within +-3 years
+        # 3. Candidate graduation within +-2 to +-3 years
         ref_year = cand_grad or cand_lic_year
         if ref_year:
             delta = abs(ref_year - target_year)
+            if delta == 2:
+                return SignalResult(
+                    signal_name=self.signal_name,
+                    score=round(max_pts * 0.65, 2),
+                    max_weight=max_pts,
+                    explanation=f"Moderate graduation delta (+-2 years: {ref_year} vs {target_year})",
+                )
             if delta <= 3:
                 return SignalResult(
                     signal_name=self.signal_name,
-                    score=round(max_pts * 0.35, 2),
+                    score=round(max_pts * 0.40, 2),
                     max_weight=max_pts,
                     explanation=f"Moderate graduation delta (+-{delta} years)",
                 )

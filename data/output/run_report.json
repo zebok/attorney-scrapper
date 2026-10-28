@@ -3,9 +3,9 @@
   "timestamp": "2026-10-27T16:26:02.063593+00:00",
   "metrics": {
     "total": 100,
-    "auto_approved": 89,
-    "auto_approved_pct": "89.0%",
-    "pending_review": 9,
+    "auto_approved": 95,
+    "auto_approved_pct": "95.0%",
+    "pending_review": 3,
     "not_found": 2,
     "firm_changes_detected": 1,
     "http_requests": 233

@@ -5,7 +5,17 @@
 [![Code style: ruff](https://img.shields.io/badge/code%20style-ruff-000000.svg)](https://github.com/astral-sh/ruff)
 [![Architecture: GCP + BigQuery](https://img.shields.io/badge/Architecture-GCP%20%7C%20BigQuery-4285F4.svg)](https://cloud.google.com/)
 
-A production-grade, resilient data extraction and identity resolution pipeline built for **Recruiter BackOffice**. It enriches attorney rosters against the **State Bar of Texas** official directory, resolves homonyms via multi-signal confidence scoring, detects lateral firm moves, enforces strict data-quality gates, and provides an interactive Human-in-the-Loop review console.
+A production-grade, resilient data extraction and identity resolution pipeline built for **Recruiter BackOffice**. It enriches attorney rosters against the **State Bar of Texas** official directory, resolves homonyms via multi-signal confidence scoring, detects lateral firm moves, enforces strict data-quality gates, and provides a clean executive review & export web console.
+
+### Batch Results Summary (100 Texas Attorneys)
+
+| Metric | Count | Details |
+|---|---|---|
+| **Total Roster Processed** | **100** | Loaded from input sheet (`data/input/tx_lawyers.csv`) |
+| **Auto-Verified Matches ($\ge 85\%$)** | **95 (95.0%)** | Exact or alias-verified identity matches automatically promoted to `attorneys_master` |
+| **Direct Phones Extracted** | **81** | Normalized and validated to NANP / E.164 (`+1XXXXXXXXXX`) |
+| **Held for Human Review ($55\text{--}84\%$)** | **3 (3.0%)** | **1 Lateral Firm Move** (*Joshua Michaels*: Buchalter $\rightarrow$ Griffith Davison) + **2 Incomplete Bar Profiles** (no firm/address listed on Bar site) |
+| **Not Licensed / Not Found ($< 55\%$)** | **2 (2.0%)** | *Breegan Mayrant* (0 hits in TX) and *Christie Westmoreland* (only 1998 municipal prosecutor in TX; rejected as homonym) |
 
 ---
 
@@ -47,9 +57,39 @@ flowchart TD
     end
 ```
 
-### 1.1 Extensible Senior Architecture & Design Patterns
+### 1.1 Extensible Multi-State Architecture & Design Patterns
 
-The codebase avoids hardcoded values and tight coupling by implementing enterprise design patterns:
+To scale seamlessly from Texas to 50+ state bar directories without rewriting entity resolution or BigQuery logic, the internal engine decouples **Directory Providers**, **Declarative Domain Rules**, and **Composite Scoring Signals**:
+
+```mermaid
+flowchart TD
+    subgraph Data-Driven Configuration
+        R1[data/rules/nicknames.json] --> KB[KnowledgeBase Service]
+        R2[data/rules/firm_aliases.json] --> KB
+        R3[data/rules/metro_areas.json] --> KB
+        R4[data/rules/firm_domains.json] --> KB
+        CFG[ScoringConfig: weights & thresholds] --> ENG[Entity Resolution Engine]
+    end
+
+    subgraph Provider Adapter Pattern
+        TXP[TexasBarClient] -.->|implements| DP[DirectoryProvider Protocol]
+        CAP[CaliforniaBarClient] -.->|implements| DP
+        NYP[NewYorkBarClient] -.->|implements| DP
+    end
+
+    subgraph Composite Scoring Strategy
+        ENG --> S1[NameMatchSignal: 35 pts]
+        ENG --> S2[FirmAffiliationSignal: 25 pts]
+        ENG --> S3[TemporalCareerSignal: 25 pts]
+        ENG --> S4[GeographicSignal: 15 pts]
+        KB -.-> S1
+        KB -.-> S2
+        KB -.-> S4
+    end
+
+    DP --> ENG
+    ENG --> OUT[MatchDecision & Audit Trail]
+```
 
 1. **Directory Provider Abstraction (Adapter Pattern)**:
    * `DirectoryProvider` (`src/txbar/provider.py`) decouples the matching engine from Texas Bar HTML forms.
@@ -66,6 +106,21 @@ The codebase avoids hardcoded values and tight coupling by implementing enterpri
    * Governed by `ScoringConfig` (Pydantic), eliminating hardcoded magic numbers and enabling runtime tuning.
 4. **Dependency Injection**:
    * `Pipeline` accepts an injected `DirectoryProvider` and `MatchEngine`, enabling fast, 100% mocked testing with zero external HTTP dependencies (`tests/test_pipeline_di.py`).
+
+### 1.2 Exploratory Findings & Real-World US Legal Nuances
+
+Before writing the scraper, we audited the 100-attorney input sheet against live `texasbar.com` profiles and identified five domain nuances specific to US legal directories:
+
+1. **Middle-Name Preference & Initials (`W. Buechele` $\rightarrow$ `'Bryant Buechele'`)**:
+   * In US legal practice, attorneys frequently abbreviate their legal first name (`W.`) and practice under their middle name (`Bryant`), reflected in their corporate email (`bbuechele@winstead.com`). Searching `"W. Buechele"` on `texasbar.com` returns 0 hits. By querying `Name = Buechele` + `CompanyName = Winstead` and extracting the hCard quoted nickname (`'Bryant Buechele'`), the pipeline resolves him at 100%.
+2. **Generational Suffixes & Informal Nicknames (`Wayne Zeringue III` $\rightarrow$ `'Jack'`)**:
+   * Roman numerals (`III`, `IV`) break standard surname lookups if not stripped prior to querying. Furthermore, attorneys often use traditional US nicknames (`'Jack'` for *Wayne Zeringue III*, matching `jzeringue@sidley.com`; `'Taylor'` for *Theodore N. McDowell III*).
+3. **Single vs. Compound Surnames (`Luisa Gutierrez Quintero` vs. `Mary Anna Rutledge`)**:
+   * A 3-token name in the US can either be a compound given name (*Mary Anna* + *Rutledge*) or a Hispanic compound family name (*Luisa* + *Gutierrez Quintero*). Our normalizer inspects the corporate email prefix (`lgutierrezquintero@` vs. `mrutledge@`) to determine the exact surname boundary before querying the directory.
+4. **Texas Metro Sprawl (`Dallas` vs. `Coppell` / `Plano`)**:
+   * Recruiting rosters list major market hubs (`Dallas`, `Houston`, `Austin`), whereas the State Bar records the physical suburban municipality of the office (e.g., *Aileen Glaeser* listed as Dallas in the sheet, but registered in *Coppell, TX*). Grouping suburbs into Metropolitan Statistical Areas (`data/rules/metro_areas.json`) prevents false negatives.
+5. **Out-of-State Lateral Admissions (`JD Year` $\neq$ `TX License Date`)**:
+   * Many BigLaw attorneys graduate law school in NY/CA (`JD Year = 2018`) and waive into the Texas Bar years later (`TX License Date = 2025`, e.g., *Patrick Dolan*). Comparing `JD Year` against both the law school graduation date and admission date prevents penalizing lateral transfers.
 
 ---
 
@@ -145,21 +200,16 @@ When an attorney has $\ge 30$ points on Name match and matches City / Admission 
 
 ---
 
-## 3. Human-in-the-Loop Review Console
+## 3. Executive Review & Export Console
 
-To fulfill the vision of an interactive audit and human correction interface, the project includes a dark-themed, glassmorphic review console built into the FastAPI service (`http://localhost:8000`).
+The project includes a clean, light-mode web application built with FastAPI (`http://localhost:8000`) designed for recruiters and leadership to inspect results, download the enriched CSV, and review flagged records or lateral firm moves.
 
 ### Features:
-- **Live Health Status**: Real-time ping and canary verification of the Texas Bar directory.
-- **Queue vs. Master Views**: Filter by Pending Review, All Records, or Detected Firm Moves.
-- **Side-by-Side Audit Drawer**: Compares original recruiter input against Texas Bar official record.
-- **Candidate Deselector**: If multiple homonyms were evaluated, the reviewer can inspect all candidate cards with their individual scores and select an alternative candidate with a single click.
-- **Atomic PATCH Decision**: Clicking **Approve (OK)** or **Reject**:
-  1. Issues an audited `PATCH /api/v1/review/{attorney_uuid}` request with `X-Reviewer-Token`.
-  2. Updates `review_status = 'human_approved'` in `match_results`.
-  3. Appends an immutable audit record to `review_events`.
-  4. **Feeds back the verified `contact_id` into `attorneys_source`**, guaranteeing future runs query directly by ID.
-  5. Merges the record into `attorneys_master`.
+- **One-Click CSV Export**: Download `enriched_tx_lawyers.csv` directly from the header (`GET /api/v1/export-csv`).
+- **Executive KPI Summary**: Displays total roster analyzed, verified match rate (95%), extracted direct phone count, and lateral firm moves.
+- **Filtered Views**: Browse **All Attorneys (100)**, **Needs Review (3)**, **Firm Moves (1)**, or run an on-demand **Live Bar Lookup** against `texasbar.com`.
+- **Side-by-Side Comparison Drawer**: Compares original input sheet fields against the official State Bar of Texas profile with a visual 4-signal confidence breakdown.
+- **Feedback Loop on Confirmation**: Confirming a match updates `match_results`, logs an audit entry in `review_events`, and **caches the verified `contact_id` back into `attorneys_source`** so future batch runs query the profile directly by ID.
 
 ---
 
@@ -194,7 +244,7 @@ uv sync
 ```bash
 uv run pytest -v
 ```
-*Runs 19 offline tests validating normalization traps, hCard HTML parsing, homonym disambiguation, and DQ gates.*
+*Runs 29 offline tests validating normalization traps, hCard HTML parsing, homonym disambiguation, declarative rules, dependency injection, and DQ gates.*
 
 ### Step 3: Run the Live Enrichment Pipeline
 To run a quick trial on the first 3 attorneys:
@@ -222,7 +272,7 @@ Open your browser at **`http://localhost:8000`** to inspect match scores, view c
 
 ### Build Multi-Architecture Image
 ```bash
-docker build -f docker/Dockerfile -t txbar:latest .
+docker build -t txbar:latest .
 ```
 
 ### Run Locally via Docker

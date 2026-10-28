@@ -1,0 +1,101 @@
+attorney_uuid,name,firm,title,practice,city,state,jd_year,email,txbar_contact_id,bar_card_number,last_verified_at,ingested_at
+620502e6-987c-4964-9191-bb7cd6c66b18,Jason Burner,Winstead PC,Of Counsel,Corporate,Austin,Texas,2016,jburner@winstead.com,,,,2026-10-26T15:15:54.284672+0000
+32ddb330-8c50-4734-9363-d6c645c68b91,Patrick Dolan,Pillsbury Winthrop Shaw Pittman LLP,Counsel,Corporate,Austin,Texas,2018,patrick.dolan@pillsburylaw.com,,,,2026-10-26T15:15:54.284672+0000
+ab2dc9ff-5c87-4217-8fdd-ae41ccd01aae,Jennifer Freel,Jackson Walker LLP,Partner,Litigation,Austin,Texas,2005,jfreel@jw.com,,,,2026-10-26T15:15:54.284672+0000
+c8b8edb4-791d-4727-9e94-0641b8e14e6b,Mark Macmurdo,Armbrust & Brown PLLC,Associate,Real Estate,Austin,Texas,2016,mmacmurdo@abaustin.com,,,,2026-10-26T15:15:54.284672+0000
+f73dbe02-4b5b-4f4a-bf36-6ad5affc81c7,Rachel Malhiet,Kirkland & Ellis LLP,Partner,Tax,Austin,Texas,2018,rachel.malhiet@kirkland.com,,,,2026-10-26T15:15:54.284672+0000
+872b9a71-14ca-47f3-8022-5634d7b957c3,Theodore McDowell,Jackson Walker LLP,Partner,Corporate,Austin,Texas,2017,tmcdowell@jw.com,,,,2026-10-26T15:15:54.284672+0000
+a355fa9e-e554-49ec-8810-476c54f392cb,Colin Mize,Wick Phillips,Partner,Corporate,Austin,Texas,2017,colin.mize@wickphillips.com,,,,2026-10-26T15:15:54.284672+0000
+35e6da88-9204-447e-8c60-02bb463d19d2,Jennifer Pier,Husch Blackwell LLP,Senior Associate,Real Estate,Austin,Texas,2020,jennifer.pier@huschblackwell.com,,,,2026-10-26T15:15:54.284672+0000
+a9ca7909-d11c-4dbb-8cb1-48d7fde715b6,Brian Pullin,Husch Blackwell LLP,Partner,Energy,Austin,Texas,2011,brian.pullin@huschblackwell.com,,,,2026-10-26T15:15:54.284672+0000
+77e74734-9128-4d62-9f56-57044023d323,Luisa Gutierrez Quintero,King & Spalding LLP,Senior Associate,Litigation,Austin,Texas,2013,lgutierrezquintero@kslaw.com,,,,2026-10-26T15:15:54.284672+0000
+06caff1c-d942-43f2-82a3-7e9742da0678,Mitchell Alleluia-Feinberg,Haynes and Boone LLP,Associate,Litigation,Dallas,Texas,2017,mitchell.alleluia-feinberg@haynesboone.com,,,,2026-10-26T15:15:54.284672+0000
+7f2c3155-be3f-46ed-a514-870d9f9f83bf,Adrian Allen,Jackson Walker LLP,Associate,Corporate,Dallas,Texas,2018,aallen@jw.com,,,,2026-10-26T15:15:54.284672+0000
+41a9ff35-c2ff-4f34-acb1-b7707a756e48,Michael Allen,Higier Allen & Lautin PC,Partner,Real Estate,Dallas,Texas,2007,mallen@higierallen.com,,,,2026-10-26T15:15:54.284672+0000
+f71a888e-c3ad-47f3-928a-0787310a2394,Catherine Barbaree,Polsinelli PC,Associate,Labor & Employment,Dallas,Texas,2017,cbarbaree@polsinelli.com,,,,2026-10-26T15:15:54.284672+0000
+ba815fd7-8d7c-4890-9f91-2864233dcf67,Hunter Barker,Polsinelli PC,Partner,Corporate,Dallas,Texas,2017,hbarker@polsinelli.com,,,,2026-10-26T15:15:54.284672+0000
+0d325952-850b-481a-84ad-ef1006ba58a6,Parker Bergeron,Bellinger & Suberg LLP,Associate,Real Estate,Dallas,Texas,2017,pbergeron@bellingersuberg.com,,,,2026-10-26T15:15:54.284672+0000
+4a0898d2-10fe-4753-b2b2-02020da35817,Bailey Blaies,Caldwell Cassady & Curry PC,Associate,Litigation,Dallas,Texas,2018,bblaies@caldwellcc.com,,,,2026-10-26T15:15:54.284672+0000
+840017f7-5151-4a48-bb18-2d3d21b204cf,Rachel Boyce,Perkins Coie LLP,Counsel,Real Estate,Dallas,Texas,2015,rachel.boyce@ashurstperkins.com,,,,2026-10-26T15:15:54.284672+0000
+a08dda44-b1ff-49f2-b525-f4888ed2d2ce,Sam Bragg,Alston & Bird LLP,Partner,Litigation,Dallas,Texas,2015,sam.bragg@alston.com,,,,2026-10-26T15:15:54.284672+0000
+cb4e85d3-d3ce-4ee6-88ee-11c2aa8fade6,Collin Brodrick,Fisher & Phillips LLP,Partner,Labor & Employment,Dallas,Texas,2013,cbrodrick@fisherphillips.com,,,,2026-10-26T15:15:54.284672+0000
+7adf6c56-29e2-45ad-b97d-eae9639e36e5,W. Buechele,Winstead PC,Of Counsel,Real Estate,Dallas,Texas,2016,bbuechele@winstead.com,,,,2026-10-26T15:15:54.284672+0000
+6373e37b-8d29-403e-89b3-5edc3771acd1,Zackary Callarman,Reed Smith LLP,Counsel,Banking,Dallas,Texas,2013,,,,,2026-10-26T15:15:54.284672+0000
+2b26b27a-086c-460c-8023-50bc15807643,Abigail Campbell,Condon Tobin Sladek Thornton Nerenberg PLLC,Partner,Litigation,Dallas,Texas,2017,acampbell@condontobin.com,,,,2026-10-26T15:15:54.284672+0000
+c70cb11c-f827-471c-97bb-8ea03606ef79,Alan Carrillo,Brown Fox PLLC,Partner,Litigation,Dallas,Texas,2018,alan@brownfoxlaw.com,,,,2026-10-26T15:15:54.284672+0000
+4ccfa1a6-e35c-4077-aeab-d43f3b85e900,Hannah Corning,Gibson Dunn & Crutcher LLP,Associate,Litigation,Dallas,Texas,2017,hcorning@gibsondunn.com,,,,2026-10-26T15:15:54.284672+0000
+c4c632ca-d1b8-4985-a83f-36515282fd0e,Virginia Cox,Cobb Martinez Woodward PLLC,Partner,Litigation,Dallas,Texas,2017,vcox@cobbmartinez.com,,,,2026-10-26T15:15:54.284672+0000
+6e606f31-64d9-4016-96ad-6a535c68be15,Kayla Cristales,Haynes and Boone LLP,Counsel,Healthcare,Dallas,Texas,2017,kayla.cristales@haynesboone.com,,,,2026-10-26T15:15:54.284672+0000
+f90b0284-87c7-477e-a74e-8a2b7e1de5c6,Shayna Dickman,Ogletree Deakins,Senior Counsel,Labor & Employment,Dallas,Texas,2012,shayna.dickman@ogletree.com,,,,2026-10-26T15:15:54.284672+0000
+d06f24a2-f953-4015-8423-131523772411,Jamie Drillette,Lynn Pinker Hurst & Schwegmann,Associate,Litigation,Dallas,Texas,2017,jdrillette@lynnllp.com,,,,2026-10-26T15:15:54.284672+0000
+72b22965-86f2-4657-8c14-bc40561b6021,Mia Falzarano,Alston & Bird LLP,Senior Associate,Litigation,Dallas,Texas,2017,mia.falzarano@alston.com,,,,2026-10-26T15:15:54.284672+0000
+c696cec8-e0ba-4b0b-962f-65f2c7b0bc02,Ryan Foster,Higier Allen & Lautin PC,Partner,Real Estate,Dallas,Texas,2005,rfoster@higierallen.com,,,,2026-10-26T15:15:54.284672+0000
+bdb1532b-5c53-42cf-8d23-8bf245445bde,Gregory Franklin,Greenberg Traurig LLP,Associate,Litigation,Dallas,Texas,2017,gregory.franklin@gtlaw.com,,,,2026-10-26T15:15:54.284672+0000
+90212b32-f781-447f-bbf4-f6d704691f58,Katherine Geddes,Reed Smith LLP,Partner,Corporate,Dallas,Texas,2017,kgeddes@reedsmith.com,,,,2026-10-26T15:15:54.284672+0000
+72fdf254-4557-424f-88cc-fda3b2e12d6a,Aileen Glaeser,Martin Disiere Jefferson & Wisdom,Partner,Litigation,Dallas,Texas,2017,glaeser@mdjwlaw.com,,,,2026-10-26T15:15:54.284672+0000
+b1ebc1ea-09f3-434c-972e-0dbdfbb05d8b,Dean Gould,Dykema Gossett PLLC,Partner,Corporate,Dallas,Texas,2017,dgould@dykema.com,,,,2026-10-26T15:15:54.284672+0000
+235f2031-7e6c-4001-a99d-fbe383d23711,Zoe Grisz,Greenberg Traurig LLP,Associate,Labor & Employment,Dallas,Texas,2017,zoe.grisz@gtlaw.com,,,,2026-10-26T15:15:54.284672+0000
+69e646c8-3520-4a2c-8bf7-8a237e881104,Dana Hilzendager,Wick Phillips,Partner,Labor & Employment,Dallas,Texas,2017,dana.hilzendager@wickphillips.com,,,,2026-10-26T15:15:54.284672+0000
+3f91a882-bb53-4149-bec3-ff69b6f20d58,John Hunt,Paul Hastings LLP,Associate,Corporate,Dallas,Texas,2018,johnhunt@paulhastings.com,,,,2026-10-26T15:15:54.284672+0000
+7020a7ce-af84-41f4-929d-1e9a53ceb1a9,Wayne Zeringue III,Sidley Austin LLP,Partner,Corporate,Dallas,Texas,2017,jzeringue@sidley.com,,,,2026-10-26T15:15:54.284672+0000
+02297321-e3eb-471b-ab75-b19f034bc6b9,Laura Jacobi,Greenberg Traurig LLP,Of Counsel,Real Estate,Dallas,Texas,2017,laura.jacobi@gtlaw.com,,,,2026-10-26T15:15:54.284672+0000
+1b9d7fc0-92c3-400b-9638-35af8385aec5,Justin Jones,Fee Smith & Sharp LLP,Partner,Litigation,Dallas,Texas,2012,jjones@feesmith.com,,,,2026-10-26T15:15:54.284672+0000
+5901a566-97cf-4f35-aa83-19284f4b9bab,Christopher Konopka,Haynes and Boone LLP,Partner,Real Estate,Dallas,Texas,2014,christopher.konopka@haynesboone.com,,,,2026-10-26T15:15:54.284672+0000
+81f2518d-278a-46e4-b924-82e38f09807e,Breegan Mayrant,Vartabedian Katz Hester & Haynes LLP,Senior Associate,Labor & Employment,Dallas,Texas,2017,breegan.mayrant@vkhh.com,,,,2026-10-26T15:15:54.284672+0000
+d4d9069d-0044-493a-8708-650fd09af712,Camie McKee,Haynes and Boone LLP,Associate,Corporate,Dallas,Texas,2018,camie.mckee@haynesboone.com,,,,2026-10-26T15:15:54.284672+0000
+996df6cc-d5ac-40dc-8229-5eb428270f7e,Mark McMullen,Jackson Walker LLP,Partner,Corporate,Dallas,Texas,2017,mmcmullen@jw.com,,,,2026-10-26T15:15:54.284672+0000
+4f6f9c81-5114-40af-8462-0747e70336c0,Laura Mezher,McGuireWoods LLP,Associate,Tax,Dallas,Texas,2015,lmezher@mcguirewoods.com,,,,2026-10-26T15:15:54.284672+0000
+98e3955e-10a2-4cb0-9ec8-4a7a205b083a,Ashbey Morgan,Gibson Dunn & Crutcher LLP,Associate,Litigation,Dallas,Texas,2017,anmorgan@gibsondunn.com,,,,2026-10-26T15:15:54.284672+0000
+52f6d74c-1884-4eb5-97c2-a7e5d948ce65,Brad Nes,"Morgan, Lewis & Bockius LLP",Office Managing Partner,Litigation,Dallas,Texas,2005,brad.nes@morganlewis.com,,,,2026-10-26T15:15:54.284672+0000
+245d61d9-ed30-441b-aec2-ee95389a99b6,Jervonne Newsome,Winston Taylor LLP,Partner,Litigation,Dallas,Texas,2013,jervonne.newsome@winstontaylor.com,,,,2026-10-26T15:15:54.284672+0000
+88b85921-8624-403f-a29e-f217fa0e7d7e,Michael O'Brien,Carrington Coleman Sloman & Blumenthal LLP,Associate,Litigation,Dallas,Texas,2017,mobrien@ccsb.com,,,,2026-10-26T15:15:54.284672+0000
+a5b261c9-9fc4-4a15-a3ad-faf25432a929,Jackson Oliver,Holland & Knight LLP,Associate,Tax,Dallas,Texas,2017,jackson.oliver@hklaw.com,,,,2026-10-26T15:15:54.284672+0000
+2bfbab99-163d-4db6-8cbe-ea3f4554a7a9,Sheila Petty,Holland & Knight LLP,Associate,Real Estate,Dallas,Texas,2017,sheila.petty@hklaw.com,,,,2026-10-26T15:15:54.284672+0000
+fcda555a-a3c3-45d8-8a5f-7b2a3d3974ee,Aaron Pirouznia,Fish & Richardson P.C.,Partner,Intellectual Property,Dallas,Texas,2017,pirouznia@fr.com,,,,2026-10-26T15:15:54.284672+0000
+ea0daa13-d503-4152-b201-7dd402087478,Michael Pomeroy,Skiermont Derby LLP,Partner,Intellectual Property,Dallas,Texas,2017,mpomeroy@skiermontderby.com,,,,2026-10-26T15:15:54.284672+0000
+a9aee9c2-5247-4352-88d7-86170b261434,Jamie Raju,Haynes and Boone LLP,Associate,Intellectual Property,Dallas,Texas,2017,jamie.raju@haynesboone.com,,,,2026-10-26T15:15:54.284672+0000
+f42f63c1-b6ba-422c-ba01-f38b7c6cc34b,Michael Roberts,Sidley Austin LLP,Senior Associate,Intellectual Property,Dallas,Texas,2017,mlroberts@sidley.com,,,,2026-10-26T15:15:54.284672+0000
+47207f95-722c-44a7-b2a6-731e3d856b00,Jessica Schauwecker,Katten Muchin Rosenman LLP,Partner,Corporate,Dallas,Texas,2017,jessica.schauwecker@katten.com,,,,2026-10-26T15:15:54.284672+0000
+7962899f-d351-4254-b87f-fd2b18b0a1e5,Laura Shapiro,Haynes and Boone LLP,Partner,Corporate,Dallas,Texas,2017,laura.shapiro@haynesboone.com,,,,2026-10-26T15:15:54.284672+0000
+80061325-c65b-4e90-96ec-ba202cab6826,Sarah-Michelle Stearns,Greenberg Traurig LLP,Of Counsel,Litigation,Dallas,Texas,2016,sarahmichelle.stearns@gtlaw.com,,,,2026-10-26T15:15:54.284672+0000
+0e263089-4546-4efd-bb11-c3f2e176b4b7,Brenton Stewart,Baker McKenzie,Partner,Corporate,Dallas,Texas,2016,brent.stewart@bakermckenzie.com,,,,2026-10-26T15:15:54.284672+0000
+63266e80-0c03-4c0e-b137-cdafa8ced283,Jeffrey Swigart,Vinson & Elkins LLP,Counsel,Intellectual Property,Dallas,Texas,2016,jswigart@velaw.com,,,,2026-10-26T15:15:54.284672+0000
+3a42ab21-9d2a-418a-9b60-658d3a7496da,Shelby Taylor,Carrington Coleman Sloman & Blumenthal LLP,Associate,Labor & Employment,Dallas,Texas,2018,staylor@ccsb.com,,,,2026-10-26T15:15:54.284672+0000
+540fb797-8204-469d-bc66-8cb5a6ab27ef,Zachary Tobolowsky,Greenberg Traurig LLP,Partner,Litigation,Dallas,Texas,2017,zachary.tobolowsky@gtlaw.com,,,,2026-10-26T15:15:54.284672+0000
+b1f9319a-48bf-4a4b-a2ae-ff09665baaf7,Theodora Volsky,Baker McKenzie,Associate,Corporate,Dallas,Texas,2016,theodora.volsky@bakermckenzie.com,,,,2026-10-26T15:15:54.284672+0000
+3bd1bc64-8435-47b1-aefd-adb5f283f03b,Christie Westmoreland,Bracewell LLP,Partner,Real Estate,Dallas,Texas,2016,christie.westmoreland@bracewell.com,,,,2026-10-26T15:15:54.284672+0000
+92d14e82-d15b-41d8-a27a-d23ea333ae92,Joseph Austin,Kelly Hart & Hallman LLP,Partner,Litigation,Fort Worth,Texas,2016,joseph.austin@kellyhart.com,,,,2026-10-26T15:15:54.284672+0000
+0c4cdce7-3216-43ab-8eec-157a1cb7f76a,Brooke Alger,Akin Gump Strauss Hauer & Feld LLP,Counsel,Energy,Houston,Texas,2018,balger@akingump.com,,,,2026-10-26T15:15:54.284672+0000
+fb460acf-5470-4ad4-a86f-23746b7a5de1,Mark Appling,MehaffyWeber PC,Partner,Litigation,Houston,Texas,2013,markappling@mehaffyweber.com,,,,2026-10-26T15:15:54.284672+0000
+7ae47a80-3ca7-454d-a152-65fa0776ae1e,Brandon Barton,Simpson Thacher & Bartlett LLP,Partner,Banking,Houston,Texas,2016,brandon.barton@stblaw.com,,,,2026-10-26T15:15:54.284672+0000
+a344c7e2-e3b5-4f29-a8e4-1c5091684d51,Nathaniel Bascom,King & Spalding LLP,Senior Associate,Corporate,Houston,Texas,2015,nbascom@kslaw.com,,,,2026-10-26T15:15:54.284672+0000
+50e951d1-46bc-499a-b953-b5e802475cbe,J.W. Beverly,Ferguson Braswell Fraser Kubasta PC,Partner,Litigation,Houston,Texas,1990,jb@fbfk.law,,,,2026-10-26T15:15:54.284672+0000
+f5b37504-2f5d-4eba-b4f1-ea0e662d489a,Andrew Brien,McDowell Hetherington,Associate,Litigation,Houston,Texas,2016,andrew.brien@mhllp.com,,,,2026-10-26T15:15:54.284672+0000
+e0760598-364a-4716-9bef-97b41312ad0a,Susan Broach,Andrews Myers PC,Partner,Real Estate,Houston,Texas,1999,sbroach@andrewsmyers.com,,,,2026-10-26T15:15:54.284672+0000
+e67c3ec2-e51d-492e-8a56-aeb19a2f82d5,John Collins,"Vorys, Sater, Seymour and Pease LLP",Partner,Litigation,Houston,Texas,2013,jscollins@vorys.com,,,,2026-10-26T15:15:54.284672+0000
+410639a4-64b5-4590-b0be-bdec7e9fabb3,Alex Cummings,Norton Rose Fulbright,Partner,Litigation,Houston,Texas,2017,alex.cummings@nortonrosefulbright.com,,,,2026-10-26T15:15:54.284672+0000
+1be4e145-f376-44c0-984a-3e7ec1370b5a,Ross Darville,Bradley Arant Boult Cummings LLP,Partner,Litigation,Houston,Texas,2013,rdarville@bradley.com,,,,2026-10-26T15:15:54.284672+0000
+855208ff-4392-4226-91f0-c8b77606e8ab,Randy Duncan,McDowell Hetherington,Senior Associate,Litigation,Houston,Texas,2011,randy.duncan@mhllp.com,,,,2026-10-26T15:15:54.284672+0000
+b9116d93-3d11-4ed0-b4c7-26c111121f53,Max Fin,Latham & Watkins LLP,Associate,Banking,Houston,Texas,2017,max.fin@lw.com,,,,2026-10-26T15:15:54.284672+0000
+389926b6-5fee-443f-a5c2-4268f1f097d5,Catarina Freitas,Jones Day,Associate,Corporate,Houston,Texas,2014,cfreitas@jonesday.com,,,,2026-10-26T15:15:54.284672+0000
+9f98812f-77c3-493c-9ca4-0167b8cf038e,Alissa Gipson,Chamberlain Hrdlicka White Williams & Aughtry,Senior Counsel,Tax,Houston,Texas,2016,alissa.gipson@chamberlainlaw.com,,,,2026-10-26T15:15:54.284672+0000
+20fd7685-d0ad-47cb-ba77-178becea2624,Matthew Hart,Simpson Thacher & Bartlett LLP,Partner,Corporate,Houston,Texas,2009,matthew.hart@stblaw.com,,,,2026-10-26T15:15:54.284672+0000
+59dbc970-4dcd-4667-8353-ec0365ed77bc,Andre Hays,Winstead PC,Associate,Trusts & Estates,Houston,Texas,2017,ahays@winstead.com,,,,2026-10-26T15:15:54.284672+0000
+b4f35f0a-8613-4806-b52a-6d0ae1aa29c2,Justin Hoffman,Winston Taylor LLP,Partner,Corporate,Houston,Texas,2004,justin.hoffman@winstontaylor.com,,,,2026-10-26T15:15:54.284672+0000
+acdcb3af-a411-4c90-8933-433ebdecc969,Paul Hunt,Wilson Cribbs & Goren,Senior Counsel,Real Estate,Houston,Texas,2014,phunt@wcglaw.com,,,,2026-10-26T15:15:54.284672+0000
+4c0dcc3f-7faf-44d9-bec1-9cb390f25160,Reymundo Rodriguez IV,Foley & Lardner LLP,Senior Counsel,Litigation,Houston,Texas,2018,rey.rodriguez@foley.com,,,,2026-10-26T15:15:54.284672+0000
+75b744a1-8a6c-4414-acc3-cb3501c84d28,Taylor Lopez,Kirkland & Ellis LLP,Partner,Energy,Houston,Texas,2017,taylor.lopez@kirkland.com,,,,2026-10-26T15:15:54.284672+0000
+687cc8af-14a1-41ea-820c-435cf5d2ec0a,Sara Madole,Schlanger Silver LLP,Partner,Trusts & Estates,Houston,Texas,2007,smadole@schlangersilver.com,,,,2026-10-26T15:15:54.284672+0000
+5231acd2-323c-4557-925d-9d96f3efd6b5,Samer Mahjoub,White & Case LLP,Associate,Corporate,Houston,Texas,2012,samer.mahjoub@whitecase.com,,,,2026-10-26T15:15:54.284672+0000
+89040f7d-f572-4cf0-a292-c1712a45be51,Charles McGee,King & Spalding LLP,Senior Associate,Corporate,Houston,Texas,2017,cmcgee@kslaw.com,,,,2026-10-26T15:15:54.284672+0000
+d9489328-1dc4-430d-8fca-737b6e90e5a6,Joshua Michaels,Buchalter PC,Senior Counsel,Litigation,Houston,Texas,2017,jmichaels@buchalter.com,,,,2026-10-26T15:15:54.284672+0000
+81eee0c2-f944-4d58-84ec-0ec02976e315,Pooneh Momeni,Munsch Hardt Kopf & Harr PC,Partner,Litigation,Houston,Texas,2015,pmomeni@munsch.com,,,,2026-10-26T15:15:54.284672+0000
+b68ca143-357a-4d3a-a074-ff3e51d1e859,Alice Parker,Latham & Watkins LLP,Partner,Corporate,Houston,Texas,2016,alice.parker@lw.com,,,,2026-10-26T15:15:54.284672+0000
+84d7add5-b855-4658-9cda-1a58b56ceb62,Kabir Phaguda,Skadden Arps Slate Meagher & Flom LLP,Counsel,Corporate,Houston,Texas,2017,kabir.phaguda@skadden.com,,,,2026-10-26T15:15:54.284672+0000
+0d1bde0e-79f6-4484-af6b-0e66e61c0bd5,Javier Rivera-Alvarado,Simpson Thacher & Bartlett LLP,Partner,Corporate,Houston,Texas,2016,javier.rivera-alvarado@stblaw.com,,,,2026-10-26T15:15:54.284672+0000
+d40fa30b-7049-462a-9f3a-8d98d02d1b44,Reece Rondon,Hall Maines Lugrin PC,Partner,Litigation,Houston,Texas,1995,rrondon@hallmaineslugrin.com,,,,2026-10-26T15:15:54.284672+0000
+4cc958be-39f4-47f3-a1a1-a90f1a117180,Mary Anna Rutledge,Porter Hedges LLP,Associate,Litigation,Houston,Texas,2017,mrutledge@porterhedges.com,,,,2026-10-26T15:15:54.284672+0000
+42fa10e6-1658-4e69-a7a8-05fc5c5f28bb,Mario Samos,Sidley Austin LLP,Partner,Corporate,Houston,Texas,2017,msamos@sidley.com,,,,2026-10-26T15:15:54.284672+0000
+d372979b-2cab-475e-8774-58773e33236b,Emily Smith,Rusty Hardin & Associates LLP,Partner,Litigation,Houston,Texas,2012,esmith@rustyhardin.com,,,,2026-10-26T15:15:54.284672+0000
+e880f25e-4751-4d9d-8338-f9dba8651142,Samuel Spiers,Latham & Watkins LLP,Associate,Corporate,Houston,Texas,2017,sam.spiers@lw.com,,,,2026-10-26T15:15:54.284672+0000
+cf0e45af-5bcc-4c23-9064-51bb3091aacf,Ryan Steinbrunner,Pillsbury Winthrop Shaw Pittman LLP,Partner,Litigation,Houston,Texas,2014,ryan.steinbrunner@pillsburylaw.com,,,,2026-10-26T15:15:54.284672+0000
