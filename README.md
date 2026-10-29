@@ -21,7 +21,9 @@ A production-grade, resilient data extraction and identity resolution pipeline b
 
 ## 1. System Architecture
 
-The pipeline follows a cloud-native **Medallion Architecture** deployed on Google Cloud Platform, while providing a zero-dependency **Local Warehouse Mode** (CSV mirroring BigQuery 1:1) so reviewers can test the entire workflow locally without GCP credentials.
+The pipeline follows a cloud-native **Medallion Architecture** deployed on Google Cloud Platform (with 6 production tables in Google BigQuery), coupled with a lightweight review console and CLI export command (`txbar export-csv`).
+
+> 📄 **Looking for standalone presentation diagrams in English?** See [`docs/DIAGRAMS_EN.md`](file:///Users/sebiporini/Documents/Repositorios/Personal/attorney-scrapper/docs/DIAGRAMS_EN.md) for full-page, presentation-ready diagrams with executive and technical summaries.
 
 ```mermaid
 flowchart TD
@@ -265,6 +267,12 @@ uv run txbar run
 uv run txbar ui --port 8000
 ```
 Open your browser at **`http://localhost:8000`** to inspect match scores, view candidate cards, and approve or reject flagged records.
+
+### Step 5: Export Delivery CSV Directly from BigQuery
+```bash
+uv run txbar export-csv
+```
+Downloads the golden master delivery CSV (`data/output/enriched_tx_lawyers.csv`) directly from Google BigQuery (`attorneys_master` / `match_results`).
 
 ---
 
