@@ -47,15 +47,15 @@ flowchart TD
         GATE -->|All Candidates| BQC[(BigQuery: match_candidates)]
         GATE -->|Run Results| BQR[(BigQuery: match_results)]
         GATE -->|Run Metrics| BQP[(BigQuery: pipeline_runs)]
-        BQR -->|Score >= 85| BQM[(BigQuery: attorneys_master - Golden Record)]
-        BQR -->|Score 55-84 / Ambiguous| BQV[(BigQuery View: v_review_queue)]
+        BQR -->|"Score >= 85"| BQM[(BigQuery: attorneys_master - Golden Record)]
+        BQR -->|"Score 55-84: Ambiguous"| BQV[(BigQuery View: v_review_queue)]
     end
 
     subgraph Human-in-the-Loop Review
-        BQV -->|Fetch Queue| CRS[Cloud Run Service: Review UI]
-        CRS -->|PATCH Decision OK/Reject| BQR
-        CRS -->|Feedback Loop: Cache ContactID| BQT
-        CRS -->|Audit Event Log| BQE[(BigQuery: review_events)]
+        BQV -->|"Fetch Queue"| CRS[Cloud Run Service: Review UI]
+        CRS -->|"PATCH Decision OK or Reject"| BQR
+        CRS -->|"Feedback Loop: Cache ContactID"| BQT
+        CRS -->|"Audit Event Log"| BQE[(BigQuery: review_events)]
     end
 ```
 

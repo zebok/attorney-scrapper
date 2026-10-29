@@ -82,24 +82,24 @@ Cuando hablás con el **CEO**. A él no le importa cómo se llama una clase en P
 ```mermaid
 flowchart LR
     subgraph Input["1. Input Attorney Roster"]
-        SRC["Roster / BigQuery Table<br/>(100 Target Attorneys)"]
+        SRC["Roster / BigQuery Table<br/>100 Target Attorneys"]
     end
 
     subgraph Engine["2. Resilient Scraper & Entity Resolution"]
-        SRC --> SCR["Texas Bar Directory Scraper<br/>(Resolves Initials, Suffixes & Mergers)"]
-        SCR --> SCORE["100-Point Scoring Engine<br/>Cross-validates Name + Email + Firm + Year + Geo"]
+        SRC --> SCR["Texas Bar Directory Scraper<br/>Resolves Initials, Suffixes & Mergers"]
+        SCR --> SCORE["100-Point Scoring Engine<br/>Cross-validates Name, Email, Firm, Year, Geo"]
     end
 
     subgraph Decisions["3. Confidence Semaphore Policy"]
-        SCORE -->|Score >= 85%<br/>95 Attorneys| AUTO["✅ AUTO-APPROVED<br/>Direct to Golden Master & CSV"]
-        SCORE -->|Score 55% - 84%<br/>3 Attorneys| REV["⚠️ QUICK HUMAN REVIEW<br/>Includes 1 Lateral Firm Move"]
-        SCORE -->|Score < 55%<br/>2 Attorneys| REJ["❌ NOT LICENSED IN TX<br/>Rejected (Protects Data Warehouse)"]
+        SCORE -->|"Score >= 85% (95 Attorneys)"| AUTO["✅ AUTO-APPROVED<br/>Direct to Golden Master & CSV"]
+        SCORE -->|"Score 55% - 84% (3 Attorneys)"| REV["⚠️ QUICK HUMAN REVIEW<br/>Includes 1 Lateral Firm Move"]
+        SCORE -->|"Score < 55% (2 Attorneys)"| REJ["❌ NOT LICENSED IN TX<br/>Rejected - Protects Warehouse"]
     end
 
     subgraph Output["4. Business Deliverables & Feedback"]
         AUTO --> UI["💻 Executive Review Console (Light Mode)<br/>1-Click CSV Export + Live Bar Search"]
         REV --> UI
-        UI -->|1-Click Confirm| CACHE["⚡ Cache Texas Bar ContactID<br/>Next month's run is 50% faster"]
+        UI -->|"1-Click Confirm"| CACHE["⚡ Cache Texas Bar ContactID<br/>Next month run is 50% faster"]
     end
 ```
 
@@ -122,30 +122,30 @@ Cuando el **Ingeniero de IT** (o tu amigo) te pregunte cómo organizaste el cód
 ```mermaid
 flowchart TD
     subgraph DataDriven["1. Data-Driven Configuration (data/rules/ + rules.py)"]
-        R1["nicknames.json<br/>(Sam <-> Samuel, Jack <-> Wayne)"] --> KB["KnowledgeBase Service<br/>(Singleton Loader)"]
-        R2["firm_aliases.json<br/>(Perkins Coie <-> Ashurst Perkins Coie)"] --> KB
-        R3["metro_areas.json<br/>(DFW Cluster: Dallas <-> Plano / Coppell)"] --> KB
-        R4["firm_domains.json<br/>(@jw.com -> Jackson Walker)"] --> KB
-        CFG["ScoringConfig (Pydantic)<br/>Weights: 35 / 25 / 25 / 15 & Thresholds"] --> ENG["MatchEngine<br/>(Identity Resolution Coordinator)"]
+        R1["nicknames.json<br/>Sam & Samuel, Jack & Wayne"] --> KB["KnowledgeBase Service<br/>Singleton Loader"]
+        R2["firm_aliases.json<br/>Perkins Coie & Ashurst Perkins Coie"] --> KB
+        R3["metro_areas.json<br/>DFW Cluster: Dallas, Plano, Coppell"] --> KB
+        R4["firm_domains.json<br/>@jw.com to Jackson Walker"] --> KB
+        CFG["ScoringConfig (Pydantic)<br/>Weights: 35 / 25 / 25 / 15 & Thresholds"] --> ENG["MatchEngine<br/>Identity Resolution Coordinator"]
     end
 
     subgraph ProviderPattern["2. Provider Adapter Pattern (provider.py + client.py)"]
-        TXP["TexasBarClient<br/>(httpx + ColdFusion + hCard)"] -.->|implements| DP["DirectoryProvider Protocol<br/>(Abstract Interface)"]
-        CAP["CaliforniaBarClient<br/>(Future: curl_cffi / Playwright)"] -.->|implements| DP
-        NYP["NewYorkBarClient<br/>(Future: API / Headless)"] -.->|implements| DP
+        TXP["TexasBarClient<br/>httpx + ColdFusion + hCard"] -.->|"implements"| DP["DirectoryProvider Protocol<br/>Abstract Interface"]
+        CAP["CaliforniaBarClient<br/>Future: curl_cffi / Playwright"] -.->|"implements"| DP
+        NYP["NewYorkBarClient<br/>Future: API / Headless"] -.->|"implements"| DP
     end
 
     subgraph CompositeScoring["3. Composite Scoring Strategy (src/txbar/signals.py)"]
-        ENG --> S1["NameMatchSignal<br/>(Max 35 pts)"]
-        ENG --> S2["FirmAffiliationSignal<br/>(Max 25 pts)"]
-        ENG --> S3["TemporalCareerSignal<br/>(Max 25 pts)"]
-        ENG --> S4["GeographicSignal<br/>(Max 15 pts)"]
+        ENG --> S1["NameMatchSignal<br/>Max 35 pts"]
+        ENG --> S2["FirmAffiliationSignal<br/>Max 25 pts"]
+        ENG --> S3["TemporalCareerSignal<br/>Max 25 pts"]
+        ENG --> S4["GeographicSignal<br/>Max 15 pts"]
         KB -.-> S1
         KB -.-> S2
         KB -.-> S4
     end
 
-    DP -->|Normalized Candidates| ENG
+    DP -->|"Normalized Candidates"| ENG
     ENG --> OUT["MatchDecision + Audit Explanation (0-100 pts)"]
 ```
 
@@ -180,19 +180,19 @@ Para responder la **Pregunta 2** (*cómo funciona el scraper*) y la **Pregunta 3
 
 ```mermaid
 flowchart LR
-    IN["Input Attorney Record<br/>(Name, Firm, City, JD Year, Email)"] --> S0{"Stage 0:<br/>Cached ContactID from<br/>prior verified run?"}
+    IN["Input Attorney Record<br/>Name, Firm, City, JD Year, Email"] --> S0{"Stage 0:<br/>Cached ContactID from<br/>prior verified run?"}
     
-    S0 -->|YES: Subsequent monthly run| DIRECT["Direct Profile GET Request<br/>(1 HTTP req - Zero search overhead)"]
+    S0 -->|"YES: Subsequent monthly run"| DIRECT["Direct Profile GET Request<br/>1 HTTP req - Zero search overhead"]
     
-    S0 -->|NO: First-time lookup| S1["Stage 1: Targeted Precision Search<br/>Surname + Firm Core<br/>(e.g., 'Buechele' + 'Winstead')"]
+    S0 -->|"NO: First-time lookup"| S1["Stage 1: Targeted Precision Search<br/>Surname + Firm Core<br/>e.g., 'Buechele' + 'Winstead'"]
     
-    S1 -->|Plausible hit found (Score >= 70)| EVAL["Fetch Full Profile (hCard)<br/>+ DOM Canary Check"]
+    S1 -->|"Plausible hit found: Score >= 70"| EVAL["Fetch Full Profile (hCard)<br/>+ DOM Canary Check"]
     
-    S1 -->|0 hits or low score<br/>(Blank firm or lateral move)| S2["Stage 2: Metro / City Search<br/>Full Name + City<br/>(e.g., 'Zackary Callarman' + 'Dallas')"]
+    S1 -->|"0 hits or low score: Blank firm or lateral move"| S2["Stage 2: Metro / City Search<br/>Full Name + City<br/>e.g., 'Zackary Callarman' + 'Dallas'"]
     
-    S2 -->|Plausible hit found (Score >= 68)| EVAL
+    S2 -->|"Plausible hit found: Score >= 68"| EVAL
     
-    S2 -->|0 hits in city<br/>(Suburban office or statewide move)| S3["Stage 3: Statewide Relaxation<br/>Surname variants across all Texas<br/>(e.g., 'Aileen Glaeser' in Coppell, TX)"]
+    S2 -->|"0 hits in city: Suburban office or statewide move"| S3["Stage 3: Statewide Relaxation<br/>Surname variants across all Texas<br/>e.g., 'Aileen Glaeser' in Coppell, TX"]
     
     S3 --> EVAL
     DIRECT --> SCORE["Composite Scoring Engine (0-100 pts)"]
@@ -218,30 +218,30 @@ Para responder las **Preguntas 4, 5 y 6 del mail** (*cómo automatizarlo en Goog
 ```mermaid
 flowchart TD
     subgraph Trigger["1. Automated Serverless Orchestration ($0 Idle Cost)"]
-        CRON["Cloud Scheduler (Cron)<br/>e.g., Weekly / Monthly at 06:00 UTC"] -->|HTTP Trigger| JOB["Cloud Run Job (Docker Container)<br/>CLI Command: txbar run"]
-        BQS[("BigQuery Source Table:<br/>attorneys_source<br/>(attorney_uuid + roster + cached ContactIDs)")] -->|1. SELECT batch to process| JOB
+        CRON["Cloud Scheduler (Cron)<br/>e.g., Weekly / Monthly at 06:00 UTC"] -->|"HTTP Trigger"| JOB["Cloud Run Job (Docker Container)<br/>CLI Command: txbar run"]
+        BQS[("BigQuery Source Table:<br/>attorneys_source<br/>attorney_uuid + roster + cached ContactIDs")] -->|"1. SELECT batch to process"| JOB
     end
 
     subgraph Execution["2. Resilient Execution & Quality Canaries"]
-        JOB -->|2. Polite HTTP (1.2s - 2.8s jitter)| WEB["State Bar of Texas Directory<br/>(texasbar.com ColdFusion)"]
-        WEB -->|HTML with hCard Microformats| PARSE["Selectolax Parser + DOM Canary<br/>(Halts on anti-bot or layout shift)"]
-        PARSE --> DQ{"3-Tier Data Quality Gate<br/>(8-digit Bar string, E.164 phone,<br/>not_found ratio < 20%)"}
+        JOB -->|"2. Polite HTTP: 1.2s to 2.8s jitter"| WEB["State Bar of Texas Directory<br/>texasbar.com ColdFusion"]
+        WEB -->|"HTML with hCard Microformats"| PARSE["Selectolax Parser + DOM Canary<br/>Halts on anti-bot or layout shift"]
+        PARSE --> DQ{"3-Tier Data Quality Gate<br/>8-digit Bar string, E.164 phone,<br/>not_found ratio < 20%"}
     end
 
     subgraph Medallion["3. Medallion Storage Layer in GCS & BigQuery"]
-        DQ -->|Bronze Layer: Raw Replay Audit| GCS[("Cloud Storage Bucket (GCS)<br/>Dated .ndjson snapshots")]
-        DQ -->|Silver Layer: NDJSON Load Job| BQR[("BigQuery Staging Tables:<br/>match_results & match_candidates")]
-        DQ -->|Run Health & DQ Telemetry| BQP[("BigQuery Runs Table:<br/>pipeline_runs")]
+        DQ -->|"Bronze Layer: Raw Replay Audit"| GCS[("Cloud Storage Bucket (GCS)<br/>Dated .ndjson snapshots")]
+        DQ -->|"Silver Layer: NDJSON Load Job"| BQR[("BigQuery Staging Tables:<br/>match_results & match_candidates")]
+        DQ -->|"Run Health & DQ Telemetry"| BQP[("BigQuery Runs Table:<br/>pipeline_runs")]
         
-        BQR -->|If DQ Gate = PASSED & Score >= 85%<br/>Atomic SQL MERGE ON attorney_uuid| BQM[("Gold Master Table - BigQuery:<br/>attorneys_master<br/>(Verified Golden Records)")]
-        BQR -->|Feedback loop: Cache verified ContactID| BQS
-        BQR -->|Score 55-84% or Lateral Move| BQV[("BigQuery Filtered View:<br/>v_review_queue")]
+        BQR -->|"If DQ Gate PASSED & Score >= 85%<br/>Atomic SQL MERGE ON attorney_uuid"| BQM[("Gold Master Table - BigQuery:<br/>attorneys_master<br/>Verified Golden Records")]
+        BQR -->|"Feedback loop: Cache verified ContactID"| BQS
+        BQR -->|"Score 55-84% or Lateral Move"| BQV[("BigQuery Filtered View:<br/>v_review_queue")]
     end
 
     subgraph HITL["4. Human-in-the-Loop Review Console"]
         BQV --> UI["Cloud Run Service (Web UI)<br/>txbar-review-console"]
-        UI -->|PATCH Confirm / Reject Decision| BQR
-        UI -->|Audit Event Trail| BQE[("BigQuery Audit Table:<br/>review_events")]
+        UI -->|"PATCH Confirm or Reject Decision"| BQR
+        UI -->|"Audit Event Trail"| BQE[("BigQuery Audit Table:<br/>review_events")]
     end
 ```
 
@@ -576,24 +576,24 @@ Acá tenés el guion completo en **inglés natural, profesional y claro**, pensa
 ```mermaid
 flowchart LR
     subgraph Input["1. Input Attorney Roster"]
-        SRC["Roster / BigQuery Table<br/>(100 Target Attorneys)"]
+        SRC["Roster / BigQuery Table<br/>100 Target Attorneys"]
     end
 
     subgraph Engine["2. Resilient Scraper & Entity Resolution"]
-        SRC --> SCR["Texas Bar Directory Scraper<br/>(Resolves Initials, Suffixes & Mergers)"]
-        SCR --> SCORE["100-Point Scoring Engine<br/>Cross-validates Name + Email + Firm + Year + Geo"]
+        SRC --> SCR["Texas Bar Directory Scraper<br/>Resolves Initials, Suffixes & Mergers"]
+        SCR --> SCORE["100-Point Scoring Engine<br/>Cross-validates Name, Email, Firm, Year, Geo"]
     end
 
     subgraph Decisions["3. Confidence Semaphore Policy"]
-        SCORE -->|Score >= 85%<br/>95 Attorneys| AUTO["✅ AUTO-APPROVED<br/>Direct to Golden Master & CSV"]
-        SCORE -->|Score 55% - 84%<br/>3 Attorneys| REV["⚠️ QUICK HUMAN REVIEW<br/>Includes 1 Lateral Firm Move"]
-        SCORE -->|Score < 55%<br/>2 Attorneys| REJ["❌ NOT LICENSED IN TX<br/>Rejected (Protects Data Warehouse)"]
+        SCORE -->|"Score >= 85% (95 Attorneys)"| AUTO["✅ AUTO-APPROVED<br/>Direct to Golden Master & CSV"]
+        SCORE -->|"Score 55% - 84% (3 Attorneys)"| REV["⚠️ QUICK HUMAN REVIEW<br/>Includes 1 Lateral Firm Move"]
+        SCORE -->|"Score < 55% (2 Attorneys)"| REJ["❌ NOT LICENSED IN TX<br/>Rejected - Protects Warehouse"]
     end
 
     subgraph Output["4. Business Deliverables & Feedback"]
         AUTO --> UI["💻 Executive Review Console (Light Mode)<br/>1-Click CSV Export + Live Bar Search"]
         REV --> UI
-        UI -->|1-Click Confirm| CACHE["⚡ Cache Texas Bar ContactID<br/>Next month's run is 50% faster"]
+        UI -->|"1-Click Confirm"| CACHE["⚡ Cache Texas Bar ContactID<br/>Next month run is 50% faster"]
     end
 ```
 
@@ -612,19 +612,19 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    IN["Input Attorney Record<br/>(Name, Firm, City, JD Year, Email)"] --> S0{"Stage 0:<br/>Cached ContactID from<br/>prior verified run?"}
+    IN["Input Attorney Record<br/>Name, Firm, City, JD Year, Email"] --> S0{"Stage 0:<br/>Cached ContactID from<br/>prior verified run?"}
     
-    S0 -->|YES: Subsequent monthly run| DIRECT["Direct Profile GET Request<br/>(1 HTTP req - Zero search overhead)"]
+    S0 -->|"YES: Subsequent monthly run"| DIRECT["Direct Profile GET Request<br/>1 HTTP req - Zero search overhead"]
     
-    S0 -->|NO: First-time lookup| S1["Stage 1: Targeted Precision Search<br/>Surname + Firm Core<br/>(e.g., 'Buechele' + 'Winstead')"]
+    S0 -->|"NO: First-time lookup"| S1["Stage 1: Targeted Precision Search<br/>Surname + Firm Core<br/>e.g., 'Buechele' + 'Winstead'"]
     
-    S1 -->|Plausible hit found (Score >= 70)| EVAL["Fetch Full Profile (hCard)<br/>+ DOM Canary Check"]
+    S1 -->|"Plausible hit found: Score >= 70"| EVAL["Fetch Full Profile (hCard)<br/>+ DOM Canary Check"]
     
-    S1 -->|0 hits or low score<br/>(Blank firm or lateral move)| S2["Stage 2: Metro / City Search<br/>Full Name + City<br/>(e.g., 'Zackary Callarman' + 'Dallas')"]
+    S1 -->|"0 hits or low score: Blank firm or lateral move"| S2["Stage 2: Metro / City Search<br/>Full Name + City<br/>e.g., 'Zackary Callarman' + 'Dallas'"]
     
-    S2 -->|Plausible hit found (Score >= 68)| EVAL
+    S2 -->|"Plausible hit found: Score >= 68"| EVAL
     
-    S2 -->|0 hits in city<br/>(Suburban office or statewide move)| S3["Stage 3: Statewide Relaxation<br/>Surname variants across all Texas<br/>(e.g., 'Aileen Glaeser' in Coppell, TX)"]
+    S2 -->|"0 hits in city: Suburban office or statewide move"| S3["Stage 3: Statewide Relaxation<br/>Surname variants across all Texas<br/>e.g., 'Aileen Glaeser' in Coppell, TX"]
     
     S3 --> EVAL
     DIRECT --> SCORE["Composite Scoring Engine (0-100 pts)"]
@@ -676,30 +676,30 @@ flowchart LR
 ```mermaid
 flowchart TD
     subgraph DataDriven["1. Data-Driven Configuration (data/rules/ + rules.py)"]
-        R1["nicknames.json<br/>(Sam <-> Samuel, Jack <-> Wayne)"] --> KB["KnowledgeBase Service<br/>(Singleton Loader)"]
-        R2["firm_aliases.json<br/>(Perkins Coie <-> Ashurst Perkins Coie)"] --> KB
-        R3["metro_areas.json<br/>(DFW Cluster: Dallas <-> Plano / Coppell)"] --> KB
-        R4["firm_domains.json<br/>(@jw.com -> Jackson Walker)"] --> KB
-        CFG["ScoringConfig (Pydantic)<br/>Weights: 35 / 25 / 25 / 15 & Thresholds"] --> ENG["MatchEngine<br/>(Identity Resolution Coordinator)"]
+        R1["nicknames.json<br/>Sam & Samuel, Jack & Wayne"] --> KB["KnowledgeBase Service<br/>Singleton Loader"]
+        R2["firm_aliases.json<br/>Perkins Coie & Ashurst Perkins Coie"] --> KB
+        R3["metro_areas.json<br/>DFW Cluster: Dallas, Plano, Coppell"] --> KB
+        R4["firm_domains.json<br/>@jw.com to Jackson Walker"] --> KB
+        CFG["ScoringConfig (Pydantic)<br/>Weights: 35 / 25 / 25 / 15 & Thresholds"] --> ENG["MatchEngine<br/>Identity Resolution Coordinator"]
     end
 
     subgraph ProviderPattern["2. Provider Adapter Pattern (provider.py + client.py)"]
-        TXP["TexasBarClient<br/>(httpx + ColdFusion + hCard)"] -.->|implements| DP["DirectoryProvider Protocol<br/>(Abstract Interface)"]
-        CAP["CaliforniaBarClient<br/>(Future: curl_cffi / Playwright)"] -.->|implements| DP
-        NYP["NewYorkBarClient<br/>(Future: API / Headless)"] -.->|implements| DP
+        TXP["TexasBarClient<br/>httpx + ColdFusion + hCard"] -.->|"implements"| DP["DirectoryProvider Protocol<br/>Abstract Interface"]
+        CAP["CaliforniaBarClient<br/>Future: curl_cffi / Playwright"] -.->|"implements"| DP
+        NYP["NewYorkBarClient<br/>Future: API / Headless"] -.->|"implements"| DP
     end
 
     subgraph CompositeScoring["3. Composite Scoring Strategy (src/txbar/signals.py)"]
-        ENG --> S1["NameMatchSignal<br/>(Max 35 pts)"]
-        ENG --> S2["FirmAffiliationSignal<br/>(Max 25 pts)"]
-        ENG --> S3["TemporalCareerSignal<br/>(Max 25 pts)"]
-        ENG --> S4["GeographicSignal<br/>(Max 15 pts)"]
+        ENG --> S1["NameMatchSignal<br/>Max 35 pts"]
+        ENG --> S2["FirmAffiliationSignal<br/>Max 25 pts"]
+        ENG --> S3["TemporalCareerSignal<br/>Max 25 pts"]
+        ENG --> S4["GeographicSignal<br/>Max 15 pts"]
         KB -.-> S1
         KB -.-> S2
         KB -.-> S4
     end
 
-    DP -->|Normalized Candidates| ENG
+    DP -->|"Normalized Candidates"| ENG
     ENG --> OUT["MatchDecision + Audit Explanation (0-100 pts)"]
 ```
 
@@ -720,30 +720,30 @@ flowchart TD
 ```mermaid
 flowchart TD
     subgraph Trigger["1. Automated Serverless Orchestration ($0 Idle Cost)"]
-        CRON["Cloud Scheduler (Cron)<br/>e.g., Weekly / Monthly at 06:00 UTC"] -->|HTTP Trigger| JOB["Cloud Run Job (Docker Container)<br/>CLI Command: txbar run"]
-        BQS[("BigQuery Source Table:<br/>attorneys_source<br/>(attorney_uuid + roster + cached ContactIDs)")] -->|1. SELECT batch to process| JOB
+        CRON["Cloud Scheduler (Cron)<br/>e.g., Weekly / Monthly at 06:00 UTC"] -->|"HTTP Trigger"| JOB["Cloud Run Job (Docker Container)<br/>CLI Command: txbar run"]
+        BQS[("BigQuery Source Table:<br/>attorneys_source<br/>attorney_uuid + roster + cached ContactIDs")] -->|"1. SELECT batch to process"| JOB
     end
 
     subgraph Execution["2. Resilient Execution & Quality Canaries"]
-        JOB -->|2. Polite HTTP (1.2s - 2.8s jitter)| WEB["State Bar of Texas Directory<br/>(texasbar.com ColdFusion)"]
-        WEB -->|HTML with hCard Microformats| PARSE["Selectolax Parser + DOM Canary<br/>(Halts on anti-bot or layout shift)"]
-        PARSE --> DQ{"3-Tier Data Quality Gate<br/>(8-digit Bar string, E.164 phone,<br/>not_found ratio < 20%)"}
+        JOB -->|"2. Polite HTTP: 1.2s to 2.8s jitter"| WEB["State Bar of Texas Directory<br/>texasbar.com ColdFusion"]
+        WEB -->|"HTML with hCard Microformats"| PARSE["Selectolax Parser + DOM Canary<br/>Halts on anti-bot or layout shift"]
+        PARSE --> DQ{"3-Tier Data Quality Gate<br/>8-digit Bar string, E.164 phone,<br/>not_found ratio < 20%"}
     end
 
     subgraph Medallion["3. Medallion Storage Layer in GCS & BigQuery"]
-        DQ -->|Bronze Layer: Raw Replay Audit| GCS[("Cloud Storage Bucket (GCS)<br/>Dated .ndjson snapshots")]
-        DQ -->|Silver Layer: NDJSON Load Job| BQR[("BigQuery Staging Tables:<br/>match_results & match_candidates")]
-        DQ -->|Run Health & DQ Telemetry| BQP[("BigQuery Runs Table:<br/>pipeline_runs")]
+        DQ -->|"Bronze Layer: Raw Replay Audit"| GCS[("Cloud Storage Bucket (GCS)<br/>Dated .ndjson snapshots")]
+        DQ -->|"Silver Layer: NDJSON Load Job"| BQR[("BigQuery Staging Tables:<br/>match_results & match_candidates")]
+        DQ -->|"Run Health & DQ Telemetry"| BQP[("BigQuery Runs Table:<br/>pipeline_runs")]
         
-        BQR -->|If DQ Gate = PASSED & Score >= 85%<br/>Atomic SQL MERGE ON attorney_uuid| BQM[("Gold Master Table - BigQuery:<br/>attorneys_master<br/>(Verified Golden Records)")]
-        BQR -->|Feedback loop: Cache verified ContactID| BQS
-        BQR -->|Score 55-84% or Lateral Move| BQV[("BigQuery Filtered View:<br/>v_review_queue")]
+        BQR -->|"If DQ Gate PASSED & Score >= 85%<br/>Atomic SQL MERGE ON attorney_uuid"| BQM[("Gold Master Table - BigQuery:<br/>attorneys_master<br/>Verified Golden Records")]
+        BQR -->|"Feedback loop: Cache verified ContactID"| BQS
+        BQR -->|"Score 55-84% or Lateral Move"| BQV[("BigQuery Filtered View:<br/>v_review_queue")]
     end
 
     subgraph HITL["4. Human-in-the-Loop Review Console"]
         BQV --> UI["Cloud Run Service (Web UI)<br/>txbar-review-console"]
-        UI -->|PATCH Confirm / Reject Decision| BQR
-        UI -->|Audit Event Trail| BQE[("BigQuery Audit Table:<br/>review_events")]
+        UI -->|"PATCH Confirm or Reject Decision"| BQR
+        UI -->|"Audit Event Trail"| BQE[("BigQuery Audit Table:<br/>review_events")]
     end
 ```
 
