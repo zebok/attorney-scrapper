@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     output_dir: Path = PROJECT_ROOT / "data" / "output"
 
     # GCP / BigQuery
-    gcp_project_id: str | None = "txbar-pipeline-1027"
+    gcp_project_id: str | None = None
     gcp_region: str = "us-central1"
     bq_dataset: str = "txbar"
     gcs_raw_bucket: str | None = None

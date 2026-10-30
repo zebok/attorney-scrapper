@@ -5,7 +5,7 @@ Handles:
 - Checkpointing for interruption tolerance.
 - Entity resolution and multi-signal scoring.
 - Record-level and run-level Data Quality gates.
-- Export of delivery artifacts: enriched.csv (for Jose), enriched.ndjson (for BigQuery), and run_report.json.
+- Export of delivery artifacts: enriched.csv (final delivery dataset), enriched.ndjson (for BigQuery), and run_report.json.
 """
 
 from __future__ import annotations

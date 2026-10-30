@@ -1,14 +1,36 @@
+# Virtual environments & dependencies
 .venv/
+
+# Python cache & bytecode
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
 .pytest_cache/
 .ruff_cache/
+
+# Local configuration & secrets
 .env
+*.local
+.env.*.local
+
+# Local execution artifacts & scratch
 data/warehouse/
 data/output/raw/
 data/output/checkpoints/
+*.log
+
+# Personal interview study notes & scripts
+resumen.md
+notes/
+
+# Terraform state & variables
 infra/terraform/.terraform/
 infra/terraform/*.tfstate*
 infra/terraform/terraform.tfvars
-.tools/
+
+# OS generated files & editor metadata
 .DS_Store
+**/.DS_Store
+.idea/
+.vscode/
+.tools/

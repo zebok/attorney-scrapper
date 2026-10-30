@@ -39,7 +39,6 @@ RUN chown -R appuser:appgroup /app/data
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
     STORAGE_BACKEND=bigquery \
-    GCP_PROJECT_ID=txbar-pipeline-1027 \
     BQ_DATASET=txbar \
     PORT=8080
 

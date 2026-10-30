@@ -305,15 +305,16 @@ class BigQueryStorageBackend:
 
             from google.oauth2.credentials import Credentials
 
-            gcloud_cmd = [shutil.which("gcloud") or "gcloud", "auth", "print-access-token"]
-            hb_py = Path("/opt/homebrew/bin/python3.12")
-            hb_gcloud = Path("/opt/homebrew/share/google-cloud-sdk/lib/gcloud.py")
-            if hb_py.exists() and hb_gcloud.exists():
-                gcloud_cmd = [str(hb_py), str(hb_gcloud), "auth", "print-access-token"]
-
-            token = subprocess.check_output(gcloud_cmd, text=True).strip()
-            creds = Credentials(token=token)
-            return self.bigquery.Client(project=project_id, credentials=creds)
+            gcloud_bin = shutil.which("gcloud")
+            if gcloud_bin:
+                try:
+                    token = subprocess.check_output([gcloud_bin, "auth", "print-access-token"], text=True).strip()
+                    if token:
+                        creds = Credentials(token=token)
+                        return self.bigquery.Client(project=project_id, credentials=creds)
+                except Exception as exc:
+                    logger.debug("Failed to obtain gcloud access token: %s", exc)
+            raise
 
     def _table_ref(self, table: str) -> str:
         return f"{self.project_id}.{self.dataset_id}.{table}"

@@ -412,21 +412,69 @@
                 text-decoration: underline;
             }
 
-            /* Live Lookup Box */
-            .live-card {
+            /* Why Matched / Stage Breakdown */
+            .stage-box {
                 background: var(--surface);
                 border: 1px solid var(--border);
-                border-radius: 10px;
-                padding: 1.5rem;
-                box-shadow: var(--shadow-sm);
-                margin-bottom: 1.5rem;
-            }
-            .preset-bar {
+                border-radius: 8px;
+                padding: 0.75rem 0.85rem;
                 display: flex;
-                gap: 0.5rem;
-                margin-bottom: 1.25rem;
-                flex-wrap: wrap;
+                flex-direction: column;
+                gap: 0.35rem;
+                box-shadow: 0 1px 2px rgba(15, 23, 42, 0.02);
+            }
+            .stage-box-top {
+                display: flex;
+                justify-content: space-between;
                 align-items: center;
+            }
+            .stage-box-title {
+                font-size: 0.78rem;
+                font-weight: 600;
+                color: var(--text);
+                display: flex;
+                align-items: center;
+                gap: 0.45rem;
+            }
+            .stage-box-pts {
+                font-family: var(--font-mono);
+                font-size: 0.75rem;
+                font-weight: 700;
+            }
+            .stage-pts-high {
+                color: var(--success);
+            }
+            .stage-pts-mid {
+                color: var(--warning);
+            }
+            .stage-pts-low {
+                color: var(--danger);
+            }
+            .stage-progress-track {
+                background: var(--surface-subtle);
+                border: 1px solid var(--border);
+                height: 6px;
+                border-radius: 999px;
+                overflow: hidden;
+            }
+            .stage-progress-fill {
+                height: 100%;
+                border-radius: 999px;
+                transition: width 0.3s ease;
+            }
+            .stage-fill-high {
+                background: var(--success);
+            }
+            .stage-fill-mid {
+                background: var(--warning);
+            }
+            .stage-fill-low {
+                background: var(--danger);
+            }
+            .stage-box-desc {
+                font-size: 0.74rem;
+                color: var(--text-secondary);
+                line-height: 1.45;
             }
 
             /* Drawer */
@@ -658,13 +706,6 @@
                         Firm Moves
                         <span class="badge-count" id="badge-moves">1</span>
                     </button>
-                    <button
-                        class="tab-btn"
-                        id="tab-live"
-                        onclick="setTab('live')"
-                    >
-                        Live Bar Lookup
-                    </button>
                 </div>
                 <div>
                     <input
@@ -674,331 +715,6 @@
                         placeholder="Filter by name, firm, or city..."
                         oninput="handleSearch(this.value)"
                     />
-                </div>
-            </div>
-
-            <!-- Live Lookup View -->
-            <div id="live-lookup-view" style="display: none">
-                <div class="live-card">
-                    <h3
-                        style="
-                            font-size: 0.95rem;
-                            font-weight: 700;
-                            margin-bottom: 0.3rem;
-                        "
-                    >
-                        Live State Bar of Texas Search
-                    </h3>
-                    <p
-                        style="
-                            font-size: 0.8rem;
-                            color: var(--text-muted);
-                            margin-bottom: 1rem;
-                        "
-                    >
-                        Test the scraper and entity resolution engine in real
-                        time against <code>texasbar.com</code>. Click a sample
-                        case below or enter any Texas attorney.
-                    </p>
-
-                    <div class="preset-bar">
-                        <span
-                            style="
-                                font-size: 0.75rem;
-                                color: var(--text-muted);
-                                font-weight: 600;
-                            "
-                            >Sample Cases:</span
-                        >
-                        <button
-                            class="btn"
-                            onclick="
-                                fillLivePreset(
-                                    'W. Buechele',
-                                    'Winstead PC',
-                                    'Dallas',
-                                    2016,
-                                    'bbuechele@winstead.com',
-                                )
-                            "
-                        >
-                            W. Buechele (Initial)
-                        </button>
-                        <button
-                            class="btn"
-                            onclick="
-                                fillLivePreset(
-                                    'Wayne Zeringue III',
-                                    'Sidley Austin LLP',
-                                    'Dallas',
-                                    2017,
-                                    'jzeringue@sidley.com',
-                                )
-                            "
-                        >
-                            Wayne Zeringue III ('Jack')
-                        </button>
-                        <button
-                            class="btn"
-                            onclick="
-                                fillLivePreset(
-                                    'Michael Roberts',
-                                    'Sidley Austin LLP',
-                                    'Dallas',
-                                    2017,
-                                    'mlroberts@sidley.com',
-                                )
-                            "
-                        >
-                            Michael Roberts (5 Homonyms)
-                        </button>
-                        <button
-                            class="btn"
-                            onclick="
-                                fillLivePreset(
-                                    'Rachel Boyce',
-                                    'Perkins Coie LLP',
-                                    'Dallas',
-                                    2015,
-                                    'rachel.boyce@ashurstperkins.com',
-                                )
-                            "
-                        >
-                            Rachel Boyce (Firm Merger)
-                        </button>
-                    </div>
-
-                    <div
-                        style="
-                            display: grid;
-                            grid-template-columns: repeat(
-                                auto-fit,
-                                minmax(170px, 1fr)
-                            );
-                            gap: 0.75rem;
-                            margin-bottom: 1rem;
-                        "
-                    >
-                        <div>
-                            <label
-                                style="
-                                    font-size: 0.72rem;
-                                    font-weight: 600;
-                                    color: var(--text-secondary);
-                                    display: block;
-                                    margin-bottom: 0.25rem;
-                                "
-                                >Attorney Name *</label
-                            >
-                            <input
-                                type="text"
-                                id="live-name"
-                                class="search-input"
-                                style="width: 100%"
-                                placeholder="e.g. W. Buechele"
-                            />
-                        </div>
-                        <div>
-                            <label
-                                style="
-                                    font-size: 0.72rem;
-                                    font-weight: 600;
-                                    color: var(--text-secondary);
-                                    display: block;
-                                    margin-bottom: 0.25rem;
-                                "
-                                >Law Firm</label
-                            >
-                            <input
-                                type="text"
-                                id="live-firm"
-                                class="search-input"
-                                style="width: 100%"
-                                placeholder="e.g. Winstead PC"
-                            />
-                        </div>
-                        <div>
-                            <label
-                                style="
-                                    font-size: 0.72rem;
-                                    font-weight: 600;
-                                    color: var(--text-secondary);
-                                    display: block;
-                                    margin-bottom: 0.25rem;
-                                "
-                                >City</label
-                            >
-                            <input
-                                type="text"
-                                id="live-city"
-                                class="search-input"
-                                style="width: 100%"
-                                placeholder="e.g. Dallas"
-                            />
-                        </div>
-                        <div>
-                            <label
-                                style="
-                                    font-size: 0.72rem;
-                                    font-weight: 600;
-                                    color: var(--text-secondary);
-                                    display: block;
-                                    margin-bottom: 0.25rem;
-                                "
-                                >JD Year</label
-                            >
-                            <input
-                                type="number"
-                                id="live-jd"
-                                class="search-input"
-                                style="width: 100%"
-                                placeholder="e.g. 2016"
-                            />
-                        </div>
-                        <div>
-                            <label
-                                style="
-                                    font-size: 0.72rem;
-                                    font-weight: 600;
-                                    color: var(--text-secondary);
-                                    display: block;
-                                    margin-bottom: 0.25rem;
-                                "
-                                >Corporate Email</label
-                            >
-                            <input
-                                type="email"
-                                id="live-email"
-                                class="search-input"
-                                style="width: 100%"
-                                placeholder="e.g. bbuechele@winstead.com"
-                            />
-                        </div>
-                    </div>
-
-                    <button
-                        class="btn btn-primary"
-                        onclick="executeLiveLookup()"
-                        id="btn-live-submit"
-                    >
-                        Search State Bar Live
-                    </button>
-
-                    <div
-                        id="live-result-box"
-                        style="
-                            display: none;
-                            margin-top: 1.25rem;
-                            border-top: 1px solid var(--border);
-                            padding-top: 1.25rem;
-                        "
-                    >
-                        <div
-                            style="
-                                display: flex;
-                                justify-content: space-between;
-                                align-items: center;
-                                margin-bottom: 0.75rem;
-                            "
-                        >
-                            <div>
-                                <span
-                                    id="live-res-name"
-                                    style="font-size: 1rem; font-weight: 700"
-                                ></span>
-                                <span
-                                    id="live-res-score-badge"
-                                    class="score-badge score-high"
-                                    style="margin-left: 0.5rem"
-                                ></span>
-                                <span
-                                    id="live-res-firm-change"
-                                    class="firm-change-pill"
-                                    style="display: none"
-                                    >Firm Move Detected</span
-                                >
-                            </div>
-                            <span
-                                id="live-res-time"
-                                style="
-                                    font-size: 0.75rem;
-                                    color: var(--text-muted);
-                                    font-family: var(--font-mono);
-                                "
-                            ></span>
-                        </div>
-                        <p
-                            id="live-res-explanation"
-                            style="
-                                font-size: 0.8rem;
-                                color: var(--text-secondary);
-                                margin-bottom: 1rem;
-                            "
-                        ></p>
-                        <div class="compare-grid" style="margin-bottom: 0">
-                            <div class="compare-box">
-                                <div class="compare-title">
-                                    State Bar Record
-                                </div>
-                                <div class="compare-row">
-                                    <span class="compare-key"
-                                        >Bar Card Number</span
-                                    ><span class="compare-val" id="live-res-bar"
-                                        >-</span
-                                    >
-                                </div>
-                                <div class="compare-row">
-                                    <span class="compare-key"
-                                        >Registered Firm</span
-                                    ><span
-                                        class="compare-val"
-                                        id="live-res-firm"
-                                        >-</span
-                                    >
-                                </div>
-                                <div class="compare-row">
-                                    <span class="compare-key"
-                                        >License Status</span
-                                    ><span
-                                        class="compare-val"
-                                        id="live-res-lic-status"
-                                        >-</span
-                                    >
-                                </div>
-                            </div>
-                            <div class="compare-box">
-                                <div class="compare-title">
-                                    Contact &amp; Education
-                                </div>
-                                <div class="compare-row">
-                                    <span class="compare-key">Direct Phone</span
-                                    ><span
-                                        class="compare-val"
-                                        id="live-res-phone"
-                                        >-</span
-                                    >
-                                </div>
-                                <div class="compare-row">
-                                    <span class="compare-key"
-                                        >Law School &amp; Graduation</span
-                                    ><span
-                                        class="compare-val"
-                                        id="live-res-school"
-                                        >-</span
-                                    >
-                                </div>
-                                <div class="compare-row">
-                                    <span class="compare-key"
-                                        >Office Address</span
-                                    ><span
-                                        class="compare-val"
-                                        id="live-res-addr"
-                                        >-</span
-                                    >
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -1331,18 +1047,25 @@
                     </table>
                 </div>
 
-                <!-- Simple Match Summary -->
+                <!-- Why This Profile Matched (Stage & Score Breakdown) -->
                 <div class="compare-box" style="margin-bottom: 1.15rem">
-                    <div class="compare-title">Why This Profile Matched</div>
-                    <ul
-                        id="drawer-reasons-list"
-                        style="
-                            padding-left: 1.1rem;
-                            font-size: 0.8rem;
-                            color: var(--text-secondary);
-                            line-height: 1.6;
-                        "
-                    ></ul>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.4rem;">
+                        <span class="compare-title" style="margin-bottom: 0;">Why This Profile Matched</span>
+                        <div style="display: flex; align-items: center; gap: 0.45rem;">
+                            <span id="drawer-search-stage-badge" style="font-size: 0.7rem; font-family: var(--font-mono); background: var(--surface); border: 1px solid var(--border); padding: 0.15rem 0.5rem; border-radius: 4px; color: var(--text-secondary); font-weight: 500;">-</span>
+                            <span id="drawer-total-score-badge" class="score-badge score-high">-</span>
+                        </div>
+                    </div>
+
+                    <!-- 4-Stage Scoring Breakdown -->
+                    <div id="drawer-scoring-stages" style="display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 0.75rem;">
+                        <!-- Populated dynamically by renderWhyMatched() -->
+                    </div>
+
+                    <!-- Overall Audit Explanation Note -->
+                    <div id="drawer-explanation-note" style="font-size: 0.74rem; color: var(--text-muted); background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 0.6rem 0.75rem; line-height: 1.45;">
+                        <!-- Summary explanation -->
+                    </div>
                 </div>
 
                 <!-- Optional Multiple Candidates Section (Only visible if >1 homonym) -->
@@ -1469,17 +1192,9 @@
                 const activeBtn = document.getElementById("tab-" + tab);
                 if (activeBtn) activeBtn.classList.add("active");
 
-                const liveView = document.getElementById("live-lookup-view");
                 const tableView = document.getElementById("main-table-view");
-
-                if (tab === "live") {
-                    liveView.style.display = "block";
-                    tableView.style.display = "none";
-                } else {
-                    liveView.style.display = "none";
-                    tableView.style.display = "block";
-                    await loadTab(tab);
-                }
+                tableView.style.display = "block";
+                await loadTab(tab);
             }
 
             async function loadTab(tab) {
@@ -1590,103 +1305,160 @@
                 renderTable(filtered);
             }
 
-            function fillLivePreset(name, firm, city, jd, email) {
-                document.getElementById("live-name").value = name;
-                document.getElementById("live-firm").value = firm;
-                document.getElementById("live-city").value = city;
-                document.getElementById("live-jd").value = jd;
-                document.getElementById("live-email").value = email;
+            let currentCandidates = [];
+
+            function formatSearchStage(stage) {
+                const map = {
+                    "cached_lookup": "Stage 0: Cache Hit",
+                    "stage1_last_firm": "Stage 1: Last + Firm",
+                    "stage2_colleague": "Stage 2: Firm Colleague",
+                    "stage2_name_city": "Stage 2: Name + City",
+                    "stage3_last_only": "Stage 3: Statewide Last Name",
+                    "stage3_statewide_fullname": "Stage 3: Statewide Full Name",
+                    "stage4_first_last": "Stage 4: Broad Name",
+                };
+                if (!stage || stage === "none") return "Direct Search";
+                return map[stage] || stage.replace(/_/g, " ");
             }
 
-            async function executeLiveLookup() {
-                const name = document.getElementById("live-name").value.trim();
-                if (!name) {
-                    showToast("Please enter an attorney name");
-                    return;
+            function parseMatchExplanation(rawExp, firmChanged, scores) {
+                const m = (rawExp || "").match(/^[^:]+:\s*(.*)$/);
+                const expBody = m ? m[1] : (rawExp || "");
+                const parts = expBody.split(";").map((p) => p.trim()).filter(Boolean);
+
+                const namePart = parts.find((p) => /\b(name|nickname|initial|initials|surname)\b/i.test(p));
+                const firmPart = parts.find((p) => /\b(firm|firms|merger|alias)\b/i.test(p));
+                const tempPart = parts.find((p) => /\b(grad|graduation|admission|admitted|year|jd|delta)\b/i.test(p));
+                const geoPart = parts.find((p) => /\b(city|cities|metro|state|geographic|dallas|austin|houston|san antonio)\b/i.test(p));
+
+                return {
+                    nameDesc: namePart || (scores.name >= 35 ? "Full name, nickname & initial identity confirmed" : scores.name > 0 ? "Partial name similarity match" : "Name did not match directory records"),
+                    firmDesc: firmChanged
+                        ? "Lateral move detected: Reported firm differs from Bar profile"
+                        : (firmPart || (scores.firm >= 25 ? "Exact firm name or verified merger alias matched" : scores.firm >= 12.5 ? "Firm unlisted on Bar profile (neutral score)" : scores.firm > 0 ? "Partial firm match" : "Firm does not match directory record")),
+                    tempDesc: tempPart || (scores.temporal >= 25 ? "Exact graduation or Bar admission year match" : scores.temporal >= 15 ? "Close graduation or admission year alignment (+-1 to 2 yrs)" : scores.temporal > 0 ? "Year delta within acceptable range" : "Graduation / Bar admission year divergent or missing"),
+                    geoDesc: geoPart || (scores.geo >= 15 ? "Exact city match in Texas" : scores.geo >= 10 ? "Same metropolitan area cluster" : scores.geo > 0 ? "Candidate registered in Texas" : "City unspecified or divergent"),
+                    rawSummary: rawExp || "No audit explanation available.",
+                };
+            }
+
+            function renderWhyMatched(data) {
+                const totalScore = typeof data.match_score === "number" ? data.match_score : (typeof data.score === "number" ? data.score : 0);
+                const scoreName = typeof data.score_name === "number" ? data.score_name : 0;
+                const scoreFirm = typeof data.score_firm === "number" ? data.score_firm : 0;
+                const scoreTemporal = typeof data.score_temporal === "number" ? data.score_temporal : 0;
+                const scoreGeo = typeof data.score_geo === "number" ? data.score_geo : 0;
+                const rawExp = data.match_explanation || data.explanation || "";
+                const firmChanged = Boolean(data.firm_changed);
+                const searchStage = data.search_stage || "none";
+
+                const stageBadge = document.getElementById("drawer-search-stage-badge");
+                if (stageBadge) {
+                    stageBadge.innerText = formatSearchStage(searchStage);
                 }
-                const firm = document.getElementById("live-firm").value.trim();
-                const city = document.getElementById("live-city").value.trim();
-                const jd = document.getElementById("live-jd").value.trim();
-                const email = document
-                    .getElementById("live-email")
-                    .value.trim();
 
-                const btn = document.getElementById("btn-live-submit");
-                btn.disabled = true;
-                btn.innerText = "Searching Texas Bar...";
+                const totalBadge = document.getElementById("drawer-total-score-badge");
+                if (totalBadge) {
+                    totalBadge.innerText = `${totalScore.toFixed(1)} / 100 pts`;
+                    totalBadge.className = `score-badge ${totalScore >= 85 ? "score-high" : totalScore >= 55 ? "score-mid" : "score-low"}`;
+                }
 
-                const t0 = performance.now();
-                try {
-                    const res = await fetch("/api/v1/lookup-live", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            name,
-                            firm,
-                            city,
-                            jd_year: jd ? parseInt(jd, 10) : null,
-                            email,
-                        }),
-                    });
-                    const data = await res.json();
-                    const latency = ((performance.now() - t0) / 1000).toFixed(
-                        2,
-                    );
-                    const box = document.getElementById("live-result-box");
-                    box.style.display = "block";
-                    document.getElementById("live-res-time").innerText =
-                        `${latency}s`;
+                const scores = { name: scoreName, firm: scoreFirm, temporal: scoreTemporal, geo: scoreGeo };
+                const parsed = parseMatchExplanation(rawExp, firmChanged, scores);
 
-                    const best = data.best_candidate;
-                    if (!best) {
-                        document.getElementById("live-res-name").innerText =
-                            "No Match Found";
-                        document.getElementById(
-                            "live-res-score-badge",
-                        ).innerText = "0%";
-                        document.getElementById(
-                            "live-res-score-badge",
-                        ).className = "score-badge score-low";
-                        document.getElementById(
-                            "live-res-explanation",
-                        ).innerText = data.match_explanation || "";
-                        return;
+                const stages = [
+                    {
+                        key: "name",
+                        title: "Name Matching",
+                        score: scoreName,
+                        max: 35.0,
+                        desc: parsed.nameDesc,
+                        icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`
+                    },
+                    {
+                        key: "firm",
+                        title: "Law Firm Affiliation",
+                        score: scoreFirm,
+                        max: 25.0,
+                        desc: parsed.firmDesc,
+                        icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="9" y1="22" x2="9" y2="22.01"></line><line x1="15" y1="22" x2="15" y2="22.01"></line><line x1="9" y1="6" x2="9" y2="6.01"></line><line x1="15" y1="6" x2="15" y2="6.01"></line><line x1="9" y1="10" x2="9" y2="10.01"></line><line x1="15" y1="10" x2="15" y2="10.01"></line><line x1="9" y1="14" x2="9" y2="14.01"></line><line x1="15" y1="14" x2="15" y2="14.01"></line></svg>`
+                    },
+                    {
+                        key: "temporal",
+                        title: "Temporal & Bar Admission",
+                        score: scoreTemporal,
+                        max: 25.0,
+                        desc: parsed.tempDesc,
+                        icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`
+                    },
+                    {
+                        key: "geo",
+                        title: "Geographic Alignment",
+                        score: scoreGeo,
+                        max: 15.0,
+                        desc: parsed.geoDesc,
+                        icon: `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>`
                     }
+                ];
 
-                    document.getElementById("live-res-name").innerText =
-                        best.full_name || name;
-                    const score = data.match_score || 0;
-                    const badge = document.getElementById(
-                        "live-res-score-badge",
-                    );
-                    badge.innerText = `${score.toFixed(0)}% Confidence`;
-                    badge.className = `score-badge ${score >= 85 ? "score-high" : score >= 55 ? "score-mid" : "score-low"}`;
-
-                    document.getElementById(
-                        "live-res-firm-change",
-                    ).style.display = data.firm_changed
-                        ? "inline-block"
-                        : "none";
-                    document.getElementById("live-res-explanation").innerText =
-                        data.match_explanation || "";
-                    document.getElementById("live-res-bar").innerText =
-                        best.bar_card_number || "N/A";
-                    document.getElementById("live-res-firm").innerText =
-                        best.current_firm || "Unlisted on profile";
-                    document.getElementById("live-res-lic-status").innerText =
-                        best.license_status || "-";
-                    document.getElementById("live-res-phone").innerText =
-                        formatPhone(best.phone) || "Unlisted";
-                    document.getElementById("live-res-school").innerText =
-                        `${best.law_school || "Unknown"} (${best.grad_year || "N/A"})`;
-                    document.getElementById("live-res-addr").innerText =
-                        best.address || "-";
-                } catch (e) {
-                    showToast(`Search failed: ${e}`);
-                } finally {
-                    btn.disabled = false;
-                    btn.innerText = "Search State Bar Live";
+                const container = document.getElementById("drawer-scoring-stages");
+                if (container) {
+                    container.innerHTML = stages.map(s => {
+                        const pct = Math.min(100, Math.max(0, (s.score / s.max) * 100));
+                        const tier = pct >= 80 ? "high" : (pct >= 40 ? "mid" : "low");
+                        return `
+                            <div class="stage-box">
+                                <div class="stage-box-top">
+                                    <span class="stage-box-title">
+                                        <span style="color: var(--primary); display: flex; align-items: center;">${s.icon}</span>
+                                        ${s.title}
+                                    </span>
+                                    <span class="stage-box-pts stage-pts-${tier}">
+                                        ${s.score.toFixed(1)} / ${s.max.toFixed(0)} pts
+                                    </span>
+                                </div>
+                                <div class="stage-progress-track">
+                                    <div class="stage-progress-fill stage-fill-${tier}" style="width: ${pct.toFixed(0)}%;"></div>
+                                </div>
+                                <div class="stage-box-desc">${s.desc}</div>
+                            </div>
+                        `;
+                    }).join("");
                 }
+
+                const noteEl = document.getElementById("drawer-explanation-note");
+                if (noteEl) {
+                    noteEl.innerHTML = `<strong>Audit Trail:</strong> ${parsed.rawSummary}`;
+                }
+            }
+
+            function updateDrawerCandidateDetails(cand) {
+                const score = typeof cand.score === "number" ? cand.score : 0;
+                const pill = document.getElementById("drawer-score-pill");
+                if (pill) {
+                    pill.innerText = `${score.toFixed(0)}% Match`;
+                    pill.className = `score-badge ${score >= 85 ? "score-high" : score >= 55 ? "score-mid" : "score-low"}`;
+                }
+
+                document.getElementById("drawer-out-bar").innerText =
+                    cand.bar_card_number || "Not Found";
+                document.getElementById("drawer-out-status").innerText =
+                    cand.license_status || "-";
+                document.getElementById("drawer-out-school").innerText =
+                    cand.law_school || "Unlisted";
+
+                const prefText = cand.preferred_name ? ` ('${cand.preferred_name}')` : "";
+                document.getElementById("drawer-out-name").innerText =
+                    (cand.full_name || "Not Found") + prefText;
+
+                document.getElementById("drawer-out-firm").innerText =
+                    cand.firm || "Unlisted on profile";
+                document.getElementById("drawer-out-city").innerText =
+                    cand.city || "Unlisted";
+                document.getElementById("drawer-out-dates").innerText =
+                    `JD ${cand.grad_year || "-"} (Lic: ${cand.license_date || "-"})`;
+
+                renderWhyMatched(cand);
             }
 
             async function openDrawer(attorneyUuid) {
@@ -1754,18 +1526,8 @@
                 document.getElementById("drawer-in-email").innerText =
                     selectedAttorney.input_email || "None provided";
 
-                // Clean bullet reasons
-                const rawExp = (
-                    selectedAttorney.match_explanation || ""
-                ).replace(/^[^:]+:\s*/, "");
-                const parts = rawExp
-                    .split(";")
-                    .map((s) => s.trim())
-                    .filter(Boolean);
-                const ul = document.getElementById("drawer-reasons-list");
-                ul.innerHTML = parts.length
-                    ? parts.map((p) => `<li>${p}</li>`).join("")
-                    : `<li>${selectedAttorney.match_explanation || "No matching record"}</li>`;
+                // Render stage scores and explanation breakdown
+                renderWhyMatched(selectedAttorney);
 
                 // Show other homonyms only if > 1 candidate exists
                 const candSection = document.getElementById(
@@ -1781,6 +1543,7 @@
                         `/api/v1/candidates/${attorneyUuid}`,
                     );
                     const cands = await cRes.json();
+                    currentCandidates = cands;
                     if (cands.length > 1) {
                         candSection.style.display = "block";
                         candContainer.innerHTML = cands
@@ -1814,11 +1577,21 @@
                     'input[type="radio"]',
                 );
                 if (radio) radio.checked = true;
+
+                if (currentCandidates && currentCandidates.length) {
+                    const cand = currentCandidates.find(
+                        (c) => String(c.contact_id) === String(contactId),
+                    );
+                    if (cand) {
+                        updateDrawerCandidateDetails(cand);
+                    }
+                }
             }
 
             function closeDrawer() {
                 document.getElementById("drawer").classList.remove("open");
                 selectedAttorney = null;
+                currentCandidates = [];
             }
 
             function closeDrawerOnOverlay(e) {
