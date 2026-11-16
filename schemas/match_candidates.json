@@ -1,0 +1,23 @@
+[
+  {"name": "run_id", "type": "STRING", "mode": "REQUIRED"},
+  {"name": "attorney_uuid", "type": "STRING", "mode": "REQUIRED"},
+  {"name": "contact_id", "type": "STRING", "mode": "REQUIRED"},
+  {"name": "search_stage", "type": "STRING", "mode": "NULLABLE", "description": "Waterfall stage that surfaced this candidate."},
+  {"name": "candidate_rank", "type": "INT64", "mode": "NULLABLE"},
+  {"name": "score", "type": "FLOAT64", "mode": "NULLABLE"},
+  {"name": "score_name", "type": "FLOAT64", "mode": "NULLABLE"},
+  {"name": "score_firm", "type": "FLOAT64", "mode": "NULLABLE"},
+  {"name": "score_temporal", "type": "FLOAT64", "mode": "NULLABLE"},
+  {"name": "score_geo", "type": "FLOAT64", "mode": "NULLABLE"},
+  {"name": "full_name", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "preferred_name", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "firm", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "city", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "bar_card_number", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "license_date", "type": "DATE", "mode": "NULLABLE"},
+  {"name": "license_status", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "law_school", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "grad_year", "type": "INT64", "mode": "NULLABLE"},
+  {"name": "explanation", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "scraped_at", "type": "TIMESTAMP", "mode": "REQUIRED"}
+]

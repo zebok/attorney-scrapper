@@ -1,0 +1,68 @@
+[project]
+name = "txbar"
+version = "0.1.0"
+description = "Serverless ETL and entity resolution pipeline with multi-signal identity matching and human-in-the-loop review."
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+authors = [
+    { name = "Sebastian Porini", email = "sebiporini@gmail.com" }
+]
+license = { text = "MIT" }
+keywords = [
+    "web-scraping",
+    "entity-resolution",
+    "identity-resolution",
+    "data-pipeline",
+    "bigquery",
+    "fastapi",
+    "polars",
+    "legal-tech",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+dependencies = [
+    "httpx>=0.27",
+    "selectolax>=0.3.21",
+    "polars>=1.9",
+    "rapidfuzz>=3.9",
+    "pydantic>=2.8",
+    "pydantic-settings>=2.4",
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.30",
+    "google-cloud-bigquery>=3.25",
+]
+
+[dependency-groups]
+dev = ["pytest>=8.3", "ruff>=0.6"]
+
+[project.scripts]
+txbar = "txbar.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/zebok/attorney-scrapper"
+Repository = "https://github.com/zebok/attorney-scrapper"
+Issues = "https://github.com/zebok/attorney-scrapper/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/txbar"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+ignore = ["B008", "E501", "B904", "SIM102"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

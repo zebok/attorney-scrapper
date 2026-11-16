@@ -1,0 +1,17 @@
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.ruff_cache
+.git
+.gitignore
+.env
+tests
+docs
+infra
+data/output
+data/warehouse
+README.md
+*.md
